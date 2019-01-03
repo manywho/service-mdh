@@ -23,6 +23,8 @@ public class UniverseRepository {
     }
 
     public List<Universe> findAll(String atomHostname, String atomUsername, String atomPassword) {
+        LOGGER.info("Loading all universes from the Atom at {} with the username {}", atomHostname, atomUsername);
+
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("https")
                 .host(atomHostname)
@@ -47,11 +49,43 @@ public class UniverseRepository {
         }
 
         try {
-            List<Universe> universes = xmlMapper.readValue(response.body().byteStream(), new TypeReference<List<Universe>>() {});
-
-            return universes;
+            return xmlMapper.readValue(response.body().byteStream(), new TypeReference<List<Universe>>() {});
         } catch (IOException e) {
             throw new RuntimeException("Unable to deserialize the list of universes", e);
+        }
+    }
+
+    public Universe find(String atomHostname, String atomUsername, String atomPassword, String id) {
+        LOGGER.info("Loading the universe {} from the Atom at {} with the username {}", id, atomHostname, atomUsername);
+
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("https")
+                .host(atomHostname)
+                .addPathSegments("mdm/universes")
+                .addPathSegment(id)
+                .build();
+
+        Request request = new Request.Builder()
+                .addHeader("Authorization", Credentials.basic(atomUsername, atomPassword))
+                .url(url)
+                .build();
+
+        Response response;
+        try {
+            response = httpClient.newCall(request)
+                    .execute();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to fetch the universe " + id, e);
+        }
+
+        if (response.body() == null) {
+            throw new RuntimeException("No response body was given when fetching the universe " + id);
+        }
+
+        try {
+            return xmlMapper.readValue(response.body().byteStream(), Universe.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to deserialize the universes " + id, e);
         }
     }
 }

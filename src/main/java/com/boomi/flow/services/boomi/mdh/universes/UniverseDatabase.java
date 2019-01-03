@@ -18,7 +18,12 @@ public class UniverseDatabase implements ReadOnlyDatabase<ApplicationConfigurati
 
     @Override
     public Universe find(ApplicationConfiguration configuration, Command command, String id) {
-        return null;
+        return repository.find(
+                configuration.getAtomHostname(),
+                configuration.getAtomUsername(),
+                configuration.getAtomPassword(),
+                id
+        );
     }
 
     @Override
