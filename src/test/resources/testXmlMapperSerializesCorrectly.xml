@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<QuarantineQueryRequest includeData="true" type="a type">
+    <filter>
+        <sourceId>a source id</sourceId>
+        <sourceEntityId>a source entity id</sourceEntityId>
+        <createdDate>
+            <from>2013-01-01T00:00:00Z</from>
+            <to>2015-12-31T00:00:00Z</to>
+        </createdDate>
+        <endDate>
+            <from>2018-01-01T00:00:00Z</from>
+            <to>2018-12-31T00:00:00Z</to>
+        </endDate>
+        <resolution>resolution 1</resolution>
+        <resolution>resolution 2</resolution>
+        <cause>cause 1</cause>
+        <cause>cause 2</cause>
+    </filter>
+</QuarantineQueryRequest>
