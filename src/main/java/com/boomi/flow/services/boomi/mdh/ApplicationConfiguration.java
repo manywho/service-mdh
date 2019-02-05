@@ -17,11 +17,26 @@ public class ApplicationConfiguration implements Configuration {
         return atomHostname;
     }
 
+    public ApplicationConfiguration setAtomHostname(String atomHostname) {
+        this.atomHostname = atomHostname;
+        return this;
+    }
+
     public String getAtomUsername() {
         return atomUsername;
     }
 
+    public ApplicationConfiguration setAtomUsername(String atomUsername) {
+        this.atomUsername = atomUsername;
+        return this;
+    }
+
     public String getAtomPassword() {
         return atomPassword;
+    }
+
+    public ApplicationConfiguration setAtomPassword(String atomPassword) {
+        this.atomPassword = atomPassword;
+        return this;
     }
 }

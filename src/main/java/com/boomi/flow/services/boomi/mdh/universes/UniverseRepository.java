@@ -44,12 +44,13 @@ public class UniverseRepository {
             throw new RuntimeException("Unable to fetch the list of universes", e);
         }
 
-        if (response.body() == null) {
+        var body = response.body();
+        if (body == null) {
             throw new RuntimeException("No response body was given when fetching the list of universes");
         }
 
         try {
-            return xmlMapper.readValue(response.body().byteStream(), new TypeReference<List<Universe>>() {});
+            return xmlMapper.readValue(body.byteStream(), new TypeReference<List<Universe>>() {});
         } catch (IOException e) {
             throw new RuntimeException("Unable to deserialize the list of universes", e);
         }
@@ -78,12 +79,13 @@ public class UniverseRepository {
             throw new RuntimeException("Unable to fetch the universe " + id, e);
         }
 
-        if (response.body() == null) {
+        var body = response.body();
+        if (body == null) {
             throw new RuntimeException("No response body was given when fetching the universe " + id);
         }
 
         try {
-            return xmlMapper.readValue(response.body().byteStream(), Universe.class);
+            return xmlMapper.readValue(body.byteStream(), Universe.class);
         } catch (IOException e) {
             throw new RuntimeException("Unable to deserialize the universes " + id, e);
         }
