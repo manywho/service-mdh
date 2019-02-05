@@ -13,7 +13,6 @@ public class ApplicationModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(TypeProvider.class).to(UniverseTypeProvider.class);
-        bind(OkHttpClient.class).toProvider(() -> new OkHttpClient.Builder().build()).in(Singleton.class);
         bind(XmlMapper.class).toProvider(XmlMapperProvider.class).in(Singleton.class);
     }
 }

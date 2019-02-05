@@ -7,6 +7,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
         EmbeddedServer server = new UndertowServer();
         server.addModule(new ApplicationModule());
+        server.addModule(new ApplicationModuleHttpClient());
         server.setApplication(Application.class);
         server.start();
     }

@@ -1,37 +1,57 @@
 package com.boomi.flow.services.boomi.mdh;
 
+import com.google.inject.AbstractModule;
 import com.manywho.sdk.services.servers.EmbeddedServer;
 import com.manywho.sdk.services.servers.undertow.UndertowServer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import okhttp3.OkHttpClient;
+import okhttp3.mock.MockInterceptor;
+import okhttp3.mock.Rule;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DescribeTest {
-    private static EmbeddedServer server = new UndertowServer();
+    private EmbeddedServer server = new UndertowServer();
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    private MockInterceptor interceptor = new MockInterceptor();
+
+    @Before
+    public void before() throws Exception {
         RestAssured.port = 10001;
 
         server.addModule(new ApplicationModule());
+        server.addModule(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(OkHttpClient.class).toInstance(new OkHttpClient.Builder()
+                        .addInterceptor(interceptor)
+                        .build());
+            }
+        });
         server.setApplication(Application.class);
         server.start("/", 10001);
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @After
+    public void after() {
         server.stop();
     }
 
     @Test
     public void testDescribe() {
+        interceptor.addRule(new Rule.Builder()
+                .respond(getClass().getClassLoader().getResourceAsStream("mocks/universes.xml")));
+
         given()
                 .contentType(ContentType.JSON)
                 .body(new JSONObject())
@@ -88,19 +108,22 @@ public class DescribeTest {
 
     @Test
     public void testInstall() {
+        interceptor.addRule(new Rule.Builder()
+                .respond(getClass().getClassLoader().getResourceAsStream("mocks/universes.xml")));
+
         var request = new JSONObject()
                 .put("configurationValues", new JSONArray()
                         .put(new JSONObject()
                                 .put("developerName", "Atom Hostname")
-                                .put("contentValue", "")
+                                .put("contentValue", "atom.example.com")
                         )
                         .put(new JSONObject()
                                 .put("developerName", "Atom Username")
-                                .put("contentValue", "")
+                                .put("contentValue", "username")
                         )
                         .put(new JSONObject()
                                 .put("developerName", "Atom Password")
-                                .put("contentValue", "")
+                                .put("contentValue", "password")
                         )
                 );
 
@@ -123,7 +146,7 @@ public class DescribeTest {
                 .body("configurationValues[2].developerName", equalTo("Atom Username"))
                 .body("configurationValues[2].contentType", equalTo("ContentString"))
                 .body("configurationValues[2].required", equalTo(true))
-//                .body("install.typeElements", hasSize(3))
+                .body("install.typeElements", hasSize(3))
                 .body("install.typeElements[0].developerName", equalTo("Universe"))
                 .body("install.typeElements[0].developerSummary", not(isEmptyOrNullString()))
                 .body("install.typeElements[0].bindings", hasSize(1))
