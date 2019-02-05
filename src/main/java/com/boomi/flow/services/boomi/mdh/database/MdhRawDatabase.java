@@ -1,0 +1,70 @@
+package com.boomi.flow.services.boomi.mdh.database;
+
+import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
+import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
+import com.manywho.sdk.api.draw.content.Command;
+import com.manywho.sdk.api.run.elements.type.ListFilter;
+import com.manywho.sdk.api.run.elements.type.MObject;
+import com.manywho.sdk.api.run.elements.type.ObjectDataType;
+import com.manywho.sdk.services.database.RawDatabase;
+
+import javax.inject.Inject;
+import java.util.List;
+
+public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
+    private final QuarantineRepository quarantineRepository;
+
+    @Inject
+    public MdhRawDatabase(QuarantineRepository quarantineRepository) {
+        this.quarantineRepository = quarantineRepository;
+    }
+
+    @Override
+    public MObject find(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, String id) {
+        return null;
+    }
+
+    @Override
+    public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter) {
+        var typeName = objectDataType.getDeveloperName();
+
+        if (typeName.startsWith("quarantine-")) {
+            var universe = typeName.replace("quarantine-", "");
+
+            return quarantineRepository.findAll(configuration, universe, filter);
+        }
+
+        // TODO
+        return null;
+    }
+
+    @Override
+    public MObject create(ApplicationConfiguration configuration, MObject object) {
+        return null;
+    }
+
+    @Override
+    public List<MObject> create(ApplicationConfiguration configuration, List<MObject> objects) {
+        return null;
+    }
+
+    @Override
+    public void delete(ApplicationConfiguration configuration, MObject object) {
+
+    }
+
+    @Override
+    public void delete(ApplicationConfiguration configuration, List<MObject> objects) {
+
+    }
+
+    @Override
+    public MObject update(ApplicationConfiguration configuration, MObject object) {
+        return null;
+    }
+
+    @Override
+    public List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects) {
+        return null;
+    }
+}
