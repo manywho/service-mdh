@@ -111,4 +111,58 @@ public class DatabaseLoadUniverse {
                 .body("objectData[1].properties[2].developerName", equalTo("Version"))
                 .body("objectData[1].properties[2].objectData", hasSize(0));
     }
+
+    @Test
+    public void testLoadSingleUniverse() {
+        interceptor.addRule(new Rule.Builder()
+                .respond(getClass().getClassLoader().getResourceAsStream("mocks/universe.xml")));
+
+        var request = new JSONObject()
+                .put("configurationValues", new JSONArray()
+                        .put(new JSONObject()
+                                .put("developerName", "Atom Hostname")
+                                .put("contentValue", "atom.example.com")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Atom Username")
+                                .put("contentValue", "username")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Atom Password")
+                                .put("contentValue", "password")
+                        )
+                )
+                .put("listFilter", new JSONObject()
+                        .put("id", "12fa46f9-e14d-4042-878e-30b273b61731")
+                )
+                .put("objectDataType", new JSONObject()
+                        .put("developerName", "Universe")
+                );
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(request.toString())
+                .when()
+                .post("/data")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .body("hasMoreResults", equalTo(false))
+                .body("objectData", hasSize(1))
+                .body("objectData[0].developerName", equalTo("Universe"))
+                .body("objectData[0].externalId", equalTo("12fa46f9-e14d-4042-878e-30b273b61731"))
+                .body("objectData[0].properties", hasSize(3))
+                .body("objectData[0].properties[0].contentType", equalTo("ContentString"))
+                .body("objectData[0].properties[0].contentValue", equalTo("12fa46f9-e14d-4042-878e-30b273b61731"))
+                .body("objectData[0].properties[0].developerName", equalTo("ID"))
+                .body("objectData[0].properties[0].objectData", hasSize(0))
+                .body("objectData[0].properties[1].contentType", equalTo("ContentString"))
+                .body("objectData[0].properties[1].contentValue", equalTo("person"))
+                .body("objectData[0].properties[1].developerName", equalTo("Name"))
+                .body("objectData[0].properties[1].objectData", hasSize(0))
+                .body("objectData[0].properties[2].contentType", equalTo("ContentString"))
+                .body("objectData[0].properties[2].contentValue", equalTo("9196c0f1-cf26-4768-91a1-9291ca04630b"))
+                .body("objectData[0].properties[2].developerName", equalTo("Version"))
+                .body("objectData[0].properties[2].objectData", hasSize(0));
+    }
 }
