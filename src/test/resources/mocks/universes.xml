@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universes>
+    <universe>
+        <id>2df80af3-1035-4732-ba12-6c84b0d9f568</id>
+        <version>021a2910-cdc4-441d-83c1-ee9c5cc7f257</version>
+        <name>account</name>
+        <stats activeRecords="17" enddatedRecords="0" quarantinedRecords="3" asOf="2019-02-05T14:12:57.289Z">
+            <sourceStats sourceCode="NetSuite" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="1" undeliverableChannelDeliveries="0"/>
+            <sourceStats sourceCode="Google" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0" undeliverableChannelDeliveries="0"/>
+            <sourceStats sourceCode="GoogleDocs" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="1" undeliverableChannelDeliveries="0"/>
+            <sourceStats sourceCode="Salesforce" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0" undeliverableChannelDeliveries="0"/>
+        </stats>
+        <sources>
+            <source code="NetSuite" componentId="ed01f55a-93d1-48bb-9617-21f5a1007e0d" state="STRAPPED" allowContribute="true">
+                <channel id="8b19f730-8544-441b-9c61-e40d381d4352" updateType="DIFF" state="STRAPPED" primary="true"/>
+            </source>
+            <source code="Google" componentId="2a7e6b98-6c15-42a5-b7fe-770244d37fc0" state="CREATED" allowContribute="true">
+                <channel id="16898426-6228-477b-b1d3-dcd3534f3d03" updateType="FULL" state="CREATED" primary="true"/>
+            </source>
+            <source code="GoogleDocs" componentId="e64d05a8-4421-4e62-a7bd-ffd14d90267b" state="STRAPPED" allowContribute="true">
+                <channel id="71ecc2bb-078d-494c-8b99-62672193b221" updateType="FULL" state="STRAPPED" primary="true"/>
+            </source>
+            <source code="Salesforce" componentId="bf64a704-5291-47d7-9eb2-a13ce65c8414" state="STRAPPED" allowContribute="true">
+                <channel id="26f1d6e7-c60b-4d18-b4c6-75344d05b0a4" updateType="DIFF" state="STRAPPED" primary="true"/>
+            </source>
+        </sources>
+        <layoutid>2df80af3-1035-4732-ba12-6c84b0d9f568</layoutid>
+        <layout idXPath="/account/id">
+            <model name="account">
+                <element uniqueId="NAME" name="name" prettyName="Name" type="STRING" required="false" enforceIntegrity="false" titleField="true"/>
+                <element uniqueId="DESCRIPTION" name="description" prettyName="Description" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="ACCOUNT_NUMBER" name="account_number" prettyName="Account Number" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="TYPE" name="type" prettyName="Type" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="PHONE_NUMBER" name="phone_number" prettyName="Phone Number" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="FAX" name="fax" prettyName="Fax" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="BILLING_ADDRESS_1" name="billing_address" prettyName="Billing Address" type="CONTAINER">
+                    <element uniqueId="BILLING_ADDRESS" name="billing_address" prettyName="Billing Address" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="BILLING_CITY" name="billing_city" prettyName="Billing City" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="BILLING_STATE" name="billing_state" prettyName="Billing State" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="BILLING_POSTAL_CODE" name="billing_postal_code" prettyName="Billing Postal Code" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="BILLING_COUNTRY" name="billing_country" prettyName="Billing Country" type="STRING" required="false" enforceIntegrity="false"/>
+                </element>
+                <element uniqueId="SHIPPING_ADDRESS" name="shipping_address" prettyName="Shipping Address" type="CONTAINER">
+                    <element uniqueId="SHIPPING_CITY" name="shipping_city" prettyName="Shipping City" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="SHIPPING_COUNTRY" name="shipping_country" prettyName="Shipping Country" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="SHIPPING_POSTAL_CODE" name="shipping_postal_code" prettyName="Shipping Postal Code" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="SHIPPING_STATE" name="shipping_state" prettyName="Shipping State" type="STRING" required="false" enforceIntegrity="false"/>
+                    <element uniqueId="SHIPPING_STREET" name="shipping_street" prettyName="Shipping Street" type="STRING" required="false" enforceIntegrity="false"/>
+                </element>
+                <element uniqueId="INDUSTRY" name="industry" prettyName="Industry" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="WEBSITE" name="website" prettyName="Website" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="NUMBER_OF_EMPLOYEES" name="number_of_employees" prettyName="Number of Employees" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="CONTACT_FIRST_NAME" name="contact_first_name" prettyName="Contact First Name" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="CONTACT_LAST_NAME" name="contact_last_name" prettyName="Contact Last Name" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="CORTERA_ID" name="cortera_id" prettyName="Cortera ID" type="STRING" required="false" enforceIntegrity="false"/>
+                <element uniqueId="DUNS_NUMBER" name="duns_number" prettyName="DUNS Number" type="STRING" required="false" enforceIntegrity="false"/>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;account&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;description&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;account_number&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;type&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;phone_number&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;fax&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_city&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_state&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_postal_code&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_country&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;shipping_address&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;shipping_city&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;shipping_country&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;shipping_postal_code&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;shipping_state&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;shipping_street&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;industry&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;website&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;number_of_employees&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;contact_first_name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;contact_last_name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;cortera_id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;duns_number&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;</xsd>
+            <field xpath="/account/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="NAME" xpath="/account/name" type="STRING" prettyName="Name" required="false" enforceIntegrity="false" titleField="true"/>
+            <field uniqueId="DESCRIPTION" xpath="/account/description" type="STRING" prettyName="Description" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="ACCOUNT_NUMBER" xpath="/account/account_number" type="STRING" prettyName="Account Number" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="TYPE" xpath="/account/type" type="STRING" prettyName="Type" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="PHONE_NUMBER" xpath="/account/phone_number" type="STRING" prettyName="Phone Number" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="FAX" xpath="/account/fax" type="STRING" prettyName="Fax" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="BILLING_ADDRESS" xpath="/account/billing_address/billing_address" type="STRING" prettyName="Billing Address" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="BILLING_CITY" xpath="/account/billing_address/billing_city" type="STRING" prettyName="Billing City" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="BILLING_STATE" xpath="/account/billing_address/billing_state" type="STRING" prettyName="Billing State" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="BILLING_POSTAL_CODE" xpath="/account/billing_address/billing_postal_code" type="STRING" prettyName="Billing Postal Code" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="BILLING_COUNTRY" xpath="/account/billing_address/billing_country" type="STRING" prettyName="Billing Country" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="SHIPPING_CITY" xpath="/account/shipping_address/shipping_city" type="STRING" prettyName="Shipping City" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="SHIPPING_COUNTRY" xpath="/account/shipping_address/shipping_country" type="STRING" prettyName="Shipping Country" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="SHIPPING_POSTAL_CODE" xpath="/account/shipping_address/shipping_postal_code" type="STRING" prettyName="Shipping Postal Code" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="SHIPPING_STATE" xpath="/account/shipping_address/shipping_state" type="STRING" prettyName="Shipping State" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="SHIPPING_STREET" xpath="/account/shipping_address/shipping_street" type="STRING" prettyName="Shipping Street" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="INDUSTRY" xpath="/account/industry" type="STRING" prettyName="Industry" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="WEBSITE" xpath="/account/website" type="STRING" prettyName="Website" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="NUMBER_OF_EMPLOYEES" xpath="/account/number_of_employees" type="STRING" prettyName="Number of Employees" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="CONTACT_FIRST_NAME" xpath="/account/contact_first_name" type="STRING" prettyName="Contact First Name" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="CONTACT_LAST_NAME" xpath="/account/contact_last_name" type="STRING" prettyName="Contact Last Name" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="CORTERA_ID" xpath="/account/cortera_id" type="STRING" prettyName="Cortera ID" required="false" enforceIntegrity="false" titleField="false"/>
+            <field uniqueId="DUNS_NUMBER" xpath="/account/duns_number" type="STRING" prettyName="DUNS Number" required="false" enforceIntegrity="false" titleField="false"/>
+        </layout>
+        <matchid>2df80af3-1035-4732-ba12-6c84b0d9f568</matchid>
+        <matchconfig>
+            <round>
+                <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+            <round>
+                <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="DUNS_NUMBER" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="DUNS_NUMBER" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+            <round>
+                <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="CORTERA_ID" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="CORTERA_ID" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+    <universe>
+        <id>12fa46f9-e14d-4042-878e-30b273b61731</id>
+        <version>9196c0f1-cf26-4768-91a1-9291ca04630b</version>
+        <name>person</name>
+        <stats activeRecords="1" enddatedRecords="0" quarantinedRecords="0" asOf="2019-02-05T14:12:57.332Z">
+            <sourceStats sourceCode="flow" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0" undeliverableChannelDeliveries="0"/>
+        </stats>
+        <sources>
+            <source code="flow" componentId="91b9b25e-3c00-4c9c-bd3e-ac115ea4d46d" state="STRAPPED" allowContribute="true">
+                <channel id="7c2b3969-154f-4136-a5e2-b02740c9d841" updateType="FULL" state="STRAPPED" primary="true"/>
+            </source>
+        </sources>
+        <layoutid>12fa46f9-e14d-4042-878e-30b273b61731</layoutid>
+        <layout idXPath="/person/id">
+            <model name="person">
+                <element uniqueId="LAST_NAME" name="last_name" prettyName="last_name" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="FIRST_NAME" name="first_name" prettyName="first_name" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="PHONE_NUMBER" name="phone_number" prettyName="phone_number" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="EMAIL_ADDRESS" name="email_address" prettyName="email_address" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="ADDRESS_1" name="address_1" prettyName="address_1" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="ADDRESS_2" name="address_2" prettyName="address_2" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="CITY" name="city" prettyName="city" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="STATE" name="state" prettyName="state" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="ZIP" name="zip" prettyName="zip" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="ZIP_4" name="zip_4" prettyName="zip_4" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="COUNTRY" name="country" prettyName="country" type="STRING" required="false" repeatable="false"/>
+                <element uniqueId="ACCOUNT" name="account" prettyName="account" type="STRING" required="false" repeatable="false"/>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;person&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;last_name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;first_name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;phone_number&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;email_address&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;address_1&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;address_2&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;city&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;state&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;zip&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;zip_4&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;country&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;account&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;</xsd>
+            <field xpath="/person/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="LAST_NAME" xpath="/person/last_name" type="STRING" prettyName="last_name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIRST_NAME" xpath="/person/first_name" type="STRING" prettyName="first_name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="PHONE_NUMBER" xpath="/person/phone_number" type="STRING" prettyName="phone_number" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="EMAIL_ADDRESS" xpath="/person/email_address" type="STRING" prettyName="email_address" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="ADDRESS_1" xpath="/person/address_1" type="STRING" prettyName="address_1" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="ADDRESS_2" xpath="/person/address_2" type="STRING" prettyName="address_2" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="CITY" xpath="/person/city" type="STRING" prettyName="city" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="STATE" xpath="/person/state" type="STRING" prettyName="state" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="ZIP" xpath="/person/zip" type="STRING" prettyName="zip" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="ZIP_4" xpath="/person/zip_4" type="STRING" prettyName="zip_4" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="COUNTRY" xpath="/person/country" type="STRING" prettyName="country" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="ACCOUNT" xpath="/person/account" type="STRING" prettyName="account" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+        </layout>
+        <matchid>12fa46f9-e14d-4042-878e-30b273b61731</matchid>
+        <matchconfig>
+            <round>
+                <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="LAST_NAME" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="LAST_NAME" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+</universes>

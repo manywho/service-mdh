@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UniverseRepository {
     private final static Logger LOGGER = LoggerFactory.getLogger(UniverseRepository.class);
@@ -20,7 +22,10 @@ public class UniverseRepository {
     public List<Universe> findAll(String atomHostname, String atomUsername, String atomPassword) {
         LOGGER.info("Loading all universes from the Atom at {} with the username {}", atomHostname, atomUsername);
 
-        return client.findAllUniverses(atomHostname, atomUsername, atomPassword);
+        var universes = client.findAllUniverses(atomHostname, atomUsername, atomPassword);
+
+        return Optional.ofNullable(universes)
+                .orElse(new ArrayList<>());
     }
 
     public Universe find(String atomHostname, String atomUsername, String atomPassword, String id) {

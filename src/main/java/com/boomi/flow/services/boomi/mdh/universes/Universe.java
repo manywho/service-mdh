@@ -38,75 +38,10 @@ public class Universe implements Type {
     }
 
     public static class Layout {
-        @JacksonXmlProperty(isAttribute = true)
-        private String idXPath;
-
-        @JacksonXmlProperty(localName = "field")
-        private List<Field> fields;
-
         private Model model;
-
-        public String getIdXPath() {
-            return idXPath;
-        }
-
-        public List<Field> getFields() {
-            return fields;
-        }
 
         public Model getModel() {
             return model;
-        }
-
-        public static class Field {
-            @JacksonXmlProperty(isAttribute = true)
-            private String uniqueId;
-
-            @JacksonXmlProperty(isAttribute = true)
-            private String prettyName;
-
-            @JacksonXmlProperty(isAttribute = true)
-            private String type;
-
-            @JacksonXmlProperty(isAttribute = true)
-            private boolean required;
-
-            @JacksonXmlProperty(isAttribute = true)
-            private boolean enforceIntegrity;
-
-            @JacksonXmlProperty(isAttribute = true)
-            private boolean incomingReferenceIntegrity;
-
-            @JacksonXmlProperty(isAttribute = true)
-            private boolean repeatable;
-
-            public String getUniqueId() {
-                return uniqueId;
-            }
-
-            public String getPrettyName() {
-                return prettyName;
-            }
-
-            public String getType() {
-                return type;
-            }
-
-            public boolean isRequired() {
-                return required;
-            }
-
-            public boolean isEnforceIntegrity() {
-                return enforceIntegrity;
-            }
-
-            public boolean isIncomingReferenceIntegrity() {
-                return incomingReferenceIntegrity;
-            }
-
-            public boolean isRepeatable() {
-                return repeatable;
-            }
         }
 
         public static class Model {
@@ -132,15 +67,6 @@ public class Universe implements Type {
 
                 @JacksonXmlProperty(isAttribute = true)
                 private boolean required;
-
-                @JacksonXmlProperty(isAttribute = true)
-                private boolean enforceIntegrity;
-
-                @JacksonXmlProperty(isAttribute = true)
-                private boolean incomingReferenceIntegrity;
-
-                @JacksonXmlProperty(isAttribute = true)
-                private boolean repeatable;
 
                 public String getUniqueId() {
                     return uniqueId;
@@ -176,34 +102,6 @@ public class Universe implements Type {
 
                 public boolean isRequired() {
                     return required;
-                }
-
-                public void setRequired(boolean required) {
-                    this.required = required;
-                }
-
-                public boolean isEnforceIntegrity() {
-                    return enforceIntegrity;
-                }
-
-                public void setEnforceIntegrity(boolean enforceIntegrity) {
-                    this.enforceIntegrity = enforceIntegrity;
-                }
-
-                public boolean isIncomingReferenceIntegrity() {
-                    return incomingReferenceIntegrity;
-                }
-
-                public void setIncomingReferenceIntegrity(boolean incomingReferenceIntegrity) {
-                    this.incomingReferenceIntegrity = incomingReferenceIntegrity;
-                }
-
-                public boolean isRepeatable() {
-                    return repeatable;
-                }
-
-                public void setRepeatable(boolean repeatable) {
-                    this.repeatable = repeatable;
                 }
             }
         }
