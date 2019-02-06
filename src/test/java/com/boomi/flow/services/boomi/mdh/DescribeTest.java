@@ -13,13 +13,10 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class DescribeTest {
     private EmbeddedServer server = new UndertowServer();
 
@@ -146,7 +143,7 @@ public class DescribeTest {
                 .body("configurationValues[2].developerName", equalTo("Atom Username"))
                 .body("configurationValues[2].contentType", equalTo("ContentString"))
                 .body("configurationValues[2].required", equalTo(true))
-                .body("install.typeElements", hasSize(3))
+                .body("install.typeElements", hasSize(5))
                 .body("install.typeElements[0].developerName", equalTo("Universe"))
                 .body("install.typeElements[0].developerSummary", not(isEmptyOrNullString()))
                 .body("install.typeElements[0].bindings", hasSize(1))
