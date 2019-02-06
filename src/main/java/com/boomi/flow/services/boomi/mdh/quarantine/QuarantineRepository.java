@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh.quarantine;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.common.ListFilters;
 import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
@@ -77,24 +78,28 @@ public class QuarantineRepository {
 
         if (filter != null) {
             if (filter.getLimit() > 200) {
+                LOGGER.warn("An unsupported limit of {} was given", filter.getLimit());
+
                 throw new RuntimeException("MDH does not support a limit greater than 200");
             }
 
             if (filter.getComparisonType().equals(ComparisonType.Or)) {
+                LOGGER.warn("An unsupported comparison type of {} was given", filter.getComparisonType());
+
                 throw new RuntimeException("Only the AND comparison type is supported by MDH");
             }
 
             if (filter.hasWhere()) {
-                // Find the "status" filter
+                // Status
                 ListFilters.findConstrainedFilter(filter.getWhere(), QuarantineEntryConstants.STATUS_FIELD, VALID_STATUSES)
                         .ifPresent(queryRequest::setType);
 
                 // Source ID
-                ListFilters.getWhereValue(filter.getWhere(), QuarantineEntryConstants.SOURCE_ID_FIELD, CriteriaType.Equal)
+                ListFilters.findFilterValue(filter.getWhere(), QuarantineEntryConstants.SOURCE_ID_FIELD, CriteriaType.Equal)
                         .ifPresent(queryFilter::setSourceId);
 
                 // Source Entity ID
-                ListFilters.getWhereValue(filter.getWhere(), QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, CriteriaType.Equal)
+                ListFilters.findFilterValue(filter.getWhere(), QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, CriteriaType.Equal)
                         .ifPresent(queryFilter::setSourceEntityId);
 
                 // Created Date
@@ -135,22 +140,24 @@ public class QuarantineRepository {
         }
 
         return result.getEntries().stream()
-                .map(entry -> {
-                    List<Property> properties = new ArrayList<>();
-
-                    properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
-                    properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
-                    properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
-                    properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
-                    properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
-                    properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
-
-                    // Create the object data for the entity
-                    properties.add(new Property(QuarantineEntryConstants.ENTITY_FIELD, createEntityMObject(entry.getSourceEntityId(), entry.getEntity())));
-
-                    return new MObject(universe, entry.getTransactionId(), properties);
-                })
+                .map(entry -> createQuarantineEntryObject(universe, entry))
                 .collect(Collectors.toList());
+    }
+
+    private static MObject createQuarantineEntryObject(String universe, QuarantineEntry entry) {
+        List<Property> properties = new ArrayList<>();
+
+        properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
+        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
+        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
+        properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
+        properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
+        properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
+
+        // Create the object data for the entity
+        properties.add(new Property(QuarantineEntryConstants.ENTITY_FIELD, createEntityMObject(entry.getSourceEntityId(), entry.getEntity())));
+
+        return new MObject(universe, entry.getTransactionId(), properties);
     }
 
     private static Consumer<ListFilterWhere> createDateFilter(QuarantineQueryRequest.DateFilter dateFilter) {

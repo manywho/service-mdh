@@ -29,7 +29,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class QuarantineEntryDatabaseLoad {
+public class DatabaseLoadQuarantineEntry {
     @Mock
     private MdhClient client;
 
