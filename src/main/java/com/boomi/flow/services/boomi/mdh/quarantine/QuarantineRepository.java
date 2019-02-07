@@ -121,13 +121,13 @@ public class QuarantineRepository {
                 queryFilter.setEndDate(endDateFilter);
 
                 // Cause
-                var causes = ListFilters.findEnumerableFilter(filter.getWhere(), QuarantineEntryConstants.CAUSE_FIELD, VALID_CAUSES);
+                var causes = ListFilters.findEnumerableFilterValues(filter.getWhere(), QuarantineEntryConstants.CAUSE_FIELD, VALID_CAUSES);
                 if (causes.isEmpty() == false) {
                     queryFilter.setCauses(causes);
                 }
 
                 // Resolution
-                var resolutions = ListFilters.findEnumerableFilter(filter.getWhere(), QuarantineEntryConstants.RESOLUTION_FIELD, VALID_RESOLUTIONS);
+                var resolutions = ListFilters.findEnumerableFilterValues(filter.getWhere(), QuarantineEntryConstants.RESOLUTION_FIELD, VALID_RESOLUTIONS);
                 if (resolutions.isEmpty() == false) {
                     queryFilter.setResolutions(resolutions);
                 }

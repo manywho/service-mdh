@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh.database;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.manywho.sdk.api.draw.content.Command;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.MObject;
@@ -13,10 +14,12 @@ import java.util.List;
 
 public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     private final QuarantineRepository quarantineRepository;
+    private final GoldenRecordRepository goldenRecordRepository;
 
     @Inject
-    public MdhRawDatabase(QuarantineRepository quarantineRepository) {
+    public MdhRawDatabase(QuarantineRepository quarantineRepository, GoldenRecordRepository goldenRecordRepository) {
         this.quarantineRepository = quarantineRepository;
+        this.goldenRecordRepository = goldenRecordRepository;
     }
 
     @Override
@@ -32,6 +35,12 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
             var universe = typeName.replace("quarantine-", "");
 
             return quarantineRepository.findAll(configuration, universe, filter);
+        }
+
+        if (typeName.startsWith("golden-record-")) {
+            var universe = typeName.replace("golden-record-", "");
+
+            return goldenRecordRepository.findAll(configuration, universe, filter);
         }
 
         // TODO

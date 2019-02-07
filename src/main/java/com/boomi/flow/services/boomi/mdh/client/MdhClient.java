@@ -2,6 +2,8 @@ package com.boomi.flow.services.boomi.mdh.client;
 
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -101,11 +103,27 @@ public class MdhClient {
                 .addPathSegments("quarantine/query")
                 .build();
 
+        return sendRequest(username, password, url, query, QuarantineQueryResponse.class, "quarantine entry");
+    }
+
+    public GoldenRecordQueryResponse queryGoldenRecords(String hostname, String username, String password, String universe, GoldenRecordQueryRequest query) {
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("https")
+                .host(hostname)
+                .addPathSegments("mdm/universes")
+                .addPathSegment(universe)
+                .addPathSegments("records/query")
+                .build();
+
+        return sendRequest(username, password, url, query, GoldenRecordQueryResponse.class, "golden record");
+    }
+
+    private <T> T sendRequest(String username, String password, HttpUrl url, Object query, Class<T> aClass, String type) {
         RequestBody body;
         try {
             body = RequestBody.create(XML, xmlMapper.writeValueAsString(query));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Something went wrong creating the query request", e);
+            throw new RuntimeException("Something went wrong creating the request", e);
         }
 
         Request request = new Request.Builder()
@@ -120,13 +138,13 @@ public class MdhClient {
                     .newCall(request)
                     .execute();
         } catch (IOException e) {
-            LOGGER.error("Unable to query for quarantine entries", e);
+            LOGGER.error("Unable to query for {}", type, e);
 
-            throw new RuntimeException("Unable to query for quarantine entries: " + e.getMessage(), e);
+            throw new RuntimeException("Unable to query for " + type + ": " + e.getMessage(), e);
         }
 
         if (response.body() == null) {
-            throw new RuntimeException("No response body was given while querying for quarantine entries");
+            throw new RuntimeException("No response body was given while querying for " + type + " objects");
         }
 
         String responseBody;
@@ -139,17 +157,17 @@ public class MdhClient {
         }
 
         if (response.isSuccessful() == false) {
-            LOGGER.error("Unable to query quarantine entries: {}", responseBody);
+            LOGGER.error("Unable to query {}: {}", type, responseBody);
 
-            throw new RuntimeException("Something went wrong loading the quarantine entries: " + responseBody);
+            throw new RuntimeException("Something went wrong loading the " + type + " objects: " + responseBody);
         }
 
         try {
-            return xmlMapper.readValue(responseBody, QuarantineQueryResponse.class);
+            return xmlMapper.readValue(responseBody, aClass);
         } catch (IOException e) {
             LOGGER.error("Unable to deserialize the response", e);
 
-            throw new RuntimeException("Unable to deserialize the quarantine entry query response", e);
+            throw new RuntimeException("Unable to deserialize the " + type + " query response", e);
         }
     }
 }

@@ -19,7 +19,13 @@ public class ListFilters {
                 .map(ListFilterWhere::getContentValue);
     }
 
-    public static List<String> findEnumerableFilter(@NotNull List<ListFilterWhere> wheres, String field, String... validValues) {
+    public static List<ListFilterWhere> findEnumerableFilters(@NotNull List<ListFilterWhere> wheres, String field) {
+        return wheres.stream()
+                .filter(where -> where.getColumnName().equals(field))
+                .collect(Collectors.toList());
+    }
+
+    public static List<String> findEnumerableFilterValues(@NotNull List<ListFilterWhere> wheres, String field, String... validValues) {
         List<ListFilterWhere> filters = wheres.stream()
                 .filter(where -> where.getColumnName().equals(field))
                 .collect(Collectors.toList());

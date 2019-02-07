@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<RecordQueryRequest>
+    <sort>
+        <sortField>
+            <fieldId>field 1</fieldId>
+            <direction>DESC</direction>
+        </sortField>
+        <sortField>
+            <fieldId>field 2</fieldId>
+            <direction>ASC</direction>
+        </sortField>
+    </sort>
+    <filter>
+        <creatingSourceId>12345</creatingSourceId>
+        <createdDate>
+            <from>2013-01-01T00:00:00Z</from>
+            <to>2015-12-31T00:00:00Z</to>
+        </createdDate>
+        <updatedDate>
+            <from>2018-01-01T00:00:00Z</from>
+            <to>2018-12-31T00:00:00Z</to>
+        </updatedDate>
+        <fieldValue>
+            <fieldId>field 1</fieldId>
+            <operator>LESS_THAN</operator>
+            <value>some value</value>
+        </fieldValue>
+        <fieldValue>
+            <fieldId>field 2</fieldId>
+            <operator>EQUAL</operator>
+            <value>another value</value>
+        </fieldValue>
+    </filter>
+</RecordQueryRequest>

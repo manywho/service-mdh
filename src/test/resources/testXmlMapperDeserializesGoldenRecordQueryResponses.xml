@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RecordQueryResponse resultCount="2" totalCount="2">
+    <Record recordId="02a8284d-0ef3-4091-acef-85f23d80cf0d" createdDate="2013-09-23T14:07:31Z" updatedDate="2014-02-04T15:59:21Z" recordTitle="Dell Boomi">
+        <Fields>
+            <account>
+                <name>Dell Boomi</name>
+                <description>Cloud based data management</description>
+                <account_number>1234561234</account_number>
+                <phone_number>(610) 111-1111</phone_number>
+                <fax>(610) 111-4444</fax>
+                <billing_address>
+                    <billing_address>801 Cassat Rd.</billing_address>
+                    <billing_city>Berwyn</billing_city>
+                    <billing_state>PA</billing_state>
+                    <billing_postal_code>19312</billing_postal_code>
+                </billing_address>
+                <website>http://boomi.com</website>
+                <number_of_employees>200</number_of_employees>
+            </account>
+        </Fields>
+    </Record>
+    <Record recordId="22012642-e599-4011-9309-40841abfbff2" createdDate="2013-09-23T14:07:31Z" updatedDate="2013-12-16T21:34:37Z" recordTitle="Hollywood Inc.">
+        <Fields>
+            <account>
+                <name>Hollywood Inc.</name>
+                <description>Best talent agency in the world.</description>
+                <account_number>90210</account_number>
+                <phone_number>(610) 111-1111</phone_number>
+                <billing_address>
+                    <billing_address>1234 Ave. of the Star</billing_address>
+                    <billing_city>Hollywood</billing_city>
+                    <billing_state>CA</billing_state>
+                    <billing_postal_code>90210</billing_postal_code>
+                </billing_address>
+                <industry>Entertainment</industry>
+            </account>
+        </Fields>
+    </Record>
+</RecordQueryResponse>

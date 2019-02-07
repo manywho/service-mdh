@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh.universes;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.describe.DescribeServiceRequest;
 import com.manywho.sdk.api.draw.elements.type.TypeElement;
@@ -34,6 +35,10 @@ public class UniverseTypeProvider implements TypeProvider<ApplicationConfigurati
         }
 
         if (name.startsWith("quarantine-")) {
+            return true;
+        }
+
+        if (name.startsWith("golden-record-")) {
             return true;
         }
 
@@ -88,7 +93,53 @@ public class UniverseTypeProvider implements TypeProvider<ApplicationConfigurati
     }
 
     static List<TypeElement> createGoldenRecordTypes(List<Universe> universes) {
-        return new ArrayList<>();
+        return universes.stream()
+                .map(universe -> {
+                    var name = String.format("%s Golden Record", universe.getName());
+
+                    List<TypeElementProperty> properties = new ArrayList<>();
+
+                    // TODO: Deduplicate this and below
+                    for (var field : universe.getLayout().getModel().getElements()) {
+                        var contentType = fieldTypeToContentType(field.getType());
+                        if (contentType == null) {
+                            // We don't want to convert this element as it's an unsupported type
+                            continue;
+                        }
+
+                        properties.add(new TypeElementProperty(field.getPrettyName(), contentType));
+                    }
+
+                    // These properties are all for the request, only for filtering
+                    properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
+                    properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
+
+                    List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
+
+                    // This links the properties found from the "fields" with the stuff in "elements" (which gives us the actual column name?)
+                    for (var element : universe.getLayout().getModel().getElements()) {
+                        var contentType = fieldTypeToContentType(element.getType());
+                        if (contentType == null) {
+                            // We don't want to convert this element as it's an unsupported type
+                            continue;
+                        }
+
+                        propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
+                    }
+
+                    // These properties are all for the request, only for filtering
+                    propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
+                    propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
+
+                    // TODO: Pretty sure this is only required because of a bug in the Engine
+                    var tableName = "golden-record-" + universe.getId().toString();
+
+                    List<TypeElementBinding> bindings = new ArrayList<>();
+                    bindings.add(new TypeElementBinding(name, "The structure of a golden record for the " + universe.getName() + " universe", tableName, propertyBindings));
+
+                    return new TypeElement(name, properties, bindings);
+                })
+                .collect(Collectors.toList());
     }
 
     static List<TypeElement> createMatchEntitiesTypes(List<Universe> universes) {
