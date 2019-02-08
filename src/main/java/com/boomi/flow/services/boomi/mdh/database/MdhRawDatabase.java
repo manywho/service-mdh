@@ -48,32 +48,34 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     }
 
     @Override
-    public MObject create(ApplicationConfiguration configuration, MObject object) {
+    public MObject create(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
+        return create(configuration, objectDataType, List.of(object)).stream()
+                .findFirst()
+                .orElse(null); // TODO
+    }
+
+    @Override
+    public List<MObject> create(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         return null;
     }
 
     @Override
-    public List<MObject> create(ApplicationConfiguration configuration, List<MObject> objects) {
+    public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
+
+    }
+
+    @Override
+    public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
+
+    }
+
+    @Override
+    public MObject update(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
         return null;
     }
 
     @Override
-    public void delete(ApplicationConfiguration configuration, MObject object) {
-
-    }
-
-    @Override
-    public void delete(ApplicationConfiguration configuration, List<MObject> objects) {
-
-    }
-
-    @Override
-    public MObject update(ApplicationConfiguration configuration, MObject object) {
-        return null;
-    }
-
-    @Override
-    public List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects) {
+    public List<MObject> update(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         return null;
     }
 }
