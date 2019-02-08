@@ -1,22 +1,16 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 public class GoldenRecordQueryResponse {
-    @JacksonXmlProperty(isAttribute = true)
     private Integer resultCount;
-
-    @JacksonXmlProperty(isAttribute = true)
     private Integer totalCount;
-
-    @JacksonXmlProperty(isAttribute = true)
     private String offsetToken;
-
-    @JacksonXmlProperty(localName = "Record")
     private List<GoldenRecord> records;
 
+    @XmlAttribute
     public Integer getResultCount() {
         return resultCount;
     }
@@ -26,6 +20,7 @@ public class GoldenRecordQueryResponse {
         return this;
     }
 
+    @XmlAttribute
     public Integer getTotalCount() {
         return totalCount;
     }
@@ -35,6 +30,7 @@ public class GoldenRecordQueryResponse {
         return this;
     }
 
+    @XmlAttribute
     public String getOffsetToken() {
         return offsetToken;
     }
@@ -44,6 +40,7 @@ public class GoldenRecordQueryResponse {
         return this;
     }
 
+    @XmlElement(name = "Record")
     public List<GoldenRecord> getRecords() {
         return records;
     }

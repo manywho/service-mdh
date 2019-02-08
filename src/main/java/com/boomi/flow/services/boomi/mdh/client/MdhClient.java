@@ -5,15 +5,16 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.boomi.flow.services.boomi.mdh.universes.UniversesResponse;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXB;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MdhClient {
@@ -21,12 +22,10 @@ public class MdhClient {
     private static final MediaType XML = MediaType.parse("application/xml; charset=utf-8");
 
     private final OkHttpClient httpClient;
-    private final XmlMapper xmlMapper;
 
     @Inject
-    public MdhClient(OkHttpClient httpClient, XmlMapper xmlMapper) {
+    public MdhClient(OkHttpClient httpClient) {
         this.httpClient = httpClient;
-        this.xmlMapper = xmlMapper;
     }
 
     public List<Universe> findAllUniverses(String hostname, String username, String password) {
@@ -55,8 +54,13 @@ public class MdhClient {
         }
 
         try {
-            return xmlMapper.readValue(body.byteStream(), new TypeReference<List<Universe>>() {});
-        } catch (IOException e) {
+            var result = JAXB.unmarshal(body.byteStream(), UniversesResponse.class);
+            if (result == null) {
+                return new ArrayList<>();
+            }
+
+            return result.getUniverses();
+        } catch (RuntimeException e) {
             throw new RuntimeException("Unable to deserialize the list of universes", e);
         }
     }
@@ -88,8 +92,8 @@ public class MdhClient {
         }
 
         try {
-            return xmlMapper.readValue(body.byteStream(), Universe.class);
-        } catch (IOException e) {
+            return JAXB.unmarshal(body.byteStream(), Universe.class);
+        } catch (RuntimeException e) {
             throw new RuntimeException("Unable to deserialize the universes " + id, e);
         }
     }
@@ -119,12 +123,15 @@ public class MdhClient {
     }
 
     private <T> T sendRequest(String username, String password, HttpUrl url, Object query, Class<T> aClass, String type) {
-        RequestBody body;
+        var bodyContent = new StringWriter();
+
         try {
-            body = RequestBody.create(XML, xmlMapper.writeValueAsString(query));
-        } catch (JsonProcessingException e) {
+            JAXB.marshal(query, bodyContent);
+        } catch (RuntimeException e) {
             throw new RuntimeException("Something went wrong creating the request", e);
         }
+
+        var body = RequestBody.create(XML, bodyContent.toString());
 
         Request request = new Request.Builder()
                 .addHeader("Authorization", Credentials.basic(username, password))
@@ -163,8 +170,8 @@ public class MdhClient {
         }
 
         try {
-            return xmlMapper.readValue(responseBody, aClass);
-        } catch (IOException e) {
+            return JAXB.unmarshal(responseBody, aClass);
+        } catch (RuntimeException e) {
             LOGGER.error("Unable to deserialize the response", e);
 
             throw new RuntimeException("Unable to deserialize the " + type + " query response", e);

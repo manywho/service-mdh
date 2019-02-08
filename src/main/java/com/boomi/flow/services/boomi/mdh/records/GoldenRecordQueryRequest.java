@@ -1,13 +1,15 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@JacksonXmlRootElement(localName = "RecordQueryRequest")
+@XmlRootElement(name = "RecordQueryRequest")
 public class GoldenRecordQueryRequest {
     private View view;
     private Sort sort;
@@ -41,18 +43,18 @@ public class GoldenRecordQueryRequest {
     }
 
     public static class View {
-        @JacksonXmlProperty(localName = "fieldId")
         private List<String> fields = new ArrayList<>();
 
+        @XmlElement(name = "fieldId")
         public List<String> getFields() {
             return fields;
         }
     }
 
     public static class Sort {
-        @JacksonXmlProperty(localName = "sortField")
         private List<Field> fields = new ArrayList<>();
 
+        @XmlElement(name = "sortField")
         public List<Field> getFields() {
             return fields;
         }
@@ -90,8 +92,6 @@ public class GoldenRecordQueryRequest {
         private String creatingSourceId;
         private DateFilter createdDate;
         private DateFilter updatedDate;
-
-        @JacksonXmlProperty(localName = "fieldValue")
         private List<FieldValue> fieldValues = new ArrayList<>();
 
         public String getCreatingSourceId() {
@@ -121,6 +121,7 @@ public class GoldenRecordQueryRequest {
             return this;
         }
 
+        @XmlElement(name = "fieldValue")
         public List<FieldValue> getFieldValues() {
             return fieldValues;
         }
@@ -167,6 +168,7 @@ public class GoldenRecordQueryRequest {
             private OffsetDateTime from;
             private OffsetDateTime to;
 
+            @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
             public OffsetDateTime getFrom() {
                 return from;
             }
@@ -176,6 +178,7 @@ public class GoldenRecordQueryRequest {
                 return this;
             }
 
+            @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
             public OffsetDateTime getTo() {
                 return to;
             }

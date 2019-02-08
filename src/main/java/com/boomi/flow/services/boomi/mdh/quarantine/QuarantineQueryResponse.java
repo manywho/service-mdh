@@ -1,20 +1,20 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 public class QuarantineQueryResponse {
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private Integer resultCount;
 
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private Integer totalCount;
 
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private String offsetToken;
 
-    @JacksonXmlProperty(localName = "QuarantineEntry")
+    @XmlElement(name = "QuarantineEntry")
     private List<QuarantineEntry> entries;
 
     public Integer getResultCount() {

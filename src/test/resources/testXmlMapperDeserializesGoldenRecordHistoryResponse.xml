@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RecordHistoryResponse resultCount="23" grid="d5742c16-5318-4ba7-8815-3267a7a55358" totalCount="823">
+    <contact enddate="02-08-2015T14:17:06.000-0400" grid="d5742c16-5318-4ba7-8815-3267a7a55358"
+             source="SF" enddatesource="SF" startdate="02-07-2015T08:36:37.000-0400"
+             version="801" transactionId="12345678-9abc-def0-1234-56789abcdef0">
+        <id>d5742c16-5318-4ba7-8815-3267a7a55358</id>
+        <name>bob</name>
+        <city>malvern</city>
+        <email>bob@gmail.com</email>
+    </contact>
+    <contact grid="d5742c16-5318-4ba7-8815-3267a7a55358" source="SF"
+             startdate="03-14-2016T14:17:07.000-0400" version="823"
+             transactionId="01234567-89ab-cdef-0123-456789abcdef">
+        <id>d5742c16-5318-4ba7-8815-3267a7a55358</id>
+        <name>bob</name>
+        <city>berwyn</city>
+        <email>bob@gmail.com</email>
+    </contact>
+</RecordHistoryResponse>

@@ -55,6 +55,7 @@ public class UniverseTypeProvider implements TypeProvider<ApplicationConfigurati
 
     static List<TypeElement> createModelTypes(List<Universe> universes) {
         return universes.stream()
+                .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
                 .map(universe -> {
                     var name = createModelName(universe.getName());
 
@@ -94,6 +95,7 @@ public class UniverseTypeProvider implements TypeProvider<ApplicationConfigurati
 
     static List<TypeElement> createGoldenRecordTypes(List<Universe> universes) {
         return universes.stream()
+                .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
                 .map(universe -> {
                     var name = String.format("%s Golden Record", universe.getName());
 

@@ -1,13 +1,18 @@
 package com.boomi.flow.services.boomi.mdh.universes;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.services.types.Type;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Type.Element(name = "Universe")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Universe implements Type {
     @Type.Identifier
     @Type.Property(name = "ID", contentType = ContentType.String)
@@ -44,30 +49,32 @@ public class Universe implements Type {
             return model;
         }
 
-        public static class Model {
-            @JacksonXmlProperty(localName = "element")
-            private List<Element> elements;
+        public Layout setModel(Model model) {
+            this.model = model;
+            return this;
+        }
 
+        public static class Model {
+            private List<Element> elements = new ArrayList<>();
+
+            @XmlElement(name = "element")
             public List<Element> getElements() {
                 return elements;
             }
 
+            public Model setElements(List<Element> elements) {
+                this.elements = elements;
+                return this;
+            }
+
             public static class Element {
-                @JacksonXmlProperty(isAttribute = true)
                 private String uniqueId;
-
-                @JacksonXmlProperty(isAttribute = true)
                 private String name;
-
-                @JacksonXmlProperty(isAttribute = true)
                 private String prettyName;
-
-                @JacksonXmlProperty(isAttribute = true)
                 private String type;
-
-                @JacksonXmlProperty(isAttribute = true)
                 private boolean required;
 
+                @XmlAttribute
                 public String getUniqueId() {
                     return uniqueId;
                 }
@@ -76,6 +83,7 @@ public class Universe implements Type {
                     this.uniqueId = uniqueId;
                 }
 
+                @XmlAttribute
                 public String getName() {
                     return name;
                 }
@@ -84,6 +92,7 @@ public class Universe implements Type {
                     this.name = name;
                 }
 
+                @XmlAttribute
                 public String getPrettyName() {
                     return prettyName;
                 }
@@ -92,6 +101,7 @@ public class Universe implements Type {
                     this.prettyName = prettyName;
                 }
 
+                @XmlAttribute
                 public String getType() {
                     return type;
                 }
@@ -100,6 +110,7 @@ public class Universe implements Type {
                     this.type = type;
                 }
 
+                @XmlAttribute
                 public boolean isRequired() {
                     return required;
                 }

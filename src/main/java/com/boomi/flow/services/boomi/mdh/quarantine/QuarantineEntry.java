@@ -1,24 +1,23 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-
+import javax.xml.bind.annotation.XmlAttribute;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
 public class QuarantineEntry {
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private OffsetDateTime createdDate;
 
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private OffsetDateTime endDate;
 
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private String sourceId;
 
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private String sourceEntityId;
 
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute
     private String transactionId;
 
     private String cause;

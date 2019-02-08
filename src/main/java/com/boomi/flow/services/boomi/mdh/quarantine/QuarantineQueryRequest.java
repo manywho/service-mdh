@@ -1,18 +1,19 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
+@XmlRootElement(name = "QuarantineQueryRequest")
 public class QuarantineQueryRequest {
     private Filter filter;
-
-    @JacksonXmlProperty(isAttribute = true)
     private boolean includeData;
-
-    @JacksonXmlProperty(isAttribute = true)
     private String type;
 
     public Filter getFilter() {
@@ -24,6 +25,7 @@ public class QuarantineQueryRequest {
         return this;
     }
 
+    @XmlAttribute
     public boolean isIncludeData() {
         return includeData;
     }
@@ -33,6 +35,7 @@ public class QuarantineQueryRequest {
         return this;
     }
 
+    @XmlAttribute
     public String getType() {
         return type;
     }
@@ -47,11 +50,7 @@ public class QuarantineQueryRequest {
         private String sourceEntityId;
         private DateFilter createdDate;
         private DateFilter endDate;
-
-        @JacksonXmlProperty(localName = "resolution")
         private List<String> resolutions;
-
-        @JacksonXmlProperty(localName = "cause")
         private List<String> causes;
 
         public String getSourceId() {
@@ -90,6 +89,7 @@ public class QuarantineQueryRequest {
             return this;
         }
 
+        @XmlElement(name = "resolution")
         public List<String> getResolutions() {
             return resolutions;
         }
@@ -99,6 +99,7 @@ public class QuarantineQueryRequest {
             return this;
         }
 
+        @XmlElement(name = "cause")
         public List<String> getCauses() {
             return causes;
         }
@@ -138,6 +139,7 @@ public class QuarantineQueryRequest {
         private OffsetDateTime from;
         private OffsetDateTime to;
 
+        @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
         public OffsetDateTime getFrom() {
             return from;
         }
@@ -147,6 +149,7 @@ public class QuarantineQueryRequest {
             return this;
         }
 
+        @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
         public OffsetDateTime getTo() {
             return to;
         }
