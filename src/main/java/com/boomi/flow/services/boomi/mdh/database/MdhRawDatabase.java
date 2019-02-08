@@ -56,6 +56,15 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public List<MObject> create(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
+        var typeName = objectDataType.getDeveloperName();
+
+        if (typeName.startsWith("golden-record-")) {
+            var universe = typeName.replace("golden-record-", "");
+
+            return goldenRecordRepository.create(configuration, universe, objects);
+        }
+
+        // TODO
         return null;
     }
 

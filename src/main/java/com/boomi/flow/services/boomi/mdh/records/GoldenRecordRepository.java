@@ -203,4 +203,8 @@ public class GoldenRecordRepository {
                 .map(field -> new Property(field.getKey(), field.getValue()))
                 .collect(Collectors.toList());
     }
+
+    public List<MObject> create(ApplicationConfiguration configuration, String universe, List<MObject> object) {
+        return null;
+    }
 }

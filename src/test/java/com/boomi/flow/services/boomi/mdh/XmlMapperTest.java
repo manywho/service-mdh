@@ -135,17 +135,31 @@ public class XmlMapperTest {
         assertThat(actual, not(nullValue()));
         assertThat(actual.getResultCount(), equalTo(23));
         assertThat(actual.getTotalCount(), equalTo(823));
-//        assertThat(actual.getRecords(), hasSize(2));
-////        assertThat(actual.getRecords().get(0).getEndDate(), equalTo(OffsetDateTime.parse("2015-08-02T14:17:06.000-0400")));
-//        assertThat(actual.getRecords().get(0).getEndDateSource(), equalTo("SF"));
-//        assertThat(actual.getRecords().get(0).getFields().get("id"), equalTo("d5742c16-5318-4ba7-8815-3267a7a55358"));
-//        assertThat(actual.getRecords().get(0).getFields().get("name"), equalTo("bob"));
-//        assertThat(actual.getRecords().get(0).getFields().get("city"), equalTo("malvern"));
-//        assertThat(actual.getRecords().get(0).getFields().get("email"), equalTo("bob@gmail.com"));
-//        assertThat(actual.getRecords().get(0).getGrid(), equalTo("d5742c16-5318-4ba7-8815-3267a7a55358"));
-//        assertThat(actual.getRecords().get(0).getSource(), equalTo("SF"));
-////        assertThat(actual.getRecords().get(0).getStartDate(), equalTo(OffsetDateTime.parse("2015-07-02T08:36:37.000-0400")));
-//        assertThat(actual.getRecords().get(0).getTransactionId(), equalTo("12345678-9abc-def0-1234-56789abcdef0"));
-//        assertThat(actual.getRecords().get(0).getVersion(), equalTo(801));
+        assertThat(actual.getRecords(), hasSize(2));
+        assertThat(actual.getRecords().get(0).getEndDate(), equalTo(OffsetDateTime.parse("2015-02-08T14:17:06.000-04:00")));
+        assertThat(actual.getRecords().get(0).getEndDateSource(), equalTo("SF"));
+        assertThat(actual.getRecords().get(0).getFields(), not(nullValue()));
+        assertThat(actual.getRecords().get(0).getFields().get("id"), equalTo("d5742c16-5318-4ba7-8815-3267a7a55358"));
+        assertThat(actual.getRecords().get(0).getFields().get("name"), equalTo("bob"));
+        assertThat(actual.getRecords().get(0).getFields().get("city"), equalTo("malvern"));
+        assertThat(actual.getRecords().get(0).getFields().get("email"), equalTo("bob@gmail.com"));
+        assertThat(actual.getRecords().get(0).getGrid(), equalTo("d5742c16-5318-4ba7-8815-3267a7a55358"));
+        assertThat(actual.getRecords().get(0).getSource(), equalTo("SF"));
+        assertThat(actual.getRecords().get(0).getStartDate(), equalTo(OffsetDateTime.parse("2015-02-07T08:36:37.000-04:00")));
+        assertThat(actual.getRecords().get(0).getTransactionId(), equalTo("12345678-9abc-def0-1234-56789abcdef0"));
+        assertThat(actual.getRecords().get(0).getVersion(), equalTo(801L));
+
+        assertThat(actual.getRecords().get(1).getEndDate(), nullValue());
+        assertThat(actual.getRecords().get(1).getEndDateSource(), nullValue());
+        assertThat(actual.getRecords().get(1).getFields(), not(nullValue()));
+        assertThat(actual.getRecords().get(1).getFields().get("id"), equalTo("d5742c16-5318-4ba7-8815-3267a7a55358"));
+        assertThat(actual.getRecords().get(1).getFields().get("name"), equalTo("bob"));
+        assertThat(actual.getRecords().get(1).getFields().get("city"), equalTo("berwyn"));
+        assertThat(actual.getRecords().get(1).getFields().get("email"), equalTo("bob@gmail.com"));
+        assertThat(actual.getRecords().get(1).getGrid(), equalTo("d5742c16-5318-4ba7-8815-3267a7a55358"));
+        assertThat(actual.getRecords().get(1).getSource(), equalTo("SF"));
+        assertThat(actual.getRecords().get(1).getStartDate(), equalTo(OffsetDateTime.parse("2016-03-14T14:17:07.000-04:00")));
+        assertThat(actual.getRecords().get(1).getTransactionId(), equalTo("01234567-89ab-cdef-0123-456789abcdef"));
+        assertThat(actual.getRecords().get(1).getVersion(), equalTo(823L));
     }
 }
