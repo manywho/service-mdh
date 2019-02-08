@@ -5,8 +5,8 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 public class GoldenRecordQueryResponse {
-    private Integer resultCount;
-    private Integer totalCount;
+    private int resultCount;
+    private int totalCount;
     private String offsetToken;
     private List<GoldenRecord> records;
 

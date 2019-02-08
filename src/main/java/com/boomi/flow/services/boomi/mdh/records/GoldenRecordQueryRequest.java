@@ -7,7 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @XmlRootElement(name = "RecordQueryRequest")
 public class GoldenRecordQueryRequest {
@@ -49,6 +51,26 @@ public class GoldenRecordQueryRequest {
         public List<String> getFields() {
             return fields;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            View view = (View) o;
+
+            return Objects.equals(fields, view.fields);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(fields);
+        }
     }
 
     public static class Sort {
@@ -85,6 +107,47 @@ public class GoldenRecordQueryRequest {
                 this.direction = direction;
                 return this;
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+
+                Field field = (Field) o;
+
+                return Objects.equals(fieldId, field.fieldId) &&
+                        Objects.equals(direction, field.direction);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(fieldId, direction);
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Sort sort = (Sort) o;
+
+            return Objects.equals(fields, sort.fields);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(fields);
         }
     }
 
@@ -162,6 +225,28 @@ public class GoldenRecordQueryRequest {
                 this.value = value;
                 return this;
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+
+                FieldValue that = (FieldValue) o;
+
+                return Objects.equals(fieldId, that.fieldId) &&
+                        Objects.equals(operator, that.operator) &&
+                        Objects.equals(value, that.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(fieldId, operator, value);
+            }
         }
 
         public static class DateFilter {
@@ -187,6 +272,72 @@ public class GoldenRecordQueryRequest {
                 this.to = to;
                 return this;
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+
+                DateFilter that = (DateFilter) o;
+
+                return Objects.equals(from, that.from) &&
+                        Objects.equals(to, that.to);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(from, to);
+            }
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Filter filter = (Filter) o;
+
+            return Objects.equals(creatingSourceId, filter.creatingSourceId) &&
+                    Objects.equals(createdDate, filter.createdDate) &&
+                    Objects.equals(updatedDate, filter.updatedDate) &&
+                    Objects.equals(new HashSet<>(fieldValues), new HashSet<>(filter.fieldValues));
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(creatingSourceId, createdDate, updatedDate, fieldValues);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GoldenRecordQueryRequest that = (GoldenRecordQueryRequest) o;
+
+        return Objects.equals(view, that.view) &&
+                Objects.equals(sort, that.sort) &&
+                Objects.equals(filter, that.filter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(view, sort, filter);
     }
 }

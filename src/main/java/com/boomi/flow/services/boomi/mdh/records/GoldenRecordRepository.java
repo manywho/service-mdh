@@ -26,6 +26,10 @@ public class GoldenRecordRepository {
         this.client = client;
     }
 
+    public List<MObject> create(ApplicationConfiguration configuration, String universe, List<MObject> objects) {
+        return null;
+    }
+
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
         LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getAtomHostname(), configuration.getAtomUsername());
 
@@ -202,9 +206,5 @@ public class GoldenRecordRepository {
                 .filter(field -> (field.getValue() instanceof Map) == false)
                 .map(field -> new Property(field.getKey(), field.getValue()))
                 .collect(Collectors.toList());
-    }
-
-    public List<MObject> create(ApplicationConfiguration configuration, String universe, List<MObject> object) {
-        return null;
     }
 }
