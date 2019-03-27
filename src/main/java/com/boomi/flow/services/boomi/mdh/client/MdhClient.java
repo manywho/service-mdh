@@ -6,6 +6,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.boomi.flow.services.boomi.mdh.universes.UniversesResponse;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,11 +92,26 @@ public class MdhClient {
             throw new RuntimeException("No response body was given when fetching the universe " + id);
         }
 
-        try {
-            return JAXB.unmarshal(body.byteStream(), Universe.class);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Unable to deserialize the universes " + id, e);
+        if (response.isSuccessful()) {
+            try {
+                return JAXB.unmarshal(body.byteStream(), Universe.class);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Unable to deserialize the universes " + id, e);
+            }
         }
+
+        if (response.code() == 400) {
+            var error = JAXB.unmarshal(body.byteStream(), MdhError.class);
+            if (error != null) {
+                throw new ServiceProblemException(400, error.getMessage());
+            }
+        }
+
+        if (response.code() == 404) {
+            throw new ServiceProblemException(404, "No universe could be found with the ID " + id);
+        }
+
+        throw new RuntimeException("An unexpected error occurred while finding a universe");
     }
 
     public QuarantineQueryResponse queryQuarantineEntries(String hostname, String username, String password, String universe, QuarantineQueryRequest query) {

@@ -1,11 +1,14 @@
 package com.boomi.flow.services.boomi.mdh;
 
+import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.manywho.sdk.services.servers.EmbeddedServer;
 import com.manywho.sdk.services.servers.undertow.UndertowServer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.mock.MockInterceptor;
 import okhttp3.mock.Rule;
 import org.json.JSONArray;
@@ -13,6 +16,8 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -22,6 +27,8 @@ public class DatabaseLoadUniverse {
     private EmbeddedServer server = new UndertowServer();
 
     private MockInterceptor interceptor = new MockInterceptor();
+
+    private MediaType mediaType = MediaType.parse("application/json");
 
     @Before
     public void before() throws Exception {
@@ -164,5 +171,48 @@ public class DatabaseLoadUniverse {
                 .body("objectData[0].properties[2].contentValue", equalTo("9196c0f1-cf26-4768-91a1-9291ca04630b"))
                 .body("objectData[0].properties[2].developerName", equalTo("Version"))
                 .body("objectData[0].properties[2].objectData", hasSize(0));
+    }
+
+    @Test
+    public void testLoadSingleUniverseWithBadRequest() throws IOException {
+        var responseBody = ResponseBody.create(mediaType, Resources.toByteArray(getClass().getClassLoader().getResource("mocks/universe-bad-request.xml")));
+
+        interceptor.addRule(new Rule.Builder()
+                .respond(400, responseBody));
+
+        var request = new JSONObject()
+                .put("configurationValues", new JSONArray()
+                        .put(new JSONObject()
+                                .put("developerName", "Atom Hostname")
+                                .put("contentValue", "atom.example.com")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Atom Username")
+                                .put("contentValue", "username")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Atom Password")
+                                .put("contentValue", "password")
+                        )
+                )
+                .put("listFilter", new JSONObject()
+                        .put("id", "12fa46f9-e14d-4042-878e-30b273b61731")
+                )
+                .put("objectDataType", new JSONObject()
+                        .put("developerName", "Universe")
+                );
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(request.toString())
+                .when()
+                .post("/data")
+                .then()
+                .assertThat()
+                .statusCode(400)
+                .body("kind", equalTo("service"))
+                .body("message", equalTo("The given universe id is blank."))
+                .body("statusCode", equalTo(400))
+                .body("uri", equalTo("/data"));
     }
 }
