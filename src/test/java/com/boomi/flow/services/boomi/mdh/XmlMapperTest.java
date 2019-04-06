@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
 import com.google.common.io.Resources;
 import org.junit.Test;
 import org.xmlunit.builder.Input;
@@ -11,10 +12,12 @@ import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
 
 import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -93,6 +96,59 @@ public class XmlMapperTest {
         JAXB.marshal(request, requestContent);
 
         var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordQueryRequests.xml"));
+
+        assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
+    }
+
+    @Test
+    public void testXmlMapperSerializesGoldenRecordUpdateRequests() throws JAXBException {
+        var entityOne = new GoldenRecordUpdateRequest.Entity()
+                .setFields(Map.ofEntries(
+                        Map.entry("id", 1),
+                        Map.entry("name", "bob"),
+                        Map.entry("city", "berwyn"),
+                        Map.entry("phones", List.of(
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-1234"),
+                                        Map.entry("type", "home")
+                                )),
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-4321"),
+                                        Map.entry("type", "mobile")
+                                ))
+                        )),
+                        Map.entry("email", "bob@gmail.com")
+                ))
+                .setName("contact")
+                .setOp(null);
+
+        var entityTwo = new GoldenRecordUpdateRequest.Entity()
+                .setFields(Map.ofEntries(
+                        Map.entry("id", 2),
+                        Map.entry("name", "sam"),
+                        Map.entry("city", "pottstown"),
+                        Map.entry("phones", List.of(
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-8765"),
+                                        Map.entry("type", "mobile")
+                                ))
+                        )),
+                        Map.entry("email", "sam@gmail.com")
+                ))
+                .setName("contact")
+                .setOp("CREATE");
+
+        var request = new GoldenRecordUpdateRequest()
+                .setSource("SF")
+                .setEntities(List.of(
+                        entityOne,
+                        entityTwo
+                ));
+
+        var requestContent = new StringWriter();
+        JAXB.marshal(request, requestContent);
+
+        var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordUpdateRequests.xml"));
 
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
