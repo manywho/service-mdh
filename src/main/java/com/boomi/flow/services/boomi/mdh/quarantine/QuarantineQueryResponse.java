@@ -5,18 +5,12 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 public class QuarantineQueryResponse {
-    @XmlAttribute
     private Integer resultCount;
-
-    @XmlAttribute
     private Integer totalCount;
-
-    @XmlAttribute
     private String offsetToken;
-
-    @XmlElement(name = "QuarantineEntry")
     private List<QuarantineEntry> entries;
 
+    @XmlAttribute
     public Integer getResultCount() {
         return resultCount;
     }
@@ -26,6 +20,7 @@ public class QuarantineQueryResponse {
         return this;
     }
 
+    @XmlAttribute
     public Integer getTotalCount() {
         return totalCount;
     }
@@ -35,6 +30,7 @@ public class QuarantineQueryResponse {
         return this;
     }
 
+    @XmlAttribute
     public String getOffsetToken() {
         return offsetToken;
     }
@@ -44,6 +40,7 @@ public class QuarantineQueryResponse {
         return this;
     }
 
+    @XmlElement(name = "QuarantineEntry")
     public List<QuarantineEntry> getEntries() {
         return entries;
     }

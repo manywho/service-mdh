@@ -1,30 +1,26 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
+import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
+import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
+
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
 public class QuarantineEntry {
-    @XmlAttribute
     private OffsetDateTime createdDate;
-
-    @XmlAttribute
     private OffsetDateTime endDate;
-
-    @XmlAttribute
     private String sourceId;
-
-    @XmlAttribute
     private String sourceEntityId;
-
-    @XmlAttribute
     private String transactionId;
-
     private String cause;
     private String reason;
     private String resolution;
     private Map<String, Map<String, Object>> entity;
 
+    @XmlAttribute
+    @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
     public OffsetDateTime getCreatedDate() {
         return createdDate;
     }
@@ -34,6 +30,8 @@ public class QuarantineEntry {
         return this;
     }
 
+    @XmlAttribute
+    @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
     public OffsetDateTime getEndDate() {
         return endDate;
     }
@@ -43,6 +41,7 @@ public class QuarantineEntry {
         return this;
     }
 
+    @XmlAttribute
     public String getSourceId() {
         return sourceId;
     }
@@ -52,6 +51,7 @@ public class QuarantineEntry {
         return this;
     }
 
+    @XmlAttribute
     public String getSourceEntityId() {
         return sourceEntityId;
     }
@@ -61,6 +61,7 @@ public class QuarantineEntry {
         return this;
     }
 
+    @XmlAttribute
     public String getTransactionId() {
         return transactionId;
     }
@@ -97,6 +98,7 @@ public class QuarantineEntry {
         return this;
     }
 
+    @XmlJavaTypeAdapter(XmlMapAdapter.class)
     public Map<String, Map<String, Object>> getEntity() {
         return entity;
     }
