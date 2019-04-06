@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.boomi.flow.services.boomi.mdh.universes.UniversesResponse;
 import com.manywho.sdk.api.run.ServiceProblemException;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.xml.bind.JAXB;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +125,25 @@ public class MdhClient {
                 .addPathSegments("quarantine/query")
                 .build();
 
-        return sendRequest(username, password, url, query, QuarantineQueryResponse.class, "quarantine entry");
+        return sendRequestExpectingResponse(username, password, url, query, QuarantineQueryResponse.class, "quarantine entry");
+    }
+
+    public void updateGoldenRecords(String hostname, String username, String password, String universe, GoldenRecordUpdateRequest request) {
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("https")
+                .host(hostname)
+                .addPathSegments("mdm/universes")
+                .addPathSegment(universe)
+                .addPathSegment("records")
+                .build();
+
+        var response = sendRequest(username, password, url, request, "golden record");
+
+        if (response.code() == 202) {
+            return;
+        }
+
+        // TODO: Error handling
     }
 
     public GoldenRecordQueryResponse queryGoldenRecords(String hostname, String username, String password, String universe, GoldenRecordQueryRequest query) {
@@ -135,10 +155,10 @@ public class MdhClient {
                 .addPathSegments("records/query")
                 .build();
 
-        return sendRequest(username, password, url, query, GoldenRecordQueryResponse.class, "golden record");
+        return sendRequestExpectingResponse(username, password, url, query, GoldenRecordQueryResponse.class, "golden record");
     }
 
-    private <T> T sendRequest(String username, String password, HttpUrl url, Object query, Class<T> aClass, String type) {
+    private Response sendRequest(String username, String password, HttpUrl url, Object query, String type) {
         var bodyContent = new StringWriter();
 
         try {
@@ -155,9 +175,8 @@ public class MdhClient {
                 .post(body)
                 .build();
 
-        Response response;
         try {
-            response = httpClient
+            return httpClient
                     .newCall(request)
                     .execute();
         } catch (IOException e) {
@@ -165,7 +184,10 @@ public class MdhClient {
 
             throw new RuntimeException("Unable to query for " + type + ": " + e.getMessage(), e);
         }
+    }
 
+    private <T> T sendRequestExpectingResponse(String username, String password, HttpUrl url, Object query, Class<T> aClass, String type) {
+        var response = sendRequest(username, password, url, query, type);
         if (response.body() == null) {
             throw new RuntimeException("No response body was given while querying for " + type + " objects");
         }
@@ -186,7 +208,7 @@ public class MdhClient {
         }
 
         try {
-            return JAXB.unmarshal(responseBody, aClass);
+            return JAXB.unmarshal(new StringReader(responseBody), aClass);
         } catch (RuntimeException e) {
             LOGGER.error("Unable to deserialize the response", e);
 

@@ -3,6 +3,7 @@ package com.boomi.flow.services.boomi.mdh.records;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.ListFilters;
+import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
 import com.manywho.sdk.api.run.elements.type.MObject;
@@ -153,6 +154,49 @@ public class GoldenRecordRepository {
         return result.getRecords().stream()
                 .map(entry -> createGoldenRecordObject(universe, entry))
                 .collect(Collectors.toList());
+    }
+
+    public List<MObject> update(ApplicationConfiguration configuration, String universe, List<MObject> objects) {
+        for (var object : objects) {
+            var source = object.getProperties()
+                    .stream()
+                    .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("No Source ID was given for the record to update"));
+
+            if (Strings.isNullOrEmpty(object.getExternalId())) {
+                // We're creating this object so let's create an ID
+                var id = UUID.randomUUID().toString();
+
+                // Set the ID property, so it can be referenced in a Flow
+                for (var property : object.getProperties()) {
+                    if (property.getDeveloperName().equals("ID")) {
+                        property.setContentValue(id);
+                    }
+                }
+
+                // Set the object's external ID too, which is only used inside Flow itself
+                object.setExternalId(id);
+            }
+
+            // Now we can save the record into the Hub
+            var updateRequest = new GoldenRecordUpdateRequest();
+
+            client.updateGoldenRecords(
+                    configuration.getAtomHostname(),
+                    configuration.getAtomUsername(),
+                    configuration.getAtomPassword(),
+                    universe,
+                    updateRequest
+            );
+
+            // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map?
+
+        }
+
+
+        // TODO
+        return new ArrayList<>();
     }
 
     private static MObject createGoldenRecordObject(String universe, GoldenRecord record) {

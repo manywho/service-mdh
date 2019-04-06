@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.manywho.sdk.api.draw.content.Command;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -49,23 +50,12 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public MObject create(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
-        return create(configuration, objectDataType, List.of(object)).stream()
-                .findFirst()
-                .orElse(null); // TODO
+        return update(configuration, objectDataType, object);
     }
 
     @Override
     public List<MObject> create(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
-        var typeName = objectDataType.getDeveloperName();
-
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
-
-            return goldenRecordRepository.create(configuration, universe, objects);
-        }
-
-        // TODO
-        return null;
+        return update(configuration, objectDataType, objects);
     }
 
     @Override
@@ -80,11 +70,22 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public MObject update(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
-        return null;
+        return update(configuration, objectDataType, List.of(object))
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new ServiceProblemException(400, "No object was returned in the update request"));
     }
 
     @Override
     public List<MObject> update(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
-        return null;
+        var typeName = objectDataType.getDeveloperName();
+
+        if (typeName.startsWith("golden-record-")) {
+            var universe = typeName.replace("golden-record-", "");
+
+            return goldenRecordRepository.update(configuration, universe, objects);
+        }
+
+        throw new ServiceProblemException(400, "The type " + typeName + " does not support saving");
     }
 }
