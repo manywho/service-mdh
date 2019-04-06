@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-public class XmlMapperTest {
+public class XmlMapperTests {
     @Test
     public void testXmlMapperSerializesQuarantineQueryRequests() {
         var filter = new QuarantineQueryRequest.Filter()

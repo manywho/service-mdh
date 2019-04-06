@@ -23,7 +23,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
 
-public class DatabaseLoadUniverse {
+public class DatabaseLoadUniverseTests {
     private EmbeddedServer server = new UndertowServer();
 
     private MockInterceptor interceptor = new MockInterceptor();

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DatabaseLoadGoldenRecord {
+public class DatabaseLoadGoldenRecordTests {
     @Mock
     private MdhClient client;
 
