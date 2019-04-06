@@ -1,8 +1,10 @@
-package com.boomi.flow.services.boomi.mdh.universes;
+package com.boomi.flow.services.boomi.mdh.database;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.describe.DescribeServiceRequest;
 import com.manywho.sdk.api.draw.elements.type.TypeElement;
@@ -18,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UniverseTypeProvider implements TypeProvider<ApplicationConfiguration> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(UniverseTypeProvider.class);
+public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MdhTypeProvider.class);
 
     private final UniverseRepository repository;
 
     @Inject
-    public UniverseTypeProvider(UniverseRepository repository) {
+    public MdhTypeProvider(UniverseRepository repository) {
         this.repository = repository;
     }
 
