@@ -156,21 +156,22 @@ public class GoldenRecordRepository {
                 .collect(Collectors.toList());
     }
 
-    public List<MObject> update(ApplicationConfiguration configuration, String universe, List<MObject> objects) {
-        for (var object : objects) {
-            var source = object.getProperties()
-                    .stream()
-                    .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("No Source ID was given for the record to update"));
+    public List<MObject> update(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
+        var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
 
+        // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
+        String idField = universe.getLayout().getIdXPath()
+                .split("/")
+                [2];
+
+        for (var object : objects) {
             if (Strings.isNullOrEmpty(object.getExternalId())) {
                 // We're creating this object so let's create an ID
                 var id = UUID.randomUUID().toString();
 
                 // Set the ID property, so it can be referenced in a Flow
                 for (var property : object.getProperties()) {
-                    if (property.getDeveloperName().equals("ID")) {
+                    if (property.getDeveloperName().equals(idField)) {
                         property.setContentValue(id);
                     }
                 }
@@ -178,25 +179,55 @@ public class GoldenRecordRepository {
                 // Set the object's external ID too, which is only used inside Flow itself
                 object.setExternalId(id);
             }
+        }
 
-            // Now we can save the record into the Hub
-            var updateRequest = new GoldenRecordUpdateRequest();
+        var objectsBySource = objects.stream()
+                .collect(Collectors.groupingBy(object -> object.getProperties()
+                        .stream()
+                        .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
+                        .map(Property::getContentValue)
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No Source ID was given for the record to update"))));
+
+        for (var sourceGroup : objectsBySource.entrySet()) {
+            var entities = sourceGroup.getValue().stream()
+                    .map(entity -> {
+                        // Map all the properties to fields, except our "internal" ones
+                        var fields = entity.getProperties().stream()
+                                .filter(property -> property.getDeveloperName().startsWith("___") == false)
+                                .filter(property -> property.getContentValue() != null)
+                                .collect(Collectors.toMap(
+                                        Property::getDeveloperName,
+                                        property -> (Object) property.getContentValue()
+                                ));
+
+                        fields.put(idField, entity.getExternalId());
+
+                        return new GoldenRecordUpdateRequest.Entity()
+                                .setOp(null)
+                                .setName(universe.getLayout().getModel().getName())
+                                .setFields(fields);
+                    })
+                    .collect(Collectors.toList());
+
+            // Now we can save the records into the Hub
+            var updateRequest = new GoldenRecordUpdateRequest()
+                    .setSource(sourceGroup.getKey())
+                    .setEntities(entities);
 
             client.updateGoldenRecords(
                     configuration.getAtomHostname(),
                     configuration.getAtomUsername(),
                     configuration.getAtomPassword(),
-                    universe,
+                    universe.getId().toString(),
                     updateRequest
             );
-
-            // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map?
-
         }
 
 
-        // TODO
-        return new ArrayList<>();
+        // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map?
+
+        return objects;
     }
 
     private static MObject createGoldenRecordObject(String universe, GoldenRecord record) {

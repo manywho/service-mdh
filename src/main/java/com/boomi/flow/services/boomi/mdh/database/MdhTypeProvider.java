@@ -115,6 +115,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
                     }
 
                     // These properties are all for the request, only for filtering
+                    properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
                     properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
                     properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
 
@@ -132,6 +133,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
                     }
 
                     // These properties are all for the request, only for filtering
+                    propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
                     propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
                     propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
 

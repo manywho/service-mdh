@@ -30,20 +30,41 @@ public class Universe implements Type {
         return id;
     }
 
+    public Universe setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
     public UUID getVersion() {
         return version;
+    }
+
+    public Universe setVersion(UUID version) {
+        this.version = version;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
+    public Universe setName(String name) {
+        this.name = name;
+        return this;
+    }
+
     public Layout getLayout() {
         return layout;
     }
 
+    public Universe setLayout(Layout layout) {
+        this.layout = layout;
+        return this;
+    }
+
     public static class Layout {
         private Model model;
+        private String idXPath;
 
         public Model getModel() {
             return model;
@@ -54,8 +75,19 @@ public class Universe implements Type {
             return this;
         }
 
+        @XmlAttribute(name = "idXPath")
+        public String getIdXPath() {
+            return idXPath;
+        }
+
+        public Layout setIdXPath(String idXPath) {
+            this.idXPath = idXPath;
+            return this;
+        }
+
         public static class Model {
             private List<Element> elements = new ArrayList<>();
+            private String name;
 
             @XmlElement(name = "element")
             public List<Element> getElements() {
@@ -64,6 +96,16 @@ public class Universe implements Type {
 
             public Model setElements(List<Element> elements) {
                 this.elements = elements;
+                return this;
+            }
+
+            @XmlAttribute
+            public String getName() {
+                return name;
+            }
+
+            public Model setName(String name) {
+                this.name = name;
                 return this;
             }
 

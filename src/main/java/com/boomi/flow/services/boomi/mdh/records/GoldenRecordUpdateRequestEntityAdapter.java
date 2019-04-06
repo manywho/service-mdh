@@ -27,7 +27,7 @@ public class GoldenRecordUpdateRequestEntityAdapter extends XmlAdapter<Object, G
     public Object marshal(GoldenRecordUpdateRequest.Entity entity) {
         Document document = documentBuilder.newDocument();
 
-        Element element = document.createElement("contact");
+        Element element = document.createElement(entity.getName());
 
         if (entity.getOp() != null) {
             element.setAttribute("op", entity.getOp());

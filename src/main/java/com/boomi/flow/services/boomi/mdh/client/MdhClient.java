@@ -139,11 +139,21 @@ public class MdhClient {
 
         var response = sendRequest(username, password, url, request, "golden record");
 
-        if (response.code() == 202) {
+        if (response.isSuccessful()) {
             return;
         }
 
-        // TODO: Error handling
+        var body = response.body();
+        if (body == null) {
+            throw new RuntimeException("An unknown error occurred while updating golden records. The status code returned was " + response.code());
+        }
+
+        var error = JAXB.unmarshal(body.byteStream(), MdhError.class);
+        if (error != null) {
+            throw new ServiceProblemException(response.code(), error.getMessage());
+        }
+
+        throw new ServiceProblemException(response.code(), "An unknown error occurred while updating golden records");
     }
 
     public GoldenRecordQueryResponse queryGoldenRecords(String hostname, String username, String password, String universe, GoldenRecordQueryRequest query) {
