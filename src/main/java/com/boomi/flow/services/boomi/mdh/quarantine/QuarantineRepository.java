@@ -153,6 +153,7 @@ public class QuarantineRepository {
         properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
         properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
         properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
+        properties.add(new Property(QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, entry.getSourceEntityId()));
 
         // Create the object data for the entity
         properties.add(new Property(QuarantineEntryConstants.ENTITY_FIELD, createEntityMObject(entry.getSourceEntityId(), entry.getEntity())));
