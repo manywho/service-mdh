@@ -157,56 +157,8 @@ public class QuarantineRepository {
         properties.add(new Property(QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, entry.getSourceEntityId()));
 
         // Create the object data for the entity
-        properties.add(new Property(QuarantineEntryConstants.ENTITY_FIELD, createEntityMObject(entry.getSourceEntityId(), entry.getEntity())));
+        properties.add(new Property(QuarantineEntryConstants.ENTITY_FIELD, Entities.createEntityMObject(entry.getSourceEntityId(), "Model", entry.getEntity())));
 
         return new MObject(universe, entry.getTransactionId(), properties);
-    }
-
-    private static Consumer<ListFilterWhere> createDateFilter(QuarantineQueryRequest.DateFilter dateFilter) {
-        return where -> {
-            var date = OffsetDateTime.parse(where.getContentValue());
-
-            switch (where.getCriteriaType()) {
-                case Equal:
-                    dateFilter
-                            .setFrom(date)
-                            .setTo(date);
-
-                    break;
-
-                case GreaterThan:
-                case GreaterThanOrEqual:
-                    dateFilter.setFrom(date);
-                    break;
-
-                case LessThan:
-                case LessThanOrEqual:
-                    dateFilter.setTo(date);
-                    break;
-
-                default:
-                    throw new RuntimeException("The criteria type " + where.getCriteriaType() + " is not supported for date fields");
-            }
-        };
-    }
-
-    private static MObject createEntityMObject(String id, Map<String, Map<String, Object>> entity) {
-        if (entity == null || entity.isEmpty()) {
-            return null;
-        }
-
-        var entry = entity.entrySet().iterator().next();
-
-        var properties = createPropertiesFromMap(entry.getValue());
-
-        return new MObject(String.format("%s Model", entry.getKey()), id, properties);
-    }
-
-    private static List<Property> createPropertiesFromMap(Map<String, Object> map) {
-        // We don't really support any nested objects or lists yet, so we filter them out and map to a type property
-        return map.entrySet().stream()
-                .filter(field -> (field.getValue() instanceof Map) == false)
-                .map(field -> new Property(field.getKey(), field.getValue()))
-                .collect(Collectors.toList());
     }
 }

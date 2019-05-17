@@ -60,12 +60,21 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
-
+        delete(configuration, objectDataType, List.of(object));
     }
 
     @Override
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
+        var typeName = objectDataType.getDeveloperName();
 
+        if (typeName.startsWith("golden-record-")) {
+            var universe = typeName.replace("golden-record-", "");
+
+            goldenRecordRepository.delete(configuration, universe, objects);
+            return;
+        }
+
+        throw new ServiceProblemException(400, "The type " + typeName + " does not support deleting");
     }
 
     @Override

@@ -29,8 +29,8 @@ public class GoldenRecordRepository {
         this.client = client;
     }
 
-    public List<MObject> create(ApplicationConfiguration configuration, String universe, List<MObject> objects) {
-        return null;
+    public void delete(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
+        update(configuration, objects, universeId, "DELETE");
     }
 
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
@@ -159,6 +159,10 @@ public class GoldenRecordRepository {
     }
 
     public List<MObject> update(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
+        return update(configuration, objects, universeId, null);
+    }
+
+    private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
         var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
 
         // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
@@ -212,7 +216,7 @@ public class GoldenRecordRepository {
                         fields.put(idField, entity.getExternalId());
 
                         return new GoldenRecordUpdateRequest.Entity()
-                                .setOp(null)
+                                .setOp(operation)
                                 .setName(universe.getLayout().getModel().getName())
                                 .setFields(fields);
                     })
@@ -223,6 +227,7 @@ public class GoldenRecordRepository {
                     .setSource(sourceId)
                     .setEntities(entities);
 
+            // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map? Do we care about creating golden records?
             client.updateGoldenRecords(
                     configuration.getAtomHostname(),
                     configuration.getAtomUsername(),
@@ -232,62 +237,6 @@ public class GoldenRecordRepository {
             );
         }
 
-
-        // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map?
-
         return objects;
-    }
-
-    private static MObject createGoldenRecordObject(String universe, GoldenRecord record) {
-        return createEntityMObject(universe, record.getRecordId(), record.getFields());
-    }
-
-    private static Consumer<ListFilterWhere> createDateFilter(GoldenRecordQueryRequest.Filter.DateFilter dateFilter) {
-        return where -> {
-            var date = OffsetDateTime.parse(where.getContentValue());
-
-            switch (where.getCriteriaType()) {
-                case Equal:
-                    dateFilter
-                            .setFrom(date)
-                            .setTo(date);
-
-                    break;
-
-                case GreaterThan:
-                case GreaterThanOrEqual:
-                    dateFilter.setFrom(date);
-                    break;
-
-                case LessThan:
-                case LessThanOrEqual:
-                    dateFilter.setTo(date);
-                    break;
-
-                default:
-                    throw new RuntimeException("The criteria type " + where.getCriteriaType() + " is not supported for date fields");
-            }
-        };
-    }
-
-    // TODO: Dedupe this and below
-    private static MObject createEntityMObject(String universe, String id, Map<String, Map<String, Object>> entity) {
-        if (entity.isEmpty()) {
-            return null;
-        }
-
-        var entry = entity.entrySet().iterator().next();
-
-        var properties = createPropertiesFromMap(entry.getValue());
-
-        return new MObject(String.format("%s Golden Record", entry.getKey()), id, properties);
-    }
-
-    private static List<Property> createPropertiesFromMap(Map<String, Object> map) {
-        // We don't really support any nested objects or lists yet, so we filter them out and map to a type property
-        return map.entrySet().stream()
-                .filter(field -> (field.getValue() instanceof Map) == false)
-                .map(field -> new Property(field.getKey(), field.getValue()))
-                .collect(Collectors.toList());
     }
 }
