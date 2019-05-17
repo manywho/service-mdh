@@ -190,7 +190,7 @@ public class QuarantineRepository {
     }
 
     private static MObject createEntityMObject(String id, Map<String, Map<String, Object>> entity) {
-        if (entity.isEmpty()) {
+        if (entity == null || entity.isEmpty()) {
             return null;
         }
 
