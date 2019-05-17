@@ -27,13 +27,13 @@ public class DatabaseSaveGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("golden-record-12fa66f9-e14d-4f642-878f-30b13b64731");
+            .setDeveloperName("golden-record-12fa66f9-e14d-f642-878f-030b13b64731");
 
     @Test
     public void testSaveWithSingleNewObjectReturnsObjectWithID() {
-        when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-4f642-878f-30b13b64731")))
+        when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
-                    .setId(UUID.fromString("12fa66f9-e14d-4f642-878f-30b13b64731"))
+                    .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
                     .setLayout(new Universe.Layout()
                             .setIdXPath("/item/id")
                             .setModel(new Universe.Layout.Model()
