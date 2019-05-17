@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @XmlRootElement(name = "batch")
 public class GoldenRecordUpdateRequest {
@@ -65,5 +66,48 @@ public class GoldenRecordUpdateRequest {
             this.fields = fields;
             return this;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Entity entity = (Entity) o;
+
+            return Objects.equals(op, entity.op) &&
+                    Objects.equals(name, entity.name) &&
+                    Objects.equals(fields, entity.fields);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(op, name, fields);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GoldenRecordUpdateRequest that = (GoldenRecordUpdateRequest) o;
+
+        return Objects.equals(source, that.source) &&
+                Objects.equals(entities, that.entities);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(source, entities);
     }
 }

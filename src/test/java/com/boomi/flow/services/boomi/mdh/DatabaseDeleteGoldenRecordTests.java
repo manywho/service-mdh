@@ -1,0 +1,81 @@
+package com.boomi.flow.services.boomi.mdh;
+
+import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
+import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.manywho.sdk.api.run.elements.type.MObject;
+import com.manywho.sdk.api.run.elements.type.ObjectDataType;
+import com.manywho.sdk.api.run.elements.type.Property;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public class DatabaseDeleteGoldenRecordTests {
+    @Mock
+    private MdhClient client;
+
+    private ObjectDataType objectDataType = new ObjectDataType()
+            .setDeveloperName("golden-record-universe-name");
+
+    @Test
+    public void testDeleteWithSingleNewObjectWorks() {
+        when(client.findUniverse(any(), any(), any(), eq("universe-name")))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                )
+                        )
+                );
+
+        MObject object = new MObject(objectDataType.getDeveloperName());
+        object.setExternalId("28cd81e7-c3f4-4174-824b-b1f5176fc64a");
+        object.getProperties().add(new Property("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a"));
+        object.getProperties().add(new Property("___sourceId", "TESTING"));
+        object.getProperties().add(new Property("field 1 1", "some value 1"));
+        object.getProperties().add(new Property("field 2 1", "some value 2"));
+        object.getProperties().add(new Property("field 3 1", "some value 3"));
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
+                .delete(TestConstants.CONFIGURATION, objectDataType, object);
+
+        var expectedRequest = new GoldenRecordUpdateRequest()
+                .setEntities(List.of(
+                        new GoldenRecordUpdateRequest.Entity()
+                                .setName("testing")
+                                .setFields(Map.ofEntries(
+                                        Map.entry("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a"),
+                                        Map.entry("field 1 1", "some value 1"),
+                                        Map.entry("field 2 1", "some value 2"),
+                                        Map.entry("field 3 1", "some value 3")
+                                ))
+                                .setOp("DELETE")
+                ))
+                .setSource("TESTING");
+
+        verify(client)
+                .updateGoldenRecords(
+                        TestConstants.CONFIGURATION.getAtomHostname(),
+                        TestConstants.CONFIGURATION.getAtomUsername(),
+                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
+                        expectedRequest
+                );
+    }
+}
