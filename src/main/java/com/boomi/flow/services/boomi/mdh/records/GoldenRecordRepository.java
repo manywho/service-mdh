@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.ListFilters;
 import com.google.common.base.Strings;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
 import com.manywho.sdk.api.run.elements.type.MObject;
@@ -186,10 +187,16 @@ public class GoldenRecordRepository {
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
                         .map(Property::getContentValue)
+//                        .filter(source -> source != null && source.isEmpty() == false)
                         .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No Source ID was given for the record to update"))));
+                        .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
         for (var sourceGroup : objectsBySource.entrySet()) {
+            // TODO: Check if we should be setting this to a default value, or error if no source was set
+            var sourceId = sourceGroup.getKey().isBlank()
+                    ? GoldenRecordConstants.DEFAULT_SOURCE_ID
+                    : sourceGroup.getKey();
+
             var entities = sourceGroup.getValue().stream()
                     .map(entity -> {
                         // Map all the properties to fields, except our "internal" ones
@@ -212,7 +219,7 @@ public class GoldenRecordRepository {
 
             // Now we can save the records into the Hub
             var updateRequest = new GoldenRecordUpdateRequest()
-                    .setSource(sourceGroup.getKey())
+                    .setSource(sourceId)
                     .setEntities(entities);
 
             client.updateGoldenRecords(
