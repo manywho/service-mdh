@@ -83,7 +83,7 @@ public class QuarantineRepository {
                 throw new RuntimeException("MDH does not support a limit greater than 200");
             }
 
-            if (filter.getComparisonType().equals(ComparisonType.Or)) {
+            if (filter.getComparisonType() != null && filter.getComparisonType().equals(ComparisonType.Or)) {
                 LOGGER.warn("An unsupported comparison type of {} was given", filter.getComparisonType());
 
                 throw new RuntimeException("Only the AND comparison type is supported by MDH");
