@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
@@ -118,7 +119,7 @@ public class DatabaseLoadGoldenRecordTests {
         var query = new GoldenRecordQueryRequest()
                 .setFilter(new GoldenRecordQueryRequest.Filter()
 //                        .setCreatingSourceId("a creating source ID")
-                                .setCreatedDate(new GoldenRecordQueryRequest.Filter.DateFilter()
+                                .setCreatedDate(new DateFilter()
                                         .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                                         .setTo(OffsetDateTime.parse("2019-02-28T00:00Z"))
                                 )
@@ -164,7 +165,7 @@ public class DatabaseLoadGoldenRecordTests {
                                                 .setOperator("STARTS_WITH")
                                                 .setValue("starts with")
                                 ))
-                                .setUpdatedDate(new GoldenRecordQueryRequest.Filter.DateFilter()
+                                .setUpdatedDate(new DateFilter()
                                         .setFrom(OffsetDateTime.parse("2019-02-01T00:00Z"))
                                         .setTo(OffsetDateTime.parse("2019-02-14T00:00Z"))
                                 )

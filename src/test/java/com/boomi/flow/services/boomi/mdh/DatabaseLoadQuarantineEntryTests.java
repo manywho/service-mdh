@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
@@ -57,7 +58,7 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(7));
+        assertThat(objects.get(0).getProperties(), hasSize(8));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("cause"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("createdDate"));
@@ -70,18 +71,20 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a resolution 1"));
         assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("transactionId"));
         assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("entity"));
-        assertThat(objects.get(0).getProperties().get(6).getContentValue(), nullValue());
-        assertThat(objects.get(0).getProperties().get(6).getObjectData(), hasSize(1));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getDeveloperName(), equalTo("dunno Model"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getExternalId(), equalTo("a source entity ID 1"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties(), hasSize(3));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(objects.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
+        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("sourceEntityId"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a source entity ID 1"));
+        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("entity"));
+        assertThat(objects.get(0).getProperties().get(7).getContentValue(), nullValue());
+        assertThat(objects.get(0).getProperties().get(7).getObjectData(), hasSize(1));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getDeveloperName(), equalTo("dunno Model"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getExternalId(), equalTo("a source entity ID 1"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties(), hasSize(3));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
     }
 
     @Test
@@ -133,11 +136,11 @@ public class DatabaseLoadQuarantineEntryTests {
         var query = new QuarantineQueryRequest()
                 .setFilter(new QuarantineQueryRequest.Filter()
                         .setCauses(List.of("AMBIGUOUS_MATCH", "MULTIPLE_MATCHES", "REQUIRED_FIELD"))
-                        .setCreatedDate(new QuarantineQueryRequest.DateFilter()
+                        .setCreatedDate(new DateFilter()
                                 .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                                 .setTo(OffsetDateTime.parse("2019-02-28T00:00Z"))
                         )
-                        .setEndDate(new QuarantineQueryRequest.DateFilter()
+                        .setEndDate(new DateFilter()
                                 .setFrom(OffsetDateTime.parse("2019-02-01T00:00Z"))
                                 .setTo(OffsetDateTime.parse("2019-02-14T00:00Z"))
                         )

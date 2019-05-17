@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh;
 
+import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
@@ -28,11 +29,11 @@ public class XmlMapperTests {
     public void testXmlMapperSerializesQuarantineQueryRequests() {
         var filter = new QuarantineQueryRequest.Filter()
                 .setCauses(List.of("cause 1", "cause 2"))
-                .setCreatedDate(new QuarantineQueryRequest.DateFilter()
+                .setCreatedDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2015-12-31T00:00Z"))
                 )
-                .setEndDate(new QuarantineQueryRequest.DateFilter()
+                .setEndDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2018-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2018-12-31T00:00Z"))
                 )
@@ -66,13 +67,13 @@ public class XmlMapperTests {
                 .setValue("another value");
 
         var filter = new GoldenRecordQueryRequest.Filter()
-                .setCreatedDate(new GoldenRecordQueryRequest.Filter.DateFilter()
+                .setCreatedDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2015-12-31T00:00Z"))
                 )
                 .setCreatingSourceId("12345")
                 .setFieldValues(List.of(fieldValueOne, fieldValueTwo))
-                .setUpdatedDate(new GoldenRecordQueryRequest.Filter.DateFilter()
+                .setUpdatedDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2018-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2018-12-31T00:00Z"))
                 );

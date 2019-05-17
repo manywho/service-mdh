@@ -2,6 +2,9 @@ package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.common.DateFilter;
+import com.boomi.flow.services.boomi.mdh.common.Dates;
+import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.common.ListFilters;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
@@ -13,9 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class GoldenRecordRepository {
@@ -59,9 +60,9 @@ public class GoldenRecordRepository {
                 // Created date
                 var createdDates = ListFilters.findEnumerableFilters(filter.getWhere(), GoldenRecordConstants.CREATED_DATE_FIELD);
                 if (createdDates.isEmpty() == false) {
-                    var dateFilter = new GoldenRecordQueryRequest.Filter.DateFilter();
+                    var dateFilter = new DateFilter();
 
-                    createdDates.forEach(createDateFilter(dateFilter));
+                    createdDates.forEach(Dates.createDateFilter(dateFilter));
 
                     queryFilter.setCreatedDate(dateFilter);
                 }
@@ -69,9 +70,9 @@ public class GoldenRecordRepository {
                 // Updated date
                 var updatedDates = ListFilters.findEnumerableFilters(filter.getWhere(), GoldenRecordConstants.UPDATED_DATE_FIELD);
                 if (updatedDates.isEmpty() == false) {
-                    var dateFilter = new GoldenRecordQueryRequest.Filter.DateFilter();
+                    var dateFilter = new DateFilter();
 
-                    updatedDates.forEach(createDateFilter(dateFilter));
+                    updatedDates.forEach(Dates.createDateFilter(dateFilter));
 
                     queryFilter.setUpdatedDate(dateFilter);
                 }
@@ -153,7 +154,7 @@ public class GoldenRecordRepository {
         }
 
         return result.getRecords().stream()
-                .map(entry -> createGoldenRecordObject(universe, entry))
+                .map(record -> Entities.createEntityMObject(record.getRecordId(), "Golden Record", record.getFields()))
                 .collect(Collectors.toList());
     }
 

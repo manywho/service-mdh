@@ -2,21 +2,22 @@ package com.boomi.flow.services.boomi.mdh.quarantine;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.common.DateFilter;
+import com.boomi.flow.services.boomi.mdh.common.Dates;
+import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.common.ListFilters;
 import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
-import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuarantineRepository {
@@ -103,20 +104,20 @@ public class QuarantineRepository {
                         .ifPresent(queryFilter::setSourceEntityId);
 
                 // Created Date
-                var createdDateFilter = new QuarantineQueryRequest.DateFilter();
+                var createdDateFilter = new DateFilter();
 
                 filter.getWhere().stream()
                         .filter(where -> where.getColumnName().equals(QuarantineEntryConstants.CREATED_DATE_FIELD))
-                        .forEachOrdered(createDateFilter(createdDateFilter));
+                        .forEachOrdered(Dates.createDateFilter(createdDateFilter));
 
                 queryFilter.setCreatedDate(createdDateFilter);
 
                 // End Date
-                var endDateFilter = new QuarantineQueryRequest.DateFilter();
+                var endDateFilter = new DateFilter();
 
                 filter.getWhere().stream()
                         .filter(where -> where.getColumnName().equals(QuarantineEntryConstants.END_DATE_FIELD))
-                        .forEachOrdered(createDateFilter(endDateFilter));
+                        .forEachOrdered(Dates.createDateFilter(endDateFilter));
 
                 queryFilter.setEndDate(endDateFilter);
 
