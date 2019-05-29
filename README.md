@@ -1,6 +1,8 @@
 service-mdh
 =====================
 
+[![Build Status](https://travis-ci.org/jonjomckay/service-mdh.svg)](https://travis-ci.org/jonjomckay/service-mdh)
+
 ### Building
 
 To build the application, you will need to have Maven 3 and a Java 8 implementation installed (OpenJDK and Oracle Java SE
