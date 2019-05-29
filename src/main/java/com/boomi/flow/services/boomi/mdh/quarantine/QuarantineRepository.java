@@ -9,6 +9,7 @@ import com.boomi.flow.services.boomi.mdh.common.ListFilters;
 import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -81,13 +82,13 @@ public class QuarantineRepository {
             if (filter.getLimit() > 200) {
                 LOGGER.warn("An unsupported limit of {} was given", filter.getLimit());
 
-                throw new RuntimeException("MDH does not support a limit greater than 200");
+                throw new ServiceProblemException(400, "MDH does not support a limit greater than 200");
             }
 
             if (filter.getComparisonType() != null && filter.getComparisonType().equals(ComparisonType.Or)) {
                 LOGGER.warn("An unsupported comparison type of {} was given", filter.getComparisonType());
 
-                throw new RuntimeException("Only the AND comparison type is supported by MDH");
+                throw new ServiceProblemException(400, "Only the AND comparison type is supported by MDH");
             }
 
             if (filter.hasWhere()) {

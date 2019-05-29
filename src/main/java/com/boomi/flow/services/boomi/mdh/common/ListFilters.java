@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh.common;
 
 import com.manywho.sdk.api.CriteriaType;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
 
 import javax.validation.constraints.NotNull;
@@ -59,13 +60,13 @@ public class ListFilters {
 
     private static void validateField(String field, List<ListFilterWhere> filters, String... validValues) {
         if (filters.stream().noneMatch(where -> where.getCriteriaType().equals(CriteriaType.Equal))) {
-            throw new RuntimeException("An unsupported criteria type was given in a filter for the field '" + field + "'");
+            throw new ServiceProblemException(400, "An unsupported criteria type was given in a filter for the field '" + field + "'");
         }
 
         var values = Arrays.asList(validValues);
 
         if (filters.stream().noneMatch(where -> values.contains(where.getContentValue()))) {
-            throw new RuntimeException("The value of the " + field + " filter must be one of " + String.join(", ", values));
+            throw new ServiceProblemException(400, "The value of the " + field + " filter must be one of " + String.join(", ", values));
         }
     }
 }

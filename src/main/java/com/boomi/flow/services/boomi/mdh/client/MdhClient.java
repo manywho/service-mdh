@@ -48,12 +48,14 @@ public class MdhClient {
             response = httpClient.newCall(request)
                     .execute();
         } catch (IOException e) {
-            throw new RuntimeException("Unable to fetch the list of universes", e);
+            LOGGER.error("Unable to fetch the a list of universes", e);
+
+            throw new ServiceProblemException(500, "Unable to fetch the list of universes due to an unexpected error");
         }
 
         var body = response.body();
         if (body == null) {
-            throw new RuntimeException("No response body was given when fetching the list of universes");
+            throw new ServiceProblemException(500, "No response body was given when fetching the list of universes");
         }
 
         try {
@@ -64,7 +66,9 @@ public class MdhClient {
 
             return result.getUniverses();
         } catch (RuntimeException e) {
-            throw new RuntimeException("Unable to deserialize the list of universes", e);
+            LOGGER.error("Unable to deserialize a list of universes", e);
+
+            throw new ServiceProblemException(500, "Unable to deserialize the list of universes due to an unexpected error");
         }
     }
 
@@ -86,19 +90,23 @@ public class MdhClient {
             response = httpClient.newCall(request)
                     .execute();
         } catch (IOException e) {
-            throw new RuntimeException("Unable to fetch the universe " + id, e);
+            LOGGER.error("Unable to fetch a universe", e);
+
+            throw new ServiceProblemException(500, "Unable to fetch the universe " + id + " due to an unexpected error");
         }
 
         var body = response.body();
         if (body == null) {
-            throw new RuntimeException("No response body was given when fetching the universe " + id);
+            throw new ServiceProblemException(500, "No response body was given when fetching the universe " + id);
         }
 
         if (response.isSuccessful()) {
             try {
                 return JAXB.unmarshal(body.byteStream(), Universe.class);
             } catch (RuntimeException e) {
-                throw new RuntimeException("Unable to deserialize the universes " + id, e);
+                LOGGER.error("Unable to deserialize a universe", e);
+
+                throw new ServiceProblemException(500, "Unable to deserialize the universe " + id + " due to an unexpected error");
             }
         }
 
@@ -113,7 +121,7 @@ public class MdhClient {
             throw new ServiceProblemException(404, "No universe could be found with the ID " + id);
         }
 
-        throw new RuntimeException("An unexpected error occurred while finding a universe");
+        throw new ServiceProblemException(500, "An unexpected error occurred while finding a universe");
     }
 
     public QuarantineQueryResponse queryQuarantineEntries(String hostname, String username, String password, String universe, QuarantineQueryRequest query) {
@@ -145,7 +153,7 @@ public class MdhClient {
 
         var body = response.body();
         if (body == null) {
-            throw new RuntimeException("An unknown error occurred while updating golden records. The status code returned was " + response.code());
+            throw new ServiceProblemException(response.code(), "An unknown error occurred while updating golden records");
         }
 
         var error = JAXB.unmarshal(body.byteStream(), MdhError.class);
@@ -174,7 +182,9 @@ public class MdhClient {
         try {
             JAXB.marshal(query, bodyContent);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Something went wrong creating the request", e);
+            LOGGER.error("Unable to serialize the request", e);
+
+            throw new ServiceProblemException(500, "An unexpected error occurred while creating the request");
         }
 
         var body = RequestBody.create(XML, bodyContent.toString());
@@ -192,14 +202,14 @@ public class MdhClient {
         } catch (IOException e) {
             LOGGER.error("Unable to query for {}", type, e);
 
-            throw new RuntimeException("Unable to query for " + type + ": " + e.getMessage(), e);
+            throw new ServiceProblemException(500, "Unable to query for " + type + ": " + e.getMessage());
         }
     }
 
     private <T> T sendRequestExpectingResponse(String username, String password, HttpUrl url, Object query, Class<T> aClass, String type) {
         var response = sendRequest(username, password, url, query, type);
         if (response.body() == null) {
-            throw new RuntimeException("No response body was given while querying for " + type + " objects");
+            throw new ServiceProblemException(500, "No response body was given while querying for " + type + " objects");
         }
 
         String responseBody;
@@ -208,13 +218,13 @@ public class MdhClient {
         } catch (IOException e) {
             LOGGER.error("Unable to fetch the response body", e);
 
-            throw new RuntimeException("Unable to fetch the response body", e);
+            throw new ServiceProblemException(500, "Unable to fetch the response body due to an unexpected error");
         }
 
         if (response.isSuccessful() == false) {
             LOGGER.error("Unable to query {}: {}", type, responseBody);
 
-            throw new RuntimeException("Something went wrong loading the " + type + " objects: " + responseBody);
+            throw new ServiceProblemException(response.code(), "Something went wrong loading the " + type + " objects: " + responseBody);
         }
 
         try {
@@ -222,7 +232,7 @@ public class MdhClient {
         } catch (RuntimeException e) {
             LOGGER.error("Unable to deserialize the response", e);
 
-            throw new RuntimeException("Unable to deserialize the " + type + " query response", e);
+            throw new ServiceProblemException(500, "Unable to deserialize the " + type + " query response");
         }
     }
 }

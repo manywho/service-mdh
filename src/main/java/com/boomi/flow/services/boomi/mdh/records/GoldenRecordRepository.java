@@ -133,7 +133,7 @@ public class GoldenRecordRepository {
 
                                 break;
                             default:
-                                throw new RuntimeException("An unsupported criteria type of " + field.getCriteriaType() + " was given for the column " + field.getColumnName());
+                                throw new ServiceProblemException(400, "An unsupported criteria type of " + field.getCriteriaType() + " was given for the column " + field.getColumnName());
                         }
 
                         fieldFilters.add(new GoldenRecordQueryRequest.Filter.FieldValue()

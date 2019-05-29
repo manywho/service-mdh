@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.common;
 
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
 
 import java.time.OffsetDateTime;
@@ -29,7 +30,7 @@ public class Dates {
                     break;
 
                 default:
-                    throw new RuntimeException("The criteria type " + where.getCriteriaType() + " is not supported for date fields");
+                    throw new ServiceProblemException(400, "The criteria type " + where.getCriteriaType() + " is not supported for date fields");
             }
         };
     }
