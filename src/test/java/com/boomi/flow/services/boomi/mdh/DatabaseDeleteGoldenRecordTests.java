@@ -33,6 +33,7 @@ public class DatabaseDeleteGoldenRecordTests {
 
     @Test
     public void testDeleteWithSingleNewObjectWorks() {
+        // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("universe-name")))
                 .thenReturn(new Universe()
                         .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
@@ -44,6 +45,7 @@ public class DatabaseDeleteGoldenRecordTests {
                         )
                 );
 
+        // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("28cd81e7-c3f4-4174-824b-b1f5176fc64a");
         object.getProperties().add(new Property("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a"));
@@ -52,9 +54,11 @@ public class DatabaseDeleteGoldenRecordTests {
         object.getProperties().add(new Property("field 2 1", "some value 2"));
         object.getProperties().add(new Property("field 3 1", "some value 3"));
 
+        // Delete the incoming object
         new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
                 .delete(TestConstants.CONFIGURATION, objectDataType, object);
 
+        // Make sure we perform the delete in MDH, with the request that we're expecting
         var expectedRequest = new GoldenRecordUpdateRequest()
                 .setEntities(List.of(
                         new GoldenRecordUpdateRequest.Entity()
