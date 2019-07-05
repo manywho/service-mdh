@@ -172,7 +172,7 @@ public class GoldenRecordRepository {
 
         for (var object : objects) {
             if (Strings.isNullOrEmpty(object.getExternalId())) {
-                // We're creating this object so let's create an ID
+                // We're creating this object so let's collectTypes an ID
                 var id = UUID.randomUUID().toString();
 
                 // Set the ID property, so it can be referenced in a Flow

@@ -115,6 +115,9 @@ public class Universe implements Type {
                 private String prettyName;
                 private String type;
                 private boolean required;
+                private List<Element> elements;
+                private String collectionUniqueId;
+                boolean repeatable;
 
                 @XmlAttribute
                 public String getUniqueId() {
@@ -155,6 +158,37 @@ public class Universe implements Type {
                 @XmlAttribute
                 public boolean isRequired() {
                     return required;
+                }
+
+                public void setRequired(boolean required) {
+                    this.required = required;
+                }
+
+                @XmlElement(name = "element")
+                public List<Element> getElements() {
+                    return elements;
+                }
+
+                public void setElements(List<Element> elements) {
+                    this.elements = elements;
+                }
+
+                @XmlAttribute
+                public String getCollectionUniqueId() {
+                    return collectionUniqueId;
+                }
+
+                public void setCollectionUniqueId(String collectionUniqueId) {
+                    this.collectionUniqueId = collectionUniqueId;
+                }
+
+                @XmlAttribute
+                public boolean isRepeatable() {
+                    return repeatable;
+                }
+
+                public void setRepeatable(boolean repeatable) {
+                    this.repeatable = repeatable;
                 }
             }
         }

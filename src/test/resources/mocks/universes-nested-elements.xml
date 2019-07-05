@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universes>
+    <universe>
+        <id>168963b5-e8f3-4069-8077-d1738948422b</id>
+        <version>f501fc4e-9e86-42bb-b97d-ce46e8e27179</version>
+        <name>country</name>
+        <stats activeRecords="0" enddatedRecords="0" quarantinedRecords="0" asOf="2019-07-03T09:33:30.378Z"/>
+        <sources/>
+        <layoutid>168963b5-e8f3-4069-8077-d1738948422b</layoutid>
+        <layout idXPath="/country/id">
+            <model name="country">
+                <element uniqueId="NAME" name="name" prettyName="Name" type="STRING" required="true" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
+                <element uniqueId="CAPITAL" name="capital" prettyName="Capital" type="CONTAINER" required="true" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                    <element uniqueId="NAME_1" name="name" prettyName="Name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
+                    <element uniqueId="REGION" name="region" prettyName="region" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                        <element uniqueId="NAME_2" name="name" prettyName="name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/></element>
+                </element>
+                <element uniqueId="CITIES" name="cities" prettyName="cities" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="true" collectionMatchType="KEY" collectionMatchKeys="" collectionPrettyName="cities" collectionTag="cities" collectionUniqueId="CITIES_1">
+                    <element uniqueId="NAME_3" name="name" prettyName="name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
+                    <element uniqueId="POPULATION" name="population" prettyName="population" type="INTEGER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="AGE_AVG" name="age_avg" prettyName="age avg" type="FLOAT" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="LAST_UPDATE" name="last_update" prettyName="last update" type="DATETIME" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="CREATED" name="created" prettyName="created" type="DATE" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="TEA_TIME" name="tea_time" prettyName="tea time" type="TIME" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="IS_CAPITAL" name="is_capital" prettyName="is capital" type="BOOLEAN" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="COUNTRY_REF" name="country_ref" prettyName="country ref" type="REFERENCE" required="false" referenceUniverseId="168963b5-e8f3-4069-8077-d1738948422b" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                    <element uniqueId="LANGUAGES" name="languages" prettyName="languages" type="ENUMERATION" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" truncateLength="255" repeatable="false">
+                        <value>ENGLISH</value>
+                        <value>SPANISH</value>
+                    </element>
+                    <element uniqueId="HISTORY" name="history" prettyName="history" type="CLOB" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/></element>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot;
+                xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;country&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;capital&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;region&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;cities&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element maxOccurs=&quot;unbounded&quot; minOccurs=&quot;0&quot; name=&quot;cities&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;population&quot; type=&quot;xs:integer&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;age_avg&quot; type=&quot;xs:double&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;last_update&quot; type=&quot;xs:dateTime&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;created&quot; type=&quot;xs:date&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;tea_time&quot; type=&quot;xs:time&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;is_capital&quot; type=&quot;xs:boolean&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;country_ref&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;languages&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;history&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+            </xsd>
+            <field xpath="/country/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="NAME" xpath="/country/name" type="STRING" prettyName="Name" required="true" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+            <field uniqueId="NAME_1" xpath="/country/capital/name" type="STRING" prettyName="Name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+            <field uniqueId="NAME_2" xpath="/country/capital/region/name" type="STRING" prettyName="name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+            <field uniqueId="CITIES_1" xpath="/country/cities" type="COLLECTION" prettyName="cities" collectionMatchType="KEY"/>
+            <field uniqueId="NAME_3" xpath="/country/cities/cities/name" type="STRING" prettyName="name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100" collectionId="CITIES_1"/>
+            <field uniqueId="POPULATION" xpath="/country/cities/cities/population" type="INTEGER" prettyName="population" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="AGE_AVG" xpath="/country/cities/cities/age_avg" type="FLOAT" prettyName="age avg" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="LAST_UPDATE" xpath="/country/cities/cities/last_update" type="DATETIME" prettyName="last update" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="CREATED" xpath="/country/cities/cities/created" type="DATE" prettyName="created" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="TEA_TIME" xpath="/country/cities/cities/tea_time" type="TIME" prettyName="tea time" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="IS_CAPITAL" xpath="/country/cities/cities/is_capital" type="BOOLEAN" prettyName="is capital" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="COUNTRY_REF" xpath="/country/cities/cities/country_ref" type="REFERENCE" prettyName="country ref" required="false" referenceUniverseId="168963b5-e8f3-4069-8077-d1738948422b" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+            <field uniqueId="LANGUAGES" xpath="/country/cities/cities/languages" type="ENUMERATION" prettyName="languages" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" truncateLength="255" collectionId="CITIES_1">
+                <value>ENGLISH</value>
+                <value>SPANISH</value>
+            </field>
+            <field uniqueId="HISTORY" xpath="/country/cities/cities/history" type="CLOB" prettyName="history" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" collectionId="CITIES_1"/>
+        </layout>
+        <matchid>168963b5-e8f3-4069-8077-d1738948422b</matchid>
+        <matchconfig>
+            <round>
+                <matchrule
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+    <universe>
+        <id>ad7820f3-92a7-4919-9647-db934bda0065</id>
+        <version>c297b1fe-bade-454a-9b53-1b29232ab337</version>
+        <name>artist</name>
+        <stats activeRecords="0" enddatedRecords="0" quarantinedRecords="0" asOf="2019-07-03T09:33:30.415Z"/>
+        <sources/>
+        <layoutid>ad7820f3-92a7-4919-9647-db934bda0065</layoutid>
+        <layout idXPath="/artist/id">
+            <model name="artist">
+                <element uniqueId="NAME" name="name" prettyName="name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot;
+                xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;artist&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+            </xsd>
+            <field xpath="/artist/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="NAME" xpath="/artist/name" type="STRING" prettyName="name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+        </layout>
+        <matchid>ad7820f3-92a7-4919-9647-db934bda0065</matchid>
+        <matchconfig>
+            <round>
+                <matchrule
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+</universes>

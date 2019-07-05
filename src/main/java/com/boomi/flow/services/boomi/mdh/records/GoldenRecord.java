@@ -15,6 +15,7 @@ public class GoldenRecord {
     private OffsetDateTime updatedDate;
     private String recordId;
     private Map<String, Map<String, Object>> fields = new HashMap<>();
+    private Map<String, Map<String, Object>> entity;
 
     @XmlAttribute
     @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
@@ -56,6 +57,16 @@ public class GoldenRecord {
 
     public GoldenRecord setFields(Map<String, Map<String, Object>> fields) {
         this.fields = fields;
+        return this;
+    }
+
+    @XmlJavaTypeAdapter(XmlMapAdapter.class)
+    public Map<String, Map<String, Object>> getEntity() {
+        return entity;
+    }
+
+    public GoldenRecord setEntity(Map<String, Map<String, Object>> entity) {
+        this.entity = entity;
         return this;
     }
 }
