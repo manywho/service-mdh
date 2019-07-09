@@ -76,8 +76,7 @@ public class GoldenRecordRepository {
 
                     queryFilter.setUpdatedDate(dateFilter);
                 }
-
-                // Field values
+                
                 var entityFields = filter.getWhere().stream()
                         .sorted(Comparator.comparing(ListFilterWhere::getColumnName))
                         .dropWhile(where -> Arrays.asList(GoldenRecordConstants.CREATED_DATE_FIELD, GoldenRecordConstants.UPDATED_DATE_FIELD).contains(where.getColumnName()))
@@ -154,7 +153,7 @@ public class GoldenRecordRepository {
         }
 
         return result.getRecords().stream()
-                .map(record -> Entities.createEntityMObject(record.getRecordId(), "Golden Record", record.getFields()))
+                .map(record -> Entities.createGoldenRecordMObject(record.getRecordId(), record.getFields()))
                 .collect(Collectors.toList());
     }
 

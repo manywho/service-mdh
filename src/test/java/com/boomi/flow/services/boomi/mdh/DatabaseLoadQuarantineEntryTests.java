@@ -169,7 +169,7 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
-        Map<String, Object> entityWrapper = new HashMap<>();
+        Map<String, Object> entityWrapper = new  HashMap<String, Object>();
         entityWrapper.put("field 1 " + number, "field 1 value " + number);
         entityWrapper.put("field 2 " + number, "field 2 value " + number);
         entityWrapper.put("field 3 " + number, "field 3 value " + number);
