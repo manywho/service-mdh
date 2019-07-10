@@ -14,7 +14,7 @@ import java.util.List;
 class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
-    static void collectTypes(List<Universe.Layout.Model.Element> elements, String typeName, String universeName,
+    static void collectTypes(List<Universe.Layout.Model.Element> elements, String name, String typePrettyName, String universeName,
                              String universeId, List<TypeElement> typeCollected, boolean isModel) {
 
         List<TypeElementProperty> properties = new ArrayList<>();
@@ -27,30 +27,30 @@ class FieldMapper {
             if (contentType == null) {
                 continue;
             }
-            var name = element.getPrettyName();
+            var prettyName = element.getPrettyName();
 
             if (ContentType.Object.equals(contentType) || ContentType.List.equals(contentType)) {
-                name = TypeNameGenerator.createChildTypeName(element.getPrettyName(), typeName);
+                prettyName = TypeNameGenerator.createChildTypeName(element.getPrettyName(), typePrettyName);
                 // collect type, and continue searching for more subtypes
-                collectTypes(element.getElements(), name, universeName, universeId, typeCollected,false);
+                collectTypes(element.getElements(), element.getName(), prettyName, universeName, universeId, typeCollected,false);
             }
 
-            propertyBindings.add(new TypeElementPropertyBinding(name, element.getName(), name));
-            properties.add(new TypeElementProperty(name, contentType, name));
+            propertyBindings.add(new TypeElementPropertyBinding(prettyName, element.getName()));
+            properties.add(new TypeElementProperty(prettyName, contentType, prettyName));
         }
 
         List<TypeElementBinding> bindings = new ArrayList<>();
         var developerSummary = "The model for the " + universeName + " universe";
 
         if (isModel == false) {
-            developerSummary = typeName;
-            bindings.add(new TypeElementBinding(typeName, developerSummary, universeId, propertyBindings));
+            developerSummary = typePrettyName;
+            bindings.add(new TypeElementBinding(typePrettyName, developerSummary, universeId, propertyBindings));
         } else {
-            bindings.add(new TypeElementBinding(typeName, developerSummary, universeId, propertyBindings));
+            bindings.add(new TypeElementBinding(typePrettyName, developerSummary, universeId, propertyBindings));
         }
 
 
-        var typeElement = new TypeElement(typeName, properties, bindings);
+        var typeElement = new TypeElement(typePrettyName, properties, bindings);
 
         typeCollected.add(typeElement);
     }

@@ -54,7 +54,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
         universes.stream()
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
                 .forEach(universe ->
-                    FieldMapper.collectTypes(universe.getLayout().getModel().getElements(),
+                    FieldMapper.collectTypes(universe.getLayout().getModel().getElements(), universe.getName(),
                             TypeNameGenerator.createModelName(universe.getName()),
                             universe.getName(), universe.getId().toString(), typeElements, true));
     }
@@ -79,7 +79,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
                     propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
                     propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
                     propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
-                    propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.RECORD, GoldenRecordConstants.RECORD_FIELD));
+                    propertyBindings.add(new TypeElementPropertyBinding(GoldenRecordConstants.RECORD, universe.getName()));
 
                     // TODO: Pretty sure this is only required because of a bug in the Engine
                     var tableName = "golden-record-" + universe.getId().toString();
@@ -129,7 +129,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
                     propertyBindings.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CAUSE, QuarantineEntryConstants.CAUSE_FIELD));
                     propertyBindings.add(new TypeElementPropertyBinding(QuarantineEntryConstants.REASON, QuarantineEntryConstants.REASON_FIELD));
                     propertyBindings.add(new TypeElementPropertyBinding(QuarantineEntryConstants.RESOLUTION, QuarantineEntryConstants.RESOLUTION_FIELD));
-                    propertyBindings.add(new TypeElementPropertyBinding(QuarantineEntryConstants.ENTITY, QuarantineEntryConstants.ENTITY_FIELD));
+                    propertyBindings.add(new TypeElementPropertyBinding(QuarantineEntryConstants.ENTITY, universe.getName()));
 
                     List<TypeElementBinding> bindings = new ArrayList<>();
 

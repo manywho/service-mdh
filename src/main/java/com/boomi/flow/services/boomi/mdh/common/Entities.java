@@ -16,12 +16,26 @@ public class Entities {
         }
 
         var entry = entity.entrySet().iterator().next();
-        var record = new MObject(TypeNameGenerator.createModelName(entry.getKey()), createPropertiesFromMap(id, entry.getValue()));
+        var record = new MObject(TypeNameGenerator.createModelName(entry.getKey()), createPropertiesForGoldenRecord(id, entry.getValue()));
         List<Property> properties = new ArrayList<>();
 
         properties.add(new Property("Record", record));
 
         return new MObject(TypeNameGenerator.createGoldenRecordName(entry.getKey()), id, properties);
+    }
+
+    private static List<Property> createPropertiesForGoldenRecord( String id, Map<String, Object> map) {
+        return map.entrySet().stream()
+                .map(field -> {
+                    if (field.getValue() instanceof Map == false) {
+
+                        return new Property(field.getKey(), field.getValue());
+                    } else {
+                        MObject object = new MObject(field.getKey(), id, createPropertiesFromMap(id, (Map<String, Object>) field.getValue()));
+
+                        return new Property(field.getKey(), object);
+                    }
+                }).collect(Collectors.toList());
     }
 
     private static List<Property> createPropertiesFromMap( String id, Map<String, Object> map) {
