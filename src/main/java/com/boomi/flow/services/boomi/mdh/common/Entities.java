@@ -1,27 +1,22 @@
 package com.boomi.flow.services.boomi.mdh.common;
 
-import com.boomi.flow.services.boomi.mdh.database.TypeNameGenerator;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Entities {
-    public static MObject createGoldenRecordMObject(String id, Map<String,  Map<String, Object>> entity) {
+    public static MObject createGoldenRecordMObject(String universeId, String id, Map<String,  Map<String, Object>> entity) {
         if (entity == null || entity.isEmpty()) {
             return null;
         }
 
         var entry = entity.entrySet().iterator().next();
-        var record = new MObject(TypeNameGenerator.createModelName(entry.getKey()), createPropertiesForGoldenRecord(id, entry.getValue()));
-        List<Property> properties = new ArrayList<>();
+        List<Property> properties = createPropertiesForGoldenRecord(id, entry.getValue());
 
-        properties.add(new Property("Record", record));
-
-        return new MObject(TypeNameGenerator.createGoldenRecordName(entry.getKey()), id, properties);
+        return new MObject(universeId + " golden-record", id, properties);
     }
 
     private static List<Property> createPropertiesForGoldenRecord( String id, Map<String, Object> map) {

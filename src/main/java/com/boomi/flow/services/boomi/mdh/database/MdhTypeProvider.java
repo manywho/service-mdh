@@ -35,11 +35,11 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
             return false;
         }
 
-        if (name.startsWith("quarantine-")) {
+        if (name.startsWith(" quarantine")) {
             return true;
         }
 
-        if (name.startsWith("golden-record-")) {
+        if (name.endsWith(" golden-record")) {
             return true;
         }
 
@@ -55,8 +55,8 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
                 .forEach(universe ->
                     FieldMapper.collectTypes(universe.getLayout().getModel().getElements(), universe.getName(),
-                            TypeNameGenerator.createModelName(universe.getName()),
-                            universe.getName(), universe.getId().toString(), typeElements, true));
+                            TypeNameGenerator.createModelName(universe.getName()), universe.getName(),
+                            universe.getId().toString(), typeElements, true));
     }
 
     private static List<TypeElement> createGoldenRecordTypes(List<Universe> universes) {
@@ -154,16 +154,16 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
 
         var universes = repository.findAll(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword());
 
-        var goldenRecordTypes = createGoldenRecordTypes(universes);
-        var matchEntitiesTypes = createMatchEntitiesTypes(universes);
-        var quarantineEntryTypes = createQuarantineEntriesTypes(universes);
+//        var goldenRecordTypes = createGoldenRecordTypes(universes);
+//        var matchEntitiesTypes = createMatchEntitiesTypes(universes);
+//        var quarantineEntryTypes = createQuarantineEntriesTypes(universes);
 
         var types = new ArrayList<TypeElement>();
         loadModelTypes(universes, types);
 
-        types.addAll(goldenRecordTypes);
-        types.addAll(matchEntitiesTypes);
-        types.addAll(quarantineEntryTypes);
+//        types.addAll(goldenRecordTypes);
+//        types.addAll(matchEntitiesTypes);
+//        types.addAll(quarantineEntryTypes);
 
         return types;
     }

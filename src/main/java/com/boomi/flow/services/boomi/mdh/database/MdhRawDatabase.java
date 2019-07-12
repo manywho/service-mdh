@@ -32,14 +32,14 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.startsWith("quarantine-")) {
-            var universe = typeName.replace("quarantine-", "");
+        if (typeName.endsWith("quarantine")) {
+            var universe = typeName.replace(" quarantine", "");
 
             return quarantineRepository.findAll(configuration, universe, filter);
         }
 
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
+        if (typeName.endsWith("golden-record")) {
+            var universe = typeName.replace(" golden-record", "");
 
             return goldenRecordRepository.findAll(configuration, universe, filter);
         }
@@ -67,8 +67,8 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
+        if (typeName.endsWith("golden-record")) {
+            var universe = typeName.replace(" golden-record", "");
 
             goldenRecordRepository.delete(configuration, universe, objects);
             return;
@@ -89,8 +89,8 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public List<MObject> update(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
+        if (typeName.endsWith("golden-record")) {
+            var universe = typeName.replace(" golden-record", "");
 
             return goldenRecordRepository.update(configuration, universe, objects);
         }
