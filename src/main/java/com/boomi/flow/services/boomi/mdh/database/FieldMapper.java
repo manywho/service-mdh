@@ -26,21 +26,26 @@ class FieldMapper {
         for (var element : elements) {
 
             var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
-            if (contentType == null) {
+            // TODO: Ignore field groups (child types) until the bindings for child Types are supported in engine
+            var isChildType = ContentType.Object.equals(contentType) || ContentType.List.equals(contentType);
+
+            if (contentType == null || isChildType) {
                 continue;
             }
-            var prettyName = element.getPrettyName();
 
             if (ContentType.Object.equals(contentType) || ContentType.List.equals(contentType)) {
-                prettyName = TypeNameGenerator.createChildTypeName(element.getName(), typePrettyName);
-                collectTypes(element.getElements(), element.getName(), prettyName, universeName, universeId, typeCollected,false);
-                properties.add(new TypeElementProperty(element.getName(), contentType, element.getName()));
+                collectTypes(element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
+                properties.add(new TypeElementProperty(element.getPrettyName(), contentType, element.getPrettyName()));
+                propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
             } else {
-                properties.add(new TypeElementProperty(element.getName(), contentType));
+                properties.add(new TypeElementProperty(element.getPrettyName(), contentType));
+                propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
             }
-
-            propertyBindings.add(new TypeElementPropertyBinding(element.getName(), element.getName()));
         }
+
+        // common for golden Records and Quarantine
+        properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
+        properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
 
         addPropertiesForGoldenRecord(properties);
         addPropertiesForQuarantine(properties);
@@ -60,18 +65,14 @@ class FieldMapper {
 
     private static void addPropertiesForGoldenRecord(List<TypeElementProperty> properties) {
         // add properties for filter by Golden Record
-        properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
-        properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
     }
 
     private static void addPropertiesForQuarantine(List<TypeElementProperty> properties) {
-        //properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ID, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ENTITY_ID, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.STATUS, ContentType.String));
 
         // These properties are all for the response
-        //properties.add(new TypeElementProperty(QuarantineEntryConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.END_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.TRANSACTION_ID, ContentType.String));
 
@@ -81,13 +82,33 @@ class FieldMapper {
     }
 
     private static void addBindingForGoldenRecord(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
-        var developerSummary = "Golden Record " + typePrettyName + " for " + universeName + " universe";
-        bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + " golden-record", propertyBindings));
+        var developerSummary = "The structure of a golden record for the " + universeName + " universe";
+
+        List<TypeElementPropertyBinding> propertyBindingsGoldenRecord = new ArrayList<>(propertyBindings);
+
+        propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
+        propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
+        propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
+
+        bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + " golden-record", propertyBindingsGoldenRecord));
     }
 
     private static void addBindingForQuarantine(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
-        var developerSummary = "Quarantine " + typePrettyName + " for " + universeName + " universe";
-        bindings.add(new TypeElementBinding(typePrettyName + " Quarantine", developerSummary, name + "quarantine", propertyBindings));
+        var developerSummary = "The structure of a Quarantine " + typePrettyName + " for the " + universeName + " universe";
+
+        List<TypeElementPropertyBinding> propertyBindingsQuarantine = new ArrayList<>(propertyBindings);
+
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.STATUS, QuarantineEntryConstants.STATUS_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ENTITY_ID, QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.END_DATE, QuarantineEntryConstants.END_DATE_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.TRANSACTION_ID, QuarantineEntryConstants.TRANSACTION_ID_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CAUSE, QuarantineEntryConstants.CAUSE_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.REASON, QuarantineEntryConstants.REASON_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.RESOLUTION, QuarantineEntryConstants.RESOLUTION_FIELD));
+
+        bindings.add(new TypeElementBinding(typePrettyName + " Quarantine", developerSummary, name + " quarantine", propertyBindingsQuarantine));
     }
 
     private static ContentType fieldTypeToContentType(String type, boolean repeatable) {

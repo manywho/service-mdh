@@ -36,7 +36,7 @@ public class DatabaseLoadQuarantineEntryTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("quarantine-universe-name");
+            .setDeveloperName("universe-name quarantine");
 
     private QuarantineQueryResponse response = new QuarantineQueryResponse()
             .setEntries(
@@ -58,7 +58,7 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(8));
+        assertThat(objects.get(0).getProperties(), hasSize(7));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("cause"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("createdDate"));
@@ -73,18 +73,6 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("a transaction ID 1"));
         assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("sourceEntityId"));
         assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a source entity ID 1"));
-        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("entity"));
-        assertThat(objects.get(0).getProperties().get(7).getContentValue(), nullValue());
-        assertThat(objects.get(0).getProperties().get(7).getObjectData(), hasSize(1));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getDeveloperName(), equalTo("dunno Model"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getExternalId(), equalTo("a source entity ID 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties(), hasSize(3));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
     }
 
     @Test

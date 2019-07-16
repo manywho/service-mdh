@@ -8,54 +8,58 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Entities {
+
     public static MObject createGoldenRecordMObject(String universeId, String id, Map<String,  Map<String, Object>> entity) {
         if (entity == null || entity.isEmpty()) {
             return null;
         }
 
         var entry = entity.entrySet().iterator().next();
-        List<Property> properties = createPropertiesForGoldenRecord(id, entry.getValue());
+        List<Property> properties = createPropertiesModel(id, entry.getValue());
 
         return new MObject(universeId + " golden-record", id, properties);
     }
 
-    private static List<Property> createPropertiesForGoldenRecord( String id, Map<String, Object> map) {
-        return map.entrySet().stream()
-                .map(field -> {
-                    if (field.getValue() instanceof Map == false) {
-
-                        return new Property(field.getKey(), field.getValue());
-                    } else {
-                        MObject object = new MObject(field.getKey(), id, createPropertiesFromMap(id, (Map<String, Object>) field.getValue()));
-
-                        return new Property(field.getKey(), object);
-                    }
-                }).collect(Collectors.toList());
-    }
-
-    private static List<Property> createPropertiesFromMap( String id, Map<String, Object> map) {
-        return map.entrySet().stream()
-                .map(field -> {
-                    if (field.getValue() instanceof Map == false) {
-
-                        return new Property(field.getKey(), field.getValue());
-                    } else {
-                        MObject object = new MObject(field.getKey(), id, createPropertiesFromMap(id, (Map<String, Object>) field.getValue()));
-
-                        return new Property(field.getKey(), object);
-                    }
-                }).collect(Collectors.toList());
-    }
-
-    public static MObject createEntityMObject(String id, String type, Map<String,  Map<String, Object>> entity) {
+    public static MObject createQuarantineMObject(String universeId, String id, Map<String,  Map<String, Object>> entity) {
         if (entity == null || entity.isEmpty()) {
             return null;
         }
 
         var entry = entity.entrySet().iterator().next();
+        List<Property> properties = createPropertiesModel(id, entry.getValue());
 
-        var properties = createPropertiesFromMap(id, entry.getValue());
-
-        return new MObject(String.format("%s %s", entry.getKey(), type), id, properties);
+        return new MObject(universeId + " quarantine", id, properties);
     }
+
+    private static List<Property> createPropertiesModel(String id, Map<String, Object> map) {
+        return map.entrySet().stream()
+                // Todo: we ignored child objects until get support in engine for child object bindings
+                .filter(field -> field.getValue() instanceof Map == false)
+                .map(field -> {
+                    if (field.getValue() instanceof Map == false) {
+
+                        return new Property(field.getKey(), field.getValue());
+                    } else {
+                        MObject object = new MObject(field.getKey(), id, createPropertyType(id, (Map<String, Object>) field.getValue()));
+
+                        return new Property(field.getKey(), object);
+                    }
+                }).collect(Collectors.toList());
+    }
+
+    private static List<Property> createPropertyType(String id, Map<String, Object> map) {
+        return map.entrySet().stream()
+                .map(field -> {
+                    if (field.getValue() instanceof Map == false) {
+
+                        return new Property(field.getKey(), field.getValue());
+                    } else {
+
+                        MObject object = new MObject(field.getKey(), id, createPropertyType(id, (Map<String, Object>) field.getValue()));
+
+                        return new Property(field.getKey(), object);
+                    }
+                }).collect(Collectors.toList());
+    }
+
 }

@@ -36,7 +36,7 @@ public class DatabaseLoadGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("golden-record-universe-name");
+            .setDeveloperName("universe-name golden-record");
 
     private GoldenRecordQueryResponse response = new GoldenRecordQueryResponse()
             .setResultCount(2)
@@ -57,15 +57,15 @@ public class DatabaseLoadGoldenRecordTests {
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name Golden Record"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties(), hasSize(3));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(objects.get(0).getProperties().get(0).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
+        assertThat(objects.get(0).getProperties(), hasSize(3));
+        assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
+        assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
+        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
+        assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
     }
 
     @Test

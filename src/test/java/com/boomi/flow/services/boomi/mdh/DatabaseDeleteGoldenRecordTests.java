@@ -29,7 +29,7 @@ public class DatabaseDeleteGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("golden-record-universe-name");
+            .setDeveloperName("universe-name golden-record");
 
     @Test
     public void testDeleteWithSingleNewObjectWorks() {
