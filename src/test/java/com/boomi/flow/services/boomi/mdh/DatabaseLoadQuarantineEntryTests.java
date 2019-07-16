@@ -56,23 +56,32 @@ public class DatabaseLoadQuarantineEntryTests {
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(7));
-        assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("cause"));
-        assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
-        assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("createdDate"));
-        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34Z"));
-        assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("endDate"));
-        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57Z"));
-        assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("reason"));
-        assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a reason 1"));
-        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("resolution"));
-        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a resolution 1"));
-        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("transactionId"));
-        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("sourceEntityId"));
-        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a source entity ID 1"));
+        assertThat(objects.get(0).getProperties(), hasSize(10));
+        assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
+
+        assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
+        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
+
+        assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
+
+        assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("cause"));
+        assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a cause 1"));
+        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("createdDate"));
+        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("endDate"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("reason"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a reason 1"));
+        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("resolution"));
+        assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a resolution 1"));
+        assertThat(objects.get(0).getProperties().get(8).getDeveloperName(), equalTo("transactionId"));
+        assertThat(objects.get(0).getProperties().get(8).getContentValue(), equalTo("a transaction ID 1"));
+        assertThat(objects.get(0).getProperties().get(9).getDeveloperName(), equalTo("sourceEntityId"));
+        assertThat(objects.get(0).getProperties().get(9).getContentValue(), equalTo("a source entity ID 1"));
     }
 
     @Test
