@@ -3,6 +3,7 @@ package com.boomi.flow.services.boomi.mdh;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
@@ -52,7 +53,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
 
         assertThat(objects, not(nullValue()));
@@ -76,7 +77,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
 
         verify(client)
@@ -183,7 +184,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter);
 
         verify(client)

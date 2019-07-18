@@ -26,6 +26,8 @@ public class Universe implements Type {
 
     private Layout layout;
 
+    private Sources sources;
+
     public UUID getId() {
         return id;
     }
@@ -60,6 +62,36 @@ public class Universe implements Type {
     public Universe setLayout(Layout layout) {
         this.layout = layout;
         return this;
+    }
+
+    public Sources getSources() {
+        return sources;
+    }
+
+    public void setSources(Sources sources) {
+        this.sources = sources;
+    }
+
+    public static class Sources {
+        private List<Source> sources = new ArrayList<>();
+
+        @XmlElement(name = "source")
+        public List<Source> getSources() {
+            return sources;
+        }
+
+        public static class Source {
+            private String code;
+
+            @XmlAttribute
+            public String getCode() {
+                return code;
+            }
+
+            public void setCode(String code) {
+                this.code = code;
+            }
+        }
     }
 
     public static class Layout {

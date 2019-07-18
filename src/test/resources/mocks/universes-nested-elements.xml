@@ -5,7 +5,14 @@
         <version>f501fc4e-9e86-42bb-b97d-ce46e8e27179</version>
         <name>country</name>
         <stats activeRecords="0" enddatedRecords="0" quarantinedRecords="0" asOf="2019-07-03T09:33:30.378Z"/>
-        <sources/>
+        <sources>
+            <source sendCreates="true" allowContribute="true"
+                    requireUpdateApproval="false" requireCreateApproval="false"
+                    state="STRAPPED" code="WD">
+                <channel primary="true" state="STRAPPED" updateType="FULL"
+                         id="61a3bf80-fb38-4d38-a7ff-cf3090f4927e"/>
+            </source>
+        </sources>
         <layoutid>168963b5-e8f3-4069-8077-d1738948422b</layoutid>
         <layout idXPath="/country/id">
             <model name="country">
@@ -72,7 +79,14 @@
         <version>c297b1fe-bade-454a-9b53-1b29232ab337</version>
         <name>artist</name>
         <stats activeRecords="0" enddatedRecords="0" quarantinedRecords="0" asOf="2019-07-03T09:33:30.415Z"/>
-        <sources/>
+        <sources>
+            <source sendCreates="true" allowContribute="true"
+                    requireUpdateApproval="false" requireCreateApproval="false"
+                    state="STRAPPED" code="SF">
+                <channel primary="true" state="STRAPPED" updateType="DIFF"
+                         id="59ddf71e-43b4-4670-b193-b87895472ef4"/>
+            </source>
+        </sources>
         <layoutid>ad7820f3-92a7-4919-9647-db934bda0065</layoutid>
         <layout idXPath="/artist/id">
             <model name="artist">

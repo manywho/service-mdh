@@ -40,6 +40,10 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
             return true;
         }
 
+        if (name.endsWith(" match")) {
+            return true;
+        }
+
         return false;
     }
 
@@ -47,16 +51,10 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
         universes.stream()
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
                 .forEach(universe ->
-                    FieldMapper.collectTypes(universe.getLayout().getModel().getElements(), universe.getName(),
-                            TypeNameGenerator.createModelName(universe.getName()), universe.getName(),
+                    FieldMapper.collectTypes(universe.getSources().getSources(), universe.getLayout().getModel().getElements(),
+                            universe.getName(), TypeNameGenerator.createModelName(universe.getName()), universe.getName(),
                             universe.getId().toString(), typeElements, true));
     }
-
-    static List<TypeElement> createMatchEntitiesTypes(List<Universe> universes) {
-        return new ArrayList<>();
-    }
-
-
 
     @Override
     public List<TypeElement> describeTypes(ApplicationConfiguration configuration, DescribeServiceRequest request) {

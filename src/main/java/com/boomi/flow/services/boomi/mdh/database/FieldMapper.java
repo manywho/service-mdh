@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
+import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetialsConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -16,8 +17,9 @@ import java.util.List;
 class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
-    static void collectTypes(List<Universe.Layout.Model.Element> elements, String name, String typePrettyName,
-                             String universeName, String universeId, List<TypeElement> typeCollected, boolean isModel) {
+    static void collectTypes(List<Universe.Sources.Source> sources, List<Universe.Layout.Model.Element> elements,
+                             String name, String typePrettyName, String universeName, String universeId,
+                             List<TypeElement> typeCollected, boolean isModel) {
 
         List<TypeElementProperty> properties = new ArrayList<>();
         List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
@@ -34,7 +36,7 @@ class FieldMapper {
             }
 
             if (ContentType.Object.equals(contentType) || ContentType.List.equals(contentType)) {
-                collectTypes(element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
+                collectTypes(new ArrayList<>(), element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
                 properties.add(new TypeElementProperty(element.getPrettyName(), contentType, element.getPrettyName()));
                 propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
             } else {
@@ -49,6 +51,7 @@ class FieldMapper {
 
         addPropertiesForGoldenRecord(properties);
         addPropertiesForQuarantine(properties);
+        addPropertiesForMatchEntities(typePrettyName, properties);
 
         List<TypeElementBinding> bindings = new ArrayList<>();
 
@@ -58,9 +61,17 @@ class FieldMapper {
         } else {
             addBindingForGoldenRecord(bindings, universeId, universeName, typePrettyName, propertyBindings);
             addBindingForQuarantine(bindings, universeId, universeName, typePrettyName, propertyBindings);
+            addBindingForMatches(sources, bindings, universeId, universeName, typePrettyName, propertyBindings);
         }
 
         typeCollected.add(new TypeElement(typePrettyName, properties, bindings));
+    }
+
+    private static void addPropertiesForMatchEntities(String name, List<TypeElementProperty> properties) {
+        properties.add(new TypeElementProperty("Fuzzy Match Details", ContentType.Object, "Fuzzy Match Details"));
+        properties.add(new TypeElementProperty("Duplicate", ContentType.List, name));
+        properties.add(new TypeElementProperty("Match", ContentType.List, name));
+        properties.add(new TypeElementProperty("Already Linked", ContentType.List, name));
     }
 
     private static void addPropertiesForGoldenRecord(List<TypeElementProperty> properties) {
@@ -91,6 +102,20 @@ class FieldMapper {
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
 
         bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + " golden-record", propertyBindingsGoldenRecord));
+    }
+
+    private static void addBindingForMatches(List<Universe.Sources.Source> sources, List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
+        var developerSummary = "The structure of matches for the " + universeName + " universe";
+
+        List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
+
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
+        for (Universe.Sources.Source source:sources) {
+            var developerName = typePrettyName + " " + source.getCode() + " Match";
+            var databaseTableName = name + "#" + source.getCode() + " match";
+            bindings.add(new TypeElementBinding(developerName, developerSummary, databaseTableName, propertyBindingsForMatches));
+        }
+
     }
 
     private static void addBindingForQuarantine(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
