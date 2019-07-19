@@ -110,6 +110,9 @@ class FieldMapper {
         List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
 
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.MATCH, FuzzyMatchDetialsConstants.MATCH_FIELD));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.DUPLICATE, FuzzyMatchDetialsConstants.DUPLICATE_FIELD));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.ALREADY_LINKED, FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD));
         var developerName = typePrettyName + " Match";
         var databaseTableName = name + " match";
 

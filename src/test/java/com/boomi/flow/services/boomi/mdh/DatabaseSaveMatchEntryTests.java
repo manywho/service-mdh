@@ -7,11 +7,18 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.inject.AbstractModule;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
+import com.manywho.sdk.services.servers.EmbeddedServer;
+import com.manywho.sdk.services.servers.undertow.UndertowServer;
+import io.restassured.RestAssured;
+import okhttp3.OkHttpClient;
 import okhttp3.mock.MockInterceptor;
 import okhttp3.mock.Rule;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,6 +37,32 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatabaseSaveMatchEntryTests {
+
+    private EmbeddedServer server = new UndertowServer();
+
+    private MockInterceptor interceptor = new MockInterceptor();
+
+    @Before
+    public void before() throws Exception {
+        RestAssured.port = 10001;
+
+        server.addModule(new ApplicationModule());
+        server.addModule(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(OkHttpClient.class).toInstance(new OkHttpClient.Builder()
+                        .addInterceptor(interceptor)
+                        .build());
+            }
+        });
+        server.setApplication(Application.class);
+        server.start("/", 10001);
+    }
+
+    @After
+    public void after() {
+        server.stop();
+    }
 
     @Mock
     private MdhClient client;

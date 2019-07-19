@@ -376,7 +376,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[2].developerName", equalTo("artist Match"))
                 .body("install.typeElements[2].bindings[2].developerSummary", equalTo("The structure of matches for the artist universe"))
                 .body("install.typeElements[2].bindings[2].id", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings", hasSize(2))
+                .body("install.typeElements[2].bindings[2].propertyBindings", hasSize(5))
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[0].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[2].propertyBindings[0].databaseFieldName", equalTo("name"))
@@ -387,6 +387,21 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[2].propertyBindings[1].databaseFieldName", equalTo("Fuzzy Match Details"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Fuzzy Match Details"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[1].typeElementPropertyId", nullValue())
+
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseContentType", nullValue())
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseFieldName", equalTo("Match"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Match"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyId", nullValue())
+
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseContentType", nullValue())
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseFieldName", equalTo("Duplicate"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Duplicate"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyId", nullValue())
+
+                .body("install.typeElements[2].bindings[2].propertyBindings[4].databaseContentType", nullValue())
+                .body("install.typeElements[2].bindings[2].propertyBindings[4].databaseFieldName", equalTo("Already Linked"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[4].typeElementPropertyDeveloperName", equalTo("Already Linked"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[4].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].serviceElementId", nullValue())
 

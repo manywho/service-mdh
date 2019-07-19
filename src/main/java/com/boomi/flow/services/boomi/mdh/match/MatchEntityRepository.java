@@ -10,7 +10,9 @@ import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,9 +26,8 @@ public class MatchEntityRepository {
     }
 
     public List<MObject> matchEntity(ApplicationConfiguration configuration, String universeId, List<MObject> objects)  {
-
-
         var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
+        List<MatchEntityResponse.MatchResult> results = new ArrayList<>();
 
         // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
         String idField = universe.getLayout().getIdXPath()
@@ -35,7 +36,7 @@ public class MatchEntityRepository {
 
         for (var object : objects) {
             if (Strings.isNullOrEmpty(object.getExternalId())) {
-                // We're creating this object so let's collectTypes an ID
+                // We are requesting an object without id
                 var id = UUID.randomUUID().toString();
 
                 // Set the ID property, so it can be referenced in a Flow
@@ -90,19 +91,37 @@ public class MatchEntityRepository {
                     .setSource(sourceId)
                     .setEntities(entities);
 
-            var matchEntityResponse = client.queryMatchEntity(
+            results.addAll(client.queryMatchEntity(
                     configuration.getAtomHostname(),
                     configuration.getAtomUsername(),
                     configuration.getAtomPassword(),
                     universe.getId().toString(),
                     updateRequest
-            );
-
-            // add match Response to objects
+                ).getMatchResults());
         }
 
-
+        objects.forEach(object -> methodPopulateObject(object, universe.getName(), results));
 
         return objects;
     }
+
+    private static void methodPopulateObject(MObject object, String universe, List<MatchEntityResponse.MatchResult> matchResults) {
+        var matchEntity = matchResults.stream()
+                .filter(matchResult -> object.getExternalId().equals(matchResult.getEntity().get(universe).get("id")))
+                .findFirst();
+
+
+        matchEntity.get().getMatch().forEach(result -> addMatch(object, result));
+    }
+
+    private static void addMatch(MObject object, Map<String, Object> result) {
+        object.getProperties().stream()
+                .filter(property-> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.MATCH_FIELD))
+                .forEach(property -> {
+                    var currentListOfMatches = property.getObjectData();
+
+                });
+    }
+
+
 }

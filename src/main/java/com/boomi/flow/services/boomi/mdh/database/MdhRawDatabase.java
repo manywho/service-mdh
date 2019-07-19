@@ -10,12 +10,8 @@ import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.services.database.RawDatabase;
-
 import javax.inject.Inject;
-import javax.xml.bind.JAXB;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     private final QuarantineRepository quarantineRepository;
