@@ -51,7 +51,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
         universes.stream()
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
                 .forEach(universe ->
-                    FieldMapper.collectTypes(universe.getSources().getSources(), universe.getLayout().getModel().getElements(),
+                    FieldMapper.collectTypes(universe.getLayout().getModel().getElements(),
                             universe.getName(), TypeNameGenerator.createModelName(universe.getName()), universe.getName(),
                             universe.getId().toString(), typeElements, true));
     }

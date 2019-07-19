@@ -17,7 +17,7 @@ import java.util.List;
 class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
-    static void collectTypes(List<Universe.Sources.Source> sources, List<Universe.Layout.Model.Element> elements,
+    static void collectTypes(List<Universe.Layout.Model.Element> elements,
                              String name, String typePrettyName, String universeName, String universeId,
                              List<TypeElement> typeCollected, boolean isModel) {
 
@@ -36,7 +36,7 @@ class FieldMapper {
             }
 
             if (ContentType.Object.equals(contentType) || ContentType.List.equals(contentType)) {
-                collectTypes(new ArrayList<>(), element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
+                collectTypes(element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
                 properties.add(new TypeElementProperty(element.getPrettyName(), contentType, element.getPrettyName()));
                 propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
             } else {
@@ -61,7 +61,7 @@ class FieldMapper {
         } else {
             addBindingForGoldenRecord(bindings, universeId, universeName, typePrettyName, propertyBindings);
             addBindingForQuarantine(bindings, universeId, universeName, typePrettyName, propertyBindings);
-            addBindingForMatches(sources, bindings, universeId, universeName, typePrettyName, propertyBindings);
+            addBindingForMatches(bindings, universeId, universeName, typePrettyName, propertyBindings);
         }
 
         typeCollected.add(new TypeElement(typePrettyName, properties, bindings));
@@ -104,18 +104,16 @@ class FieldMapper {
         bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + " golden-record", propertyBindingsGoldenRecord));
     }
 
-    private static void addBindingForMatches(List<Universe.Sources.Source> sources, List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
+    private static void addBindingForMatches(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
         var developerSummary = "The structure of matches for the " + universeName + " universe";
 
         List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
 
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
-        for (Universe.Sources.Source source:sources) {
-            var developerName = typePrettyName + " " + source.getCode() + " Match";
-            var databaseTableName = name + "#" + source.getCode() + " match";
-            bindings.add(new TypeElementBinding(developerName, developerSummary, databaseTableName, propertyBindingsForMatches));
-        }
+        var developerName = typePrettyName + " Match";
+        var databaseTableName = name + " match";
 
+        bindings.add(new TypeElementBinding(developerName, developerSummary, databaseTableName, propertyBindingsForMatches));
     }
 
     private static void addBindingForQuarantine(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {

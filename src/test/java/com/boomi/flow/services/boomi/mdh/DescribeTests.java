@@ -372,8 +372,8 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[1].propertyBindings[9].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
-                .body("install.typeElements[2].bindings[2].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065#SF match"))
-                .body("install.typeElements[2].bindings[2].developerName", equalTo("artist SF Match"))
+                .body("install.typeElements[2].bindings[2].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065 match"))
+                .body("install.typeElements[2].bindings[2].developerName", equalTo("artist Match"))
                 .body("install.typeElements[2].bindings[2].developerSummary", equalTo("The structure of matches for the artist universe"))
                 .body("install.typeElements[2].bindings[2].id", nullValue())
                 .body("install.typeElements[2].bindings[2].propertyBindings", hasSize(2))
@@ -395,7 +395,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].elementType", equalTo("TYPE"))
                 .body("install.typeElements[2].id", nullValue())
 
-                .body("install.typeElements[2].properties", hasSize(12))
+                .body("install.typeElements[2].properties", hasSize(15))
                 .body("install.typeElements[2].properties[0].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[0].contentType", equalTo("ContentString"))
                 .body("install.typeElements[2].properties[0].developerName", equalTo("name"))
@@ -477,8 +477,29 @@ public class DescribeTests {
                 .body("install.typeElements[2].properties[11].contentType", equalTo("ContentObject"))
                 .body("install.typeElements[2].properties[11].developerName", equalTo("Fuzzy Match Details"))
                 .body("install.typeElements[2].properties[11].id", nullValue())
-                .body("install.typeElements[2].properties[11].typeElementDeveloperName",nullValue())
+                .body("install.typeElements[2].properties[11].typeElementDeveloperName", equalTo("Fuzzy Match Details"))
                 .body("install.typeElements[2].properties[11].typeElementId", nullValue())
+
+                .body("install.typeElements[2].properties[12].contentFormat", nullValue())
+                .body("install.typeElements[2].properties[12].contentType", equalTo("ContentList"))
+                .body("install.typeElements[2].properties[12].developerName", equalTo("Duplicate"))
+                .body("install.typeElements[2].properties[12].id", nullValue())
+                .body("install.typeElements[2].properties[12].typeElementDeveloperName", equalTo("artist"))
+                .body("install.typeElements[2].properties[12].typeElementId",  nullValue())
+
+                .body("install.typeElements[2].properties[13].contentFormat", nullValue())
+                .body("install.typeElements[2].properties[13].contentType", equalTo("ContentList"))
+                .body("install.typeElements[2].properties[13].developerName", equalTo("Match"))
+                .body("install.typeElements[2].properties[13].id", nullValue())
+                .body("install.typeElements[2].properties[13].typeElementDeveloperName", equalTo("artist"))
+                .body("install.typeElements[2].properties[13].typeElementId", nullValue())
+
+                .body("install.typeElements[2].properties[14].contentFormat", nullValue())
+                .body("install.typeElements[2].properties[14].contentType", equalTo("ContentList"))
+                .body("install.typeElements[2].properties[14].developerName", equalTo("Already Linked"))
+                .body("install.typeElements[2].properties[14].id", nullValue())
+                .body("install.typeElements[2].properties[14].typeElementDeveloperName",  equalTo("artist"))
+                .body("install.typeElements[2].properties[14].typeElementId", nullValue())
 
                 .body("install.typeElements[2].serviceElementId", nullValue())
                 .body("install.typeElements[2].updateByName", equalTo(false));
