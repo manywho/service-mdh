@@ -1,4 +1,4 @@
-package com.boomi.flow.services.boomi.mdh.records;
+package com.boomi.flow.services.boomi.mdh.common;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,10 +11,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class GoldenRecordUpdateRequestEntityAdapter extends XmlAdapter<Object, GoldenRecordUpdateRequest.Entity> {
+public class BatchUpdateRequestEntityAdapter extends XmlAdapter<Object, BatchUpdateRequest.Entity> {
     private final DocumentBuilder documentBuilder;
 
-    public GoldenRecordUpdateRequestEntityAdapter() {
+    public BatchUpdateRequestEntityAdapter() {
         try {
             this.documentBuilder = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();
@@ -24,7 +24,7 @@ public class GoldenRecordUpdateRequestEntityAdapter extends XmlAdapter<Object, G
     }
 
     @Override
-    public Object marshal(GoldenRecordUpdateRequest.Entity entity) {
+    public Object marshal(BatchUpdateRequest.Entity entity) {
         Document document = documentBuilder.newDocument();
 
         Element element = document.createElement(entity.getName());
@@ -74,7 +74,7 @@ public class GoldenRecordUpdateRequestEntityAdapter extends XmlAdapter<Object, G
     }
 
     @Override
-    public GoldenRecordUpdateRequest.Entity unmarshal(Object wrapper) {
+    public BatchUpdateRequest.Entity unmarshal(Object wrapper) {
         throw new RuntimeException("Unmarshalling maps isn't supported in this class");
     }
 }

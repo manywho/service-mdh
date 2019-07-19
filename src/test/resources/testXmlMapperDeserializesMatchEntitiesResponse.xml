@@ -1,0 +1,98 @@
+<MatchEntitiesResponse>
+    <MatchResult matchRule="Incoming name is similar to (Jaro-Winkler) Existing name" status="SUCCESS">
+        <entity>
+            <contact>
+                <id>1</id>
+                <name>bobby</name>
+                <city>berwyn</city>
+                <phones>
+                    <phone>
+                        <number>311 555-1234</number>
+                        <type>home</type>
+                    </phone>
+                    <phone>
+                        <number>311 555-4321</number>
+                        <type>mobile</type>
+                    </phone>
+                </phones>
+                <email>bob@gmail.com</email>
+                <spouse>1001</spouse>
+            </contact>
+        </entity>
+        <match>
+            <contact>
+                <id>e6e1b847-d61a-46d9-a610-c678ba40ca41</id>
+                <name>bob</name>
+                <city>berwyn</city>
+                <phones>
+                    <phone>
+                        <number>311 555-1234</number>
+                        <type>home</type>
+                    </phone>
+                    <phone>
+                        <number>311 555-4321</number>
+                        <type>mobile</type>
+                    </phone>
+                </phones>
+                <email>bob@gmail.com</email>
+                <spouse>1001</spouse>
+            </contact>
+            <fuzzyMatchDetails>
+                <field>name</field>
+                <first>BOBBY</first>
+                <second>BOB</second>
+                <method>jarowinkler</method>
+                <matchStrength>0.90666664</matchStrength>
+                <threshold>0.85</threshold>
+            </fuzzyMatchDetails>
+        </match>
+        <duplicate>
+            <contact>
+                <id>fc8cd5be-ac26-4e9a-9d0c-6b397a124172</id>
+                <name>bob</name>
+                <city>berwyn</city>
+                <phones>
+                    <phone>
+                        <number>311 555-5678</number>
+                        <type>home</type>
+                    </phone>
+                    <phone>
+                        <number>311 555-8765</number>
+                        <type>mobile</type>
+                    </phone>
+                </phones>
+                <email>bob@gmail.com</email>
+                <spouse>1001</spouse>
+            </contact>
+            <fuzzyMatchDetails>
+                <field>name</field>
+                <first>BOBBY</first>
+                <second>BOB</second>
+                <method>jarowinkler</method>
+                <matchStrength>0.90666664</matchStrength>
+                <threshold>0.85</threshold>
+            </fuzzyMatchDetails>
+        </duplicate>
+    </MatchResult>
+    <MatchResult status="ALREADY_LINKED">
+        <entity>
+            <contact>
+                <id>2</id>
+                <name>mike</name>
+                <city>chesterbrook</city>
+                <phones>
+                    <phone>
+                        <number>311 555-2345</number>
+                        <type>home</type>
+                    </phone>
+                    <phone>
+                        <number>311 555-5432</number>
+                        <type>mobile</type>
+                    </phone>
+                </phones>
+                <email>mike@gmail.com</email>
+                <spouse>1002</spouse>
+            </contact>
+        </entity>
+    </MatchResult>
+</MatchEntitiesResponse>

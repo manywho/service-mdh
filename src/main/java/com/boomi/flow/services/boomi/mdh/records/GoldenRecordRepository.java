@@ -2,10 +2,7 @@ package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
-import com.boomi.flow.services.boomi.mdh.common.DateFilter;
-import com.boomi.flow.services.boomi.mdh.common.Dates;
-import com.boomi.flow.services.boomi.mdh.common.Entities;
-import com.boomi.flow.services.boomi.mdh.common.ListFilters;
+import com.boomi.flow.services.boomi.mdh.common.*;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
@@ -214,7 +211,7 @@ public class GoldenRecordRepository {
 
                         fields.put(idField, entity.getExternalId());
 
-                        return new GoldenRecordUpdateRequest.Entity()
+                        return new BatchUpdateRequest.Entity()
                                 .setOp(operation)
                                 .setName(universe.getLayout().getModel().getName())
                                 .setFields(fields);
@@ -222,7 +219,7 @@ public class GoldenRecordRepository {
                     .collect(Collectors.toList());
 
             // Now we can save the records into the Hub
-            var updateRequest = new GoldenRecordUpdateRequest()
+            var updateRequest = new BatchUpdateRequest()
                     .setSource(sourceId)
                     .setEntities(entities);
 

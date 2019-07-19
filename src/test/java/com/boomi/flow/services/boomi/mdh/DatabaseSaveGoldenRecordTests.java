@@ -5,7 +5,7 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -62,9 +62,9 @@ public class DatabaseSaveGoldenRecordTests {
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting
-        var expectedRequest = new GoldenRecordUpdateRequest()
+        var expectedRequest = new BatchUpdateRequest()
                 .setEntities(List.of(
-                        new GoldenRecordUpdateRequest.Entity()
+                        new BatchUpdateRequest.Entity()
                                 .setName("testing")
                                 .setFields(Map.ofEntries(
                                         Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"),

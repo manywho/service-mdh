@@ -1,4 +1,4 @@
-package com.boomi.flow.services.boomi.mdh.records;
+package com.boomi.flow.services.boomi.mdh.common;
 
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @XmlRootElement(name = "batch")
-public class GoldenRecordUpdateRequest {
+public class BatchUpdateRequest {
     private String source;
     private List<Entity> entities;
 
@@ -18,7 +18,7 @@ public class GoldenRecordUpdateRequest {
         return source;
     }
 
-    public GoldenRecordUpdateRequest setSource(String source) {
+    public BatchUpdateRequest setSource(String source) {
         this.source = source;
         return this;
     }
@@ -28,12 +28,12 @@ public class GoldenRecordUpdateRequest {
         return entities;
     }
 
-    public GoldenRecordUpdateRequest setEntities(List<Entity> entities) {
+    public BatchUpdateRequest setEntities(List<Entity> entities) {
         this.entities = entities;
         return this;
     }
 
-    @XmlJavaTypeAdapter(GoldenRecordUpdateRequestEntityAdapter.class)
+    @XmlJavaTypeAdapter(BatchUpdateRequestEntityAdapter.class)
     public static class Entity {
         private String op;
         private String name;
@@ -100,7 +100,7 @@ public class GoldenRecordUpdateRequest {
             return false;
         }
 
-        GoldenRecordUpdateRequest that = (GoldenRecordUpdateRequest) o;
+        BatchUpdateRequest that = (BatchUpdateRequest) o;
 
         return Objects.equals(source, that.source) &&
                 Objects.equals(entities, that.entities);

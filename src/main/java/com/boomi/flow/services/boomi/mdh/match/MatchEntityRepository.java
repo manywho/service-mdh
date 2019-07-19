@@ -3,7 +3,7 @@ package com.boomi.flow.services.boomi.mdh.match;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.MObject;
@@ -78,27 +78,30 @@ public class MatchEntityRepository {
 
                         fields.put(idField, entity.getExternalId());
 
-                        return new GoldenRecordUpdateRequest.Entity()
+                        return new BatchUpdateRequest.Entity()
                                 .setOp(null)
                                 .setName(universe.getLayout().getModel().getName())
                                 .setFields(fields);
                     })
                     .collect(Collectors.toList());
 
-            // Now we can save the records into the Hub
-            var updateRequest = new GoldenRecordUpdateRequest()
+            // Now we ned to load the match entity information
+            var updateRequest = new BatchUpdateRequest()
                     .setSource(sourceId)
                     .setEntities(entities);
 
-            // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map? Do we care about creating golden records?
-            client.queryMatchEntity(
+            var matchEntityResponse = client.queryMatchEntity(
                     configuration.getAtomHostname(),
                     configuration.getAtomUsername(),
                     configuration.getAtomPassword(),
                     universe.getId().toString(),
                     updateRequest
             );
+
+            // add match Response to objects
         }
+
+
 
         return objects;
     }

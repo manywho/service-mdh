@@ -5,11 +5,13 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
+import okhttp3.mock.MockInterceptor;
+import okhttp3.mock.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatabaseSaveMatchEntryTests {
+
     @Mock
     private MdhClient client;
 
@@ -36,6 +39,7 @@ public class DatabaseSaveMatchEntryTests {
 
     @Test
     public void testSaveWithSingleExistingObjectReturnsObject() {
+
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
@@ -62,9 +66,9 @@ public class DatabaseSaveMatchEntryTests {
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting
-        var expectedRequest = new GoldenRecordUpdateRequest()
+        var expectedRequest = new BatchUpdateRequest()
                 .setEntities(List.of(
-                        new GoldenRecordUpdateRequest.Entity()
+                        new BatchUpdateRequest.Entity()
                                 .setName("testing")
                                 .setFields(Map.ofEntries(
                                         Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"),
@@ -77,7 +81,7 @@ public class DatabaseSaveMatchEntryTests {
                 .setSource("TESTING");
 
         verify(client)
-                .updateGoldenRecords(
+                .queryMatchEntity(
                         TestConstants.CONFIGURATION.getAtomHostname(),
                         TestConstants.CONFIGURATION.getAtomUsername(),
                         TestConstants.CONFIGURATION.getAtomPassword(),
