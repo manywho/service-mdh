@@ -93,25 +93,62 @@ public class MatchEntityRepository {
                     configuration.getAtomUsername(), configuration.getAtomPassword(), universe.getId().toString(),
                     updateRequest);
 
-            List<MatchEntityResponse.MatchResult> matches = matchResponse.getMatchResults();
+            List<MatchEntityResponse.MatchResult> matchesResult = matchResponse.getMatchResults();
 
-            results.addAll(matches);
+
+            results.addAll(matchesResult);
         }
 
-        objects.forEach(object -> methodPopulateObject(object, universe.getName(), idField, results));
+        objects.forEach(object -> addMatchResult(object, universe.getName(), idField, results));
 
         return objects;
     }
 
-    private static void methodPopulateObject(MObject object, String universe, String idField, List<MatchEntityResponse.MatchResult> matchResults) {
-        var matchEntity = matchResults.stream()
-                .filter(matchResult -> object.getExternalId().equals(((HashMap)(matchResult.getEntity().get("entity").get(universe))).get(idField)))
-                .findFirst();
+    private static void addMatchResult(MObject object, String universe, String idField, List<MatchEntityResponse.MatchResult> matchResults) {
 
-        matchEntity.get().getMatch().forEach(result -> addMatch(object, result));
+        Property propertyMatches = object.getProperties().stream()
+                .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.MATCH_FIELD))
+                .findFirst()
+                .orElseGet(() -> {
+                    Property p = new Property(FuzzyMatchDetialsConstants.MATCH_FIELD, new ArrayList<>());
+                    object.getProperties().add(p);
+
+                    return p;
+                });
+
+        Property propertyDuplicates = object.getProperties().stream()
+                .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.DUPLICATE_FIELD))
+                .findFirst()
+                .orElseGet(() -> {
+                    Property p = new Property(FuzzyMatchDetialsConstants.DUPLICATE_FIELD, new ArrayList<>());
+                    object.getProperties().add(p);
+
+                    return p;
+                });
+
+
+        Property propertyAlreadyLinked = object.getProperties().stream()
+                .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD))
+                .findFirst()
+                .orElseGet(() -> {
+                    Property p = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD, new ArrayList<>());
+                    object.getProperties().add(p);
+
+                    return p;
+                });
+
+//        List<MObject> matches = matchResults.stream()
+//                .filter(matchResult -> object.getExternalId().equals(((HashMap)(matchResult.getEntity().get("entity").get(universe))).get(idField)))
+//                .map(matchResult -> {
+//
+//                    matchResult.getMatch().stream()
+//
+//                });
+
+        //matchEntity.ifPresent(matchResult -> matchResult.getMatch().forEach(result -> addMatch(object, result)));
     }
 
-    private static void addMatch(MObject object, Map<String, Object> result) {
+    private static void addFuzzyMatchDetails(MObject object, Map<String, Object> result) {
         var fuzzyProperty = object.getProperties().stream()
                 .filter(property-> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS))
                 .findFirst();
@@ -122,8 +159,8 @@ public class MatchEntityRepository {
         } else {
             object.getProperties().add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, createEmptyFuzzyMatch()));
         }
-
     }
+
 
     private static MObject createEmptyFuzzyMatch() {
         var object = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
