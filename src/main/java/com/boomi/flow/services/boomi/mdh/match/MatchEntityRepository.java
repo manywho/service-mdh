@@ -10,10 +10,7 @@ import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MatchEntityRepository {
@@ -91,37 +88,54 @@ public class MatchEntityRepository {
                     .setSource(sourceId)
                     .setEntities(entities);
 
-            results.addAll(client.queryMatchEntity(
-                    configuration.getAtomHostname(),
-                    configuration.getAtomUsername(),
-                    configuration.getAtomPassword(),
-                    universe.getId().toString(),
-                    updateRequest
-                ).getMatchResults());
+
+            MatchEntityResponse matchResponse = client.queryMatchEntity(configuration.getAtomHostname(),
+                    configuration.getAtomUsername(), configuration.getAtomPassword(), universe.getId().toString(),
+                    updateRequest);
+
+            List<MatchEntityResponse.MatchResult> matches = matchResponse.getMatchResults();
+
+            results.addAll(matches);
         }
 
-        objects.forEach(object -> methodPopulateObject(object, universe.getName(), results));
+        objects.forEach(object -> methodPopulateObject(object, universe.getName(), idField, results));
 
         return objects;
     }
 
-    private static void methodPopulateObject(MObject object, String universe, List<MatchEntityResponse.MatchResult> matchResults) {
+    private static void methodPopulateObject(MObject object, String universe, String idField, List<MatchEntityResponse.MatchResult> matchResults) {
         var matchEntity = matchResults.stream()
-                .filter(matchResult -> object.getExternalId().equals(matchResult.getEntity().get(universe).get("id")))
+                .filter(matchResult -> object.getExternalId().equals(((HashMap)(matchResult.getEntity().get("entity").get(universe))).get(idField)))
                 .findFirst();
-
 
         matchEntity.get().getMatch().forEach(result -> addMatch(object, result));
     }
 
     private static void addMatch(MObject object, Map<String, Object> result) {
-        object.getProperties().stream()
-                .filter(property-> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.MATCH_FIELD))
-                .forEach(property -> {
-                    var currentListOfMatches = property.getObjectData();
+        var fuzzyProperty = object.getProperties().stream()
+                .filter(property-> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS))
+                .findFirst();
 
-                });
+        if (fuzzyProperty.isPresent()) {
+            fuzzyProperty.get().getObjectData().get(0).getProperties().forEach(p ->
+                    p.setContentValue(((Map<String, String>)result.get(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS)).get(p.getDeveloperName())));
+        } else {
+            object.getProperties().add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, createEmptyFuzzyMatch()));
+        }
+
     }
 
+    private static MObject createEmptyFuzzyMatch() {
+        var object = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
+        var properties = new ArrayList<Property>();
+        properties.add(new Property("field", ""));
+        properties.add(new Property("first", ""));
+        properties.add(new Property("second", ""));
+        properties.add(new Property("method", ""));
+        properties.add(new Property("matchStrength", ""));
+        properties.add(new Property("threshold", ""));
+        object.setProperties(properties);
 
+        return object;
+    }
 }

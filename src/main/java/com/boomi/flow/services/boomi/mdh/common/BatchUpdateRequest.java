@@ -4,14 +4,12 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @XmlRootElement(name = "batch")
 public class BatchUpdateRequest {
     private String source;
-    private List<Entity> entities;
+    private List<Entity> entities = new ArrayList<>();
 
     @XmlAttribute(name = "src")
     public String getSource() {
@@ -37,7 +35,7 @@ public class BatchUpdateRequest {
     public static class Entity {
         private String op;
         private String name;
-        private Map<String, Object> fields;
+        private Map<String, Object> fields = new HashMap<>();
 
         @XmlAttribute
         public String getOp() {
