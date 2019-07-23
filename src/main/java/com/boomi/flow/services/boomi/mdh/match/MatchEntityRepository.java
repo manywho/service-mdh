@@ -137,42 +137,44 @@ public class MatchEntityRepository {
                     return p;
                 });
 
-//        List<MObject> matches = matchResults.stream()
-//                .filter(matchResult -> object.getExternalId().equals(((HashMap)(matchResult.getEntity().get("entity").get(universe))).get(idField)))
-//                .map(matchResult -> {
-//
-//                    matchResult.getMatch().stream()
-//
-//                });
+        matchResults.stream()
+                .filter(matchResult -> object.getExternalId().equals(((HashMap)(matchResult.getEntity().get("entity").get(universe))).get(idField)))
+                .forEach(matchResult -> {
+                    addMatchesToProperty(propertyMatches, universe, matchResult.getMatch(), true);
+                    addMatchesToProperty(propertyDuplicates, universe, matchResult.getDuplicate(), true);
+                    addMatchesToProperty(propertyAlreadyLinked, universe, matchResult.getDuplicate(), false);
+                });
+    }
 
-        //matchEntity.ifPresent(matchResult -> matchResult.getMatch().forEach(result -> addMatch(object, result)));
+    private static void addMatchesToProperty(Property propertyMatches, String universe, List<Map<String, Object>> matchResults, boolean addFuzzyMatchDetails){
+        matchResults.forEach(matchResult -> {
+            var object = new MObject(universe);
+            ((Map<String, Object>) matchResult.get(universe)).entrySet().stream()
+                    .forEach(stringObjectEntry -> {
+                        var property = new Property(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+                        object.getProperties().add(property);
+                    });
+
+            if (addFuzzyMatchDetails) {
+                addFuzzyMatchDetails(object, (HashMap<String, Object>) matchResult.get(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
+            }
+            propertyMatches.getObjectData().add(object);
+        });
+
     }
 
     private static void addFuzzyMatchDetails(MObject object, Map<String, Object> result) {
-        var fuzzyProperty = object.getProperties().stream()
-                .filter(property-> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS))
-                .findFirst();
+        var fuzzyMatchEmpty = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
 
-        if (fuzzyProperty.isPresent()) {
-            fuzzyProperty.get().getObjectData().get(0).getProperties().forEach(p ->
-                    p.setContentValue(((Map<String, String>)result.get(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS)).get(p.getDeveloperName())));
-        } else {
-            object.getProperties().add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, createEmptyFuzzyMatch()));
-        }
-    }
-
-
-    private static MObject createEmptyFuzzyMatch() {
-        var object = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
         var properties = new ArrayList<Property>();
-        properties.add(new Property("field", ""));
-        properties.add(new Property("first", ""));
-        properties.add(new Property("second", ""));
-        properties.add(new Property("method", ""));
-        properties.add(new Property("matchStrength", ""));
-        properties.add(new Property("threshold", ""));
-        object.setProperties(properties);
+        properties.add(new Property("field", result.get("field")));
+        properties.add(new Property("first", result.get("first")));
+        properties.add(new Property("second", result.get("second")));
+        properties.add(new Property("method", result.get("method")));
+        properties.add(new Property("matchStrength", result.get("matchStrength")));
+        properties.add(new Property("threshold", result.get("threshold")));
+        fuzzyMatchEmpty.setProperties(properties);
 
-        return object;
+        object.getProperties().add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchEmpty));
     }
 }

@@ -90,23 +90,69 @@ public class DatabaseSaveMatchEntryTests {
         assertThat(result.get(0).getProperties().get(4).getDeveloperName(), equalTo("field 3 1"));
         assertThat(result.get(0).getProperties().get(4).getContentValue(), equalTo("some value 3"));
 
+        assertThat(result.get(0).getProperties().get(6).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.MATCH_FIELD));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getDeveloperName(), equalTo("testing"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().size(), equalTo(5));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("some value 1"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 1 2"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("some value 2"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("field 1 3"));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("some value 3"));
+
         assertThat(result.get(0).getProperties().get(5).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
         assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("name"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("first"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 1 1"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("second"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 1 2"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("method"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("k"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo("matchStrength"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(4).getContentValue(), equalTo("0.90666664"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(5).getDeveloperName(), equalTo("threshold"));
-//        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(5).getContentValue(), equalTo("0.85"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("name"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("first"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 1 1"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("second"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 1 2"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("method"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("k"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo("matchStrength"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(4).getContentValue(), equalTo("0.90666664"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(5).getDeveloperName(), equalTo("threshold"));
+        assertThat(result.get(0).getProperties().get(5).getObjectData().get(0).getProperties().get(5).getContentValue(), equalTo("0.85"));
 
-        assertThat(result.get(0).getProperties().get(6).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.MATCH_FIELD));
         assertThat(result.get(0).getProperties().get(7).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.DUPLICATE_FIELD));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getDeveloperName(), equalTo("testing"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().size(), equalTo(5));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("some value 1"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 1 2"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("some value 2"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("field 1 3"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("some value 3"));
+
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("name"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("first"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 1 1"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("second"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 1 2"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("method"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("k"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo("matchStrength"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(4).getContentValue(), equalTo("0.90666664"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(5).getDeveloperName(), equalTo("threshold"));
+        assertThat(result.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(5).getContentValue(), equalTo("0.85"));
+
+        assertThat(result.get(0).getProperties().get(8).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().size(), equalTo(4));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("some value 1"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 1 2"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("some value 2"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("field 1 3"));
+        assertThat(result.get(0).getProperties().get(8).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("some value 3"));
     }
 
     private MatchEntityResponse createMatchEntityResponse() {
@@ -143,6 +189,7 @@ public class DatabaseSaveMatchEntryTests {
 
         matchResult.setMatch(matches);
         matchResult.setDuplicate(new ArrayList<>(matches));
+
         matchEntityResponse.setMatchResults(List.of(matchResult));
         return matchEntityResponse;
     }
