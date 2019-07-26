@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +27,9 @@ public class MatchEntityResponse {
     public static class MatchResult {
         private String status;
         private String matchRule;
-        private Map<String, Map<String, Object>> entity;
-        private List<Map<String, Object>> match;
-        private List<Map<String, Object>> duplicate;
+        private Map<String, Map<String, Object>> entity = new HashMap<>();
+        private List<Map<String, Object>> match = new ArrayList<>();
+        private List<Map<String, Object>> duplicate = new ArrayList<>();
 
         @XmlAttribute
         public String getStatus() {

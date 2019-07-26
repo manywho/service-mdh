@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.MObject;
@@ -99,12 +100,13 @@ public class MatchEntityRepository {
             results.addAll(matchesResult);
         }
 
-        objects.forEach(object -> addMatchResult(object, universe.getName(), idField, results));
+        objects.forEach(object -> addMatchResult(object, universe, idField, results));
+        objects.forEach(object -> object.setDeveloperName(object.getDeveloperName().replace("golden-record", "match")));
 
         return objects;
     }
 
-    private static void addMatchResult(MObject object, String universe, String idField, List<MatchEntityResponse.MatchResult> matchResults) {
+    private static void addMatchResult(MObject object, Universe universe, String idField, List<MatchEntityResponse.MatchResult> matchResults) {
 
         Property propertyMatches = object.getProperties().stream()
                 .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.MATCH_FIELD))
@@ -138,7 +140,7 @@ public class MatchEntityRepository {
                 });
 
         matchResults.stream()
-                .filter(matchResult -> object.getExternalId().equals(((HashMap)(matchResult.getEntity().get("entity").get(universe))).get(idField)))
+                .filter(matchResult -> object.getExternalId().equals((matchResult.getEntity().get(universe.getName())).get(idField)))
                 .forEach(matchResult -> {
                     addMatchesToProperty(propertyMatches, universe, matchResult.getMatch(), true);
                     addMatchesToProperty(propertyDuplicates, universe, matchResult.getDuplicate(), true);
@@ -146,10 +148,10 @@ public class MatchEntityRepository {
                 });
     }
 
-    private static void addMatchesToProperty(Property propertyMatches, String universe, List<Map<String, Object>> matchResults, boolean addFuzzyMatchDetails){
+    private static void addMatchesToProperty(Property propertyMatches, Universe universe, List<Map<String, Object>> matchResults, boolean addFuzzyMatchDetails){
         matchResults.forEach(matchResult -> {
-            var object = new MObject(universe);
-            ((Map<String, Object>) matchResult.get(universe)).entrySet().stream()
+            var object = new MObject(universe.getId().toString() + " match");
+            ((Map<String, Object>) matchResult.get(universe.getName())).entrySet().stream()
                     .forEach(stringObjectEntry -> {
                         var property = new Property(stringObjectEntry.getKey(), stringObjectEntry.getValue());
                         object.getProperties().add(property);
@@ -167,12 +169,14 @@ public class MatchEntityRepository {
         var fuzzyMatchEmpty = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
 
         var properties = new ArrayList<Property>();
-        properties.add(new Property("field", result.get("field")));
-        properties.add(new Property("first", result.get("first")));
-        properties.add(new Property("second", result.get("second")));
-        properties.add(new Property("method", result.get("method")));
-        properties.add(new Property("matchStrength", result.get("matchStrength")));
-        properties.add(new Property("threshold", result.get("threshold")));
+        if (result != null) {
+            properties.add(new Property("field", result.get("field")));
+            properties.add(new Property("first", result.get("first")));
+            properties.add(new Property("second", result.get("second")));
+            properties.add(new Property("method", result.get("method")));
+            properties.add(new Property("matchStrength", result.get("matchStrength")));
+            properties.add(new Property("threshold", result.get("threshold")));
+        }
         fuzzyMatchEmpty.setProperties(properties);
 
         object.getProperties().add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchEmpty));

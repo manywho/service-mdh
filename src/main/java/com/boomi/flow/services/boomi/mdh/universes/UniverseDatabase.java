@@ -3,6 +3,7 @@ package com.boomi.flow.services.boomi.mdh.universes;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.manywho.sdk.api.draw.content.Command;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
+import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.services.database.ReadOnlyDatabase;
 
@@ -28,7 +29,7 @@ public class UniverseDatabase implements ReadOnlyDatabase<ApplicationConfigurati
     }
 
     @Override
-    public List<Universe> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter) {
+    public List<Universe> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter, List<MObject> objects) {
         return repository.findAll(
                 configuration.getAtomHostname(),
                 configuration.getAtomUsername(),

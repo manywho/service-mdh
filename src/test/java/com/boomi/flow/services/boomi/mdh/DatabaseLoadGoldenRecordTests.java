@@ -54,7 +54,7 @@ public class DatabaseLoadGoldenRecordTests {
                 .thenReturn(response);
 
         List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
@@ -78,7 +78,7 @@ public class DatabaseLoadGoldenRecordTests {
                 .thenReturn(response);
 
         List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
                 .queryGoldenRecords(
@@ -185,7 +185,7 @@ public class DatabaseLoadGoldenRecordTests {
                 .thenReturn(response);
 
         new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter);
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)
                 .queryGoldenRecords(

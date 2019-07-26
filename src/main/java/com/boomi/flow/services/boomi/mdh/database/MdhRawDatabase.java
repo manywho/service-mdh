@@ -32,7 +32,7 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     }
 
     @Override
-    public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter) {
+    public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
         if (typeName.endsWith("quarantine")) {
@@ -45,6 +45,12 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
             var universe = removeEndingSubstring(typeName, " golden-record");
 
             return goldenRecordRepository.findAll(configuration, universe, filter);
+        }
+
+        if (typeName.endsWith("match")) {
+            var universe = removeEndingSubstring(typeName," match");
+
+            return matchEntityRespository.matchEntity(configuration, universe, objects);
         }
 
         // TODO
@@ -100,12 +106,6 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
             var universe = removeEndingSubstring(typeName," golden-record");
 
             return goldenRecordRepository.update(configuration, universe, objects);
-        }
-
-        if (typeName.endsWith("match")) {
-            var universe = removeEndingSubstring(typeName," match");
-
-            return matchEntityRespository.matchEntity(configuration, universe, objects);
         }
 
         throw new ServiceProblemException(400, "The type " + typeName + " does not support saving");
