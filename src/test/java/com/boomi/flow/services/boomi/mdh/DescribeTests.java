@@ -86,7 +86,33 @@ public class DescribeTests {
                 .body("install.typeElements[0].properties[6].developerName", equalTo("Threshold"))
                 .body("install.typeElements[0].properties[6].contentType", equalTo("ContentString"))
 
-                .body("install.typeElements[0].bindings", hasSize(0))
+                .body("install.typeElements[0].bindings", hasSize(1))
+                .body("install.typeElements[0].bindings[0].databaseTableName", equalTo("Fuzzy Match Details"))
+                .body("install.typeElements[0].bindings[0].developerName", equalTo("Fuzzy Match Details"))
+                .body("install.typeElements[0].bindings[0].developerSummary", equalTo("The Fuzzy Match Details object structure"))
+                .body("install.typeElements[0].bindings[0].id", nullValue())
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[0].typeElementPropertyDeveloperName", equalTo("Field"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[0].databaseFieldName", equalTo("Field"))
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("First"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[1].databaseFieldName", equalTo("First"))
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("ID"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[2].databaseFieldName", equalTo("ID"))
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Match Strength"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[3].databaseFieldName", equalTo("Match Strength"))
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[4].typeElementPropertyDeveloperName", equalTo("Method"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[4].databaseFieldName", equalTo("Method"))
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[5].typeElementPropertyDeveloperName", equalTo("Second"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[5].databaseFieldName", equalTo("Second"))
+
+                .body("install.typeElements[0].bindings[0].propertyBindings[6].typeElementPropertyDeveloperName", equalTo("Threshold"))
+                .body("install.typeElements[0].bindings[0].propertyBindings[6].databaseFieldName", equalTo("Threshold"))
+
 
                 .body("install.typeElements", hasSize(2))
                 .body("install.typeElements[1].developerName", equalTo("Universe"))
@@ -181,7 +207,7 @@ public class DescribeTests {
                 .body("culture", nullValue());
 
         response
-                .body("install.typeElements[0].bindings", hasSize(0))
+                .body("install.typeElements[0].bindings", hasSize(1))
                 .body("install.typeElements[0].developerName", equalTo("Fuzzy Match Details"))
                 .body("install.typeElements[0].developerSummary", equalTo("The Fuzzy Match Details object structure"))
                 .body("install.typeElements[0].elementType", equalTo("TYPE"))
@@ -300,15 +326,15 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[0].propertyBindings[0].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[0].propertyBindings[1].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[0].propertyBindings[1].databaseFieldName", equalTo("___sourceId"))
-                .body("install.typeElements[2].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Filter: Source ID"))
+                .body("install.typeElements[2].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Golden Record (Filter): Source ID"))
                 .body("install.typeElements[2].bindings[0].propertyBindings[1].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[0].propertyBindings[2].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[0].propertyBindings[2].databaseFieldName", equalTo("___filterCreatedDate"))
-                .body("install.typeElements[2].bindings[0].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Filter: Created Date"))
+                .body("install.typeElements[2].bindings[0].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Golden Record/Quarantine (Filter): Created Date"))
                 .body("install.typeElements[2].bindings[0].propertyBindings[2].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[0].propertyBindings[3].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[0].propertyBindings[3].databaseFieldName", equalTo("___filterUpdatedDate"))
-                .body("install.typeElements[2].bindings[0].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Filter: Updated Date"))
+                .body("install.typeElements[2].bindings[0].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Golden Record (Filter): Updated Date"))
                 .body("install.typeElements[2].bindings[0].propertyBindings[3].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[0].serviceElementId", nullValue())
 
@@ -324,12 +350,12 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[1].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[1].databaseFieldName", equalTo("status"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Status"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Quarantine: Status"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[1].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[2].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[2].databaseFieldName", equalTo("___sourceId"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Filter: Source ID"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Golden Record (Filter): Source ID"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[2].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[3].databaseContentType", nullValue())
@@ -339,36 +365,36 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[4].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[4].databaseFieldName", equalTo("___filterCreatedDate"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[4].typeElementPropertyDeveloperName", equalTo("Filter: Created Date"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[4].typeElementPropertyDeveloperName", equalTo("Golden Record/Quarantine (Filter): Created Date"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[4].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[5].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[5].databaseFieldName", equalTo("endDate"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[5].typeElementPropertyDeveloperName", equalTo("End Date"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[5].typeElementPropertyDeveloperName", equalTo("Quarantine (Filter): End Date"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[5].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[6].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[6].databaseFieldName", equalTo("transactionId"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[6].typeElementPropertyDeveloperName", equalTo("Transaction ID"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[6].typeElementPropertyDeveloperName", equalTo("Quarantine: Transaction ID"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[6].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[7].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[7].databaseFieldName", equalTo("cause"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[7].typeElementPropertyDeveloperName", equalTo("Cause"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[7].typeElementPropertyDeveloperName", equalTo("Quarantine: Cause"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[7].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[8].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[8].databaseFieldName", equalTo("reason"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[8].typeElementPropertyDeveloperName", equalTo("Reason"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[8].typeElementPropertyDeveloperName", equalTo("Quarantine: Reason"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[8].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
                 .body("install.typeElements[2].bindings[1].propertyBindings[9].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[1].propertyBindings[9].databaseFieldName", equalTo("resolution"))
-                .body("install.typeElements[2].bindings[1].propertyBindings[9].typeElementPropertyDeveloperName", equalTo("Resolution"))
+                .body("install.typeElements[2].bindings[1].propertyBindings[9].typeElementPropertyDeveloperName", equalTo("Quarantine: Resolution"))
                 .body("install.typeElements[2].bindings[1].propertyBindings[9].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
@@ -389,18 +415,18 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[2].propertyBindings[1].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseContentType", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseFieldName", equalTo("Match"))
-                .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Match"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseFieldName", equalTo("Matched Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Matched Entities"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseContentType", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseFieldName", equalTo("Duplicate"))
-                .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Duplicate"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseFieldName", equalTo("Duplicated Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Duplicated Entities"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[4].databaseContentType", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings[4].databaseFieldName", equalTo("Already Linked"))
-                .body("install.typeElements[2].bindings[2].propertyBindings[4].typeElementPropertyDeveloperName", equalTo("Already Linked"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[4].databaseFieldName", equalTo("Already Linked Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[4].typeElementPropertyDeveloperName", equalTo("Already Linked Entities"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[4].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].serviceElementId", nullValue())
@@ -420,21 +446,21 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].properties[1].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[1].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[1].developerName", equalTo("Filter: Source ID"))
+                .body("install.typeElements[2].properties[1].developerName", equalTo("Golden Record (Filter): Source ID"))
                 .body("install.typeElements[2].properties[1].id", nullValue())
                 .body("install.typeElements[2].properties[1].typeElementDeveloperName", nullValue())
                 .body("install.typeElements[2].properties[1].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[2].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[2].contentType", equalTo("ContentDateTime"))
-                .body("install.typeElements[2].properties[2].developerName", equalTo("Filter: Created Date"))
+                .body("install.typeElements[2].properties[2].developerName", equalTo("Golden Record/Quarantine (Filter): Created Date"))
                 .body("install.typeElements[2].properties[2].id", nullValue())
                 .body("install.typeElements[2].properties[2].typeElementDeveloperName", nullValue())
                 .body("install.typeElements[2].properties[2].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[3].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[3].contentType", equalTo("ContentDateTime"))
-                .body("install.typeElements[2].properties[3].developerName", equalTo("Filter: Updated Date"))
+                .body("install.typeElements[2].properties[3].developerName", equalTo("Golden Record (Filter): Updated Date"))
                 .body("install.typeElements[2].properties[3].id", nullValue())
                 .body("install.typeElements[2].properties[3].typeElementDeveloperName", nullValue())
                 .body("install.typeElements[2].properties[3].typeElementId", nullValue())
@@ -448,42 +474,42 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].properties[5].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[5].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[5].developerName", equalTo("Status"))
+                .body("install.typeElements[2].properties[5].developerName", equalTo("Quarantine: Status"))
                 .body("install.typeElements[2].properties[5].id", nullValue())
                 .body("install.typeElements[2].properties[5].typeElementDeveloperName",nullValue())
                 .body("install.typeElements[2].properties[5].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[6].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[6].contentType", equalTo("ContentDateTime"))
-                .body("install.typeElements[2].properties[6].developerName", equalTo("End Date"))
+                .body("install.typeElements[2].properties[6].developerName", equalTo("Quarantine (Filter): End Date"))
                 .body("install.typeElements[2].properties[6].id", nullValue())
                 .body("install.typeElements[2].properties[6].typeElementDeveloperName",nullValue())
                 .body("install.typeElements[2].properties[6].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[7].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[7].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[7].developerName", equalTo("Transaction ID"))
+                .body("install.typeElements[2].properties[7].developerName", equalTo("Quarantine: Transaction ID"))
                 .body("install.typeElements[2].properties[7].id", nullValue())
                 .body("install.typeElements[2].properties[7].typeElementDeveloperName",nullValue())
                 .body("install.typeElements[2].properties[7].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[8].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[8].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[8].developerName", equalTo("Cause"))
+                .body("install.typeElements[2].properties[8].developerName", equalTo("Quarantine: Cause"))
                 .body("install.typeElements[2].properties[8].id", nullValue())
                 .body("install.typeElements[2].properties[8].typeElementDeveloperName",nullValue())
                 .body("install.typeElements[2].properties[8].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[9].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[9].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[9].developerName", equalTo("Reason"))
+                .body("install.typeElements[2].properties[9].developerName", equalTo("Quarantine: Reason"))
                 .body("install.typeElements[2].properties[9].id", nullValue())
                 .body("install.typeElements[2].properties[9].typeElementDeveloperName",nullValue())
                 .body("install.typeElements[2].properties[9].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[10].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[10].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[10].developerName", equalTo("Resolution"))
+                .body("install.typeElements[2].properties[10].developerName", equalTo("Quarantine: Resolution"))
                 .body("install.typeElements[2].properties[10].id", nullValue())
                 .body("install.typeElements[2].properties[10].typeElementDeveloperName",nullValue())
                 .body("install.typeElements[2].properties[10].typeElementId", nullValue())
@@ -497,21 +523,21 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].properties[12].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[12].contentType", equalTo("ContentList"))
-                .body("install.typeElements[2].properties[12].developerName", equalTo("Duplicate"))
+                .body("install.typeElements[2].properties[12].developerName", equalTo("Duplicated Entities"))
                 .body("install.typeElements[2].properties[12].id", nullValue())
                 .body("install.typeElements[2].properties[12].typeElementDeveloperName", equalTo("artist"))
                 .body("install.typeElements[2].properties[12].typeElementId",  nullValue())
 
                 .body("install.typeElements[2].properties[13].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[13].contentType", equalTo("ContentList"))
-                .body("install.typeElements[2].properties[13].developerName", equalTo("Match"))
+                .body("install.typeElements[2].properties[13].developerName", equalTo("Matched Entities"))
                 .body("install.typeElements[2].properties[13].id", nullValue())
                 .body("install.typeElements[2].properties[13].typeElementDeveloperName", equalTo("artist"))
                 .body("install.typeElements[2].properties[13].typeElementId", nullValue())
 
                 .body("install.typeElements[2].properties[14].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[14].contentType", equalTo("ContentList"))
-                .body("install.typeElements[2].properties[14].developerName", equalTo("Already Linked"))
+                .body("install.typeElements[2].properties[14].developerName", equalTo("Already Linked Entities"))
                 .body("install.typeElements[2].properties[14].id", nullValue())
                 .body("install.typeElements[2].properties[14].typeElementDeveloperName",  equalTo("artist"))
                 .body("install.typeElements[2].properties[14].typeElementId", nullValue())

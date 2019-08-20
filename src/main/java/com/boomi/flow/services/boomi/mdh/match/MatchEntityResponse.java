@@ -27,6 +27,7 @@ public class MatchEntityResponse {
     public static class MatchResult {
         private String status;
         private String matchRule;
+        private String idResource;
         private Map<String, Map<String, Object>> entity = new HashMap<>();
         private List<Map<String, Object>> match = new ArrayList<>();
         private List<Map<String, Object>> duplicate = new ArrayList<>();
@@ -47,6 +48,14 @@ public class MatchEntityResponse {
 
         public void setMatchRule(String matchRule) {
             this.matchRule = matchRule;
+        }
+
+        public String getIdResource() {
+            return idResource;
+        }
+
+        public void setIdResource(String idResource) {
+            this.idResource = idResource;
         }
 
         @XmlElement(name = "entity")

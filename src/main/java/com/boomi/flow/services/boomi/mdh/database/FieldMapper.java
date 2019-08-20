@@ -69,9 +69,9 @@ class FieldMapper {
 
     private static void addPropertiesForMatchEntities(String name, List<TypeElementProperty> properties) {
         properties.add(new TypeElementProperty("Fuzzy Match Details", ContentType.Object, "Fuzzy Match Details"));
-        properties.add(new TypeElementProperty("Duplicate", ContentType.List, name));
-        properties.add(new TypeElementProperty("Match", ContentType.List, name));
-        properties.add(new TypeElementProperty("Already Linked", ContentType.List, name));
+        properties.add(new TypeElementProperty("Duplicated Entities", ContentType.List, name));
+        properties.add(new TypeElementProperty("Matched Entities", ContentType.List, name));
+        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, name));
     }
 
     private static void addPropertiesForGoldenRecord(List<TypeElementProperty> properties) {

@@ -12,25 +12,25 @@ import static com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetialsConstants
 public class FuzzyMatchDetails implements Type {
 
     @Type.Identifier
-    @Type.Property(name="ID", contentType = ContentType.String, bound = false)
+    @Type.Property(name="ID", contentType = ContentType.String)
     private UUID id;
 
-    @Type.Property(name="Field", contentType = ContentType.String, bound = false)
+    @Type.Property(name="Field", contentType = ContentType.String)
     private String field;
 
-    @Type.Property(name="First", contentType = ContentType.String, bound = false)
+    @Type.Property(name="First", contentType = ContentType.String)
     private String first;
 
-    @Type.Property(name="Second", contentType = ContentType.String, bound = false)
+    @Type.Property(name="Second", contentType = ContentType.String)
     private String second;
 
-    @Type.Property(name="Method", contentType = ContentType.String, bound = false)
+    @Type.Property(name="Method", contentType = ContentType.String)
     private String method;
 
-    @Type.Property(name="Match Strength", contentType = ContentType.String, bound = false)
+    @Type.Property(name="Match Strength", contentType = ContentType.String)
     private String matchStrength;
 
-    @Type.Property(name="Threshold", contentType = ContentType.String, bound = false)
+    @Type.Property(name="Threshold", contentType = ContentType.String)
     private String threshold;
 
     public UUID getId() {

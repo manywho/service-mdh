@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh.match;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
+import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -27,27 +28,9 @@ public class MatchEntityRepository {
         var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
         List<MatchEntityResponse.MatchResult> results = new ArrayList<>();
 
-        // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
-        String idField = universe.getLayout().getIdXPath()
-                .split("/")
-                [2];
-
-        for (var object : objects) {
-            if (Strings.isNullOrEmpty(object.getExternalId())) {
-                // We are requesting an object without id
-                var id = UUID.randomUUID().toString();
-
-                // Set the ID property, so it can be referenced in a Flow
-                for (var property : object.getProperties()) {
-                    if (property.getDeveloperName().equals(idField)) {
-                        property.setContentValue(id);
-                    }
-                }
-
-                // Set the object's external ID too, which is only used inside Flow itself
-                object.setExternalId(id);
-            }
-        }
+        objects.stream()
+                .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
+                .forEach(object -> Entities.AddRandomUniqueId(object, universe.getIdField()));
 
         var objectsBySource = objects.stream()
                 .collect(Collectors.groupingBy(object -> object.getProperties()
@@ -75,7 +58,7 @@ public class MatchEntityRepository {
                                         property -> (Object) property.getContentValue()
                                 ));
 
-                        fields.put(idField, entity.getExternalId());
+                        fields.put(universe.getIdField(), entity.getExternalId());
 
                         return new BatchUpdateRequest.Entity()
                                 .setOp(null)
@@ -95,87 +78,65 @@ public class MatchEntityRepository {
                     updateRequest);
 
             List<MatchEntityResponse.MatchResult> matchesResult = matchResponse.getMatchResults();
-
-
+            matchesResult.forEach(result -> result.setIdResource(sourceId));
             results.addAll(matchesResult);
         }
 
-        objects.forEach(object -> addMatchResult(object, universe, idField, results));
-        objects.forEach(object -> object.setDeveloperName(object.getDeveloperName().replace("golden-record", "match")));
+        return results.stream()
+                .filter(result -> result.getEntity() != null && result.getEntity().get(universe.getName()) != null)
+                .map(result -> {
+                    var externalId = result.getEntity().get(universe.getName()).get(universe.getIdField()).toString();
 
-        return objects;
+                    var propertiesMatched = new Property(FuzzyMatchDetialsConstants.MATCH_FIELD, new ArrayList<>());
+                    var propertiesDuplicated = new Property(FuzzyMatchDetialsConstants.DUPLICATE_FIELD, new ArrayList<>());
+                    var propertiesAlreadyLinked = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD, new ArrayList<>());
+
+
+                    var object = new MObject(universeId + " match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
+
+                    var properties =  new ArrayList<Property>();
+                    result.getEntity().get(universe.getName())
+                            .forEach((key, value) -> properties.add(new Property(key, (String) value)));
+
+                    properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
+                    properties.addAll(object.getProperties());
+
+                    object.setProperties(properties);
+
+                    result.getMatch().forEach(match -> addMatchesToProperty(propertiesMatched, universe, match, universe.getIdField(), true));
+                    result.getDuplicate().forEach(match -> addMatchesToProperty(propertiesDuplicated, universe, match, universe.getIdField(), true));
+                    result.getDuplicate().forEach(match -> addMatchesToProperty(propertiesAlreadyLinked, universe, match, universe.getIdField(), false));
+
+                    return object;
+                }).collect(Collectors.toList());
     }
 
-    private static void addMatchResult(MObject object, Universe universe, String idField, List<MatchEntityResponse.MatchResult> matchResults) {
-
-        Property propertyMatches = object.getProperties().stream()
-                .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.MATCH_FIELD))
-                .findFirst()
-                .orElseGet(() -> {
-                    Property p = new Property(FuzzyMatchDetialsConstants.MATCH_FIELD, new ArrayList<>());
-                    object.getProperties().add(p);
-
-                    return p;
-                });
-
-        Property propertyDuplicates = object.getProperties().stream()
-                .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.DUPLICATE_FIELD))
-                .findFirst()
-                .orElseGet(() -> {
-                    Property p = new Property(FuzzyMatchDetialsConstants.DUPLICATE_FIELD, new ArrayList<>());
-                    object.getProperties().add(p);
-
-                    return p;
-                });
-
-
-        Property propertyAlreadyLinked = object.getProperties().stream()
-                .filter(property -> property.getDeveloperName().equals(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD))
-                .findFirst()
-                .orElseGet(() -> {
-                    Property p = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD, new ArrayList<>());
-                    object.getProperties().add(p);
-
-                    return p;
-                });
-
-        matchResults.stream()
-                .filter(matchResult -> object.getExternalId().equals((matchResult.getEntity().get(universe.getName())).get(idField)))
-                .forEach(matchResult -> {
-                    addMatchesToProperty(propertyMatches, universe, matchResult.getMatch(), true);
-                    addMatchesToProperty(propertyDuplicates, universe, matchResult.getDuplicate(), true);
-                    addMatchesToProperty(propertyAlreadyLinked, universe, matchResult.getDuplicate(), false);
-                });
-    }
-
-    private static void addMatchesToProperty(Property propertyMatches, Universe universe, List<Map<String, Object>> matchResults, boolean addFuzzyMatchDetails){
-        matchResults.forEach(matchResult -> {
+    private static void addMatchesToProperty(Property propertyMatches, Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
+            var entity = (Map<String, Object>)matchResults.get(universe.getName());
             var object = new MObject(universe.getId().toString() + " match");
-            ((Map<String, Object>) matchResult.get(universe.getName())).entrySet().stream()
-                    .forEach(stringObjectEntry -> {
-                        var property = new Property(stringObjectEntry.getKey(), stringObjectEntry.getValue());
-                        object.getProperties().add(property);
-                    });
+            object.setExternalId(entity.get(idField).toString());
+            entity.forEach((key, value) -> {
+                var property = new Property(key, value);
+                object.getProperties().add(property);
+            });
 
             if (addFuzzyMatchDetails) {
-                addFuzzyMatchDetails(object, (HashMap<String, Object>) matchResult.get(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
+                addFuzzyMatchDetails(object, (HashMap<String, Object>) matchResults.get("fuzzyMatchDetails"));
             }
             propertyMatches.getObjectData().add(object);
-        });
-
     }
 
     private static void addFuzzyMatchDetails(MObject object, Map<String, Object> result) {
         var fuzzyMatchEmpty = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
-
+        fuzzyMatchEmpty.setExternalId(UUID.randomUUID().toString());
         var properties = new ArrayList<Property>();
         if (result != null) {
-            properties.add(new Property("field", result.get("field")));
-            properties.add(new Property("first", result.get("first")));
-            properties.add(new Property("second", result.get("second")));
-            properties.add(new Property("method", result.get("method")));
-            properties.add(new Property("matchStrength", result.get("matchStrength")));
-            properties.add(new Property("threshold", result.get("threshold")));
+            properties.add(new Property("Field", result.get("field")));
+            properties.add(new Property("First", result.get("first")));
+            properties.add(new Property("Second", result.get("second")));
+            properties.add(new Property("Method", result.get("method")));
+            properties.add(new Property("Match Strength", result.get("matchStrength")));
+            properties.add(new Property("Threshold", result.get("threshold")));
         }
         fuzzyMatchEmpty.setProperties(properties);
 

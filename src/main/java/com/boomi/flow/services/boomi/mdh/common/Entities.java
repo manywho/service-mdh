@@ -7,6 +7,7 @@ import com.manywho.sdk.api.run.elements.type.Property;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Entities {
@@ -39,6 +40,21 @@ public class Entities {
         properties.add(new Property(QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, entry.getSourceEntityId()));
 
         return new MObject(universeId + " quarantine", entry.getTransactionId(), properties);
+    }
+
+    public static void AddRandomUniqueId(MObject object, String idField) {
+        // We are requesting an object without id
+        var id = UUID.randomUUID().toString();
+
+        // Set the ID property, so it can be referenced in a Flow
+        for (var property : object.getProperties()) {
+            if (property.getDeveloperName().equals(idField)) {
+                property.setContentValue(id);
+            }
+        }
+
+        // Set the object's external ID too, which is only used inside Flow itself
+        object.setExternalId(id);
     }
 
     private static List<Property> createPropertiesModel(String id, Map<String, Object> map) {

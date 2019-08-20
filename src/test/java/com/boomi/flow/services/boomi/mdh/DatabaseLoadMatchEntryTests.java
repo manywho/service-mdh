@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DatabaseSaveMatchEntryTests {
+public class DatabaseLoadMatchEntryTests {
     @Mock
     private MdhClient client;
 
@@ -35,7 +35,7 @@ public class DatabaseSaveMatchEntryTests {
             .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731 match");
 
     @Test
-    public void testSaveMatchEntityObjectsReturnsObject() {
+    public void testLoadMatchEntityObjectsReturnsObject() {
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
@@ -51,7 +51,7 @@ public class DatabaseSaveMatchEntryTests {
 
         // Update using the incoming object
         List<MObject> result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
-                .update(TestConstants.CONFIGURATION, objectDataType, List.of(createObjectToUpdate()));
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, List.of(createObjectToUpdate()));
 
         // Make sure we perform the update in MDH, with the request that we're expecting
         var expectedRequest = new BatchUpdateRequest()
@@ -78,20 +78,20 @@ public class DatabaseSaveMatchEntryTests {
         assertThat(result.get(0), not(nullValue()));
         assertThat(result.get(0).getDeveloperName(), equalTo(objectDataType.getDeveloperName()));
         assertThat(result.get(0).getExternalId(), not(isEmptyOrNullString()));
-        assertThat(result.get(0).getProperties(), hasSize(9));
+        assertThat(result.get(0).getProperties(), hasSize(8));
         assertThat(result.get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
         assertThat(result.get(0).getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
-        assertThat(result.get(0).getProperties().get(1).getDeveloperName(), equalTo("___sourceId"));
-        assertThat(result.get(0).getProperties().get(1).getContentValue(), equalTo("TESTING"));
-        assertThat(result.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 1 1"));
-        assertThat(result.get(0).getProperties().get(2).getContentValue(), equalTo("some value 1"));
-        assertThat(result.get(0).getProperties().get(3).getDeveloperName(), equalTo("field 2 1"));
-        assertThat(result.get(0).getProperties().get(3).getContentValue(), equalTo("some value 2"));
-        assertThat(result.get(0).getProperties().get(4).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(result.get(0).getProperties().get(4).getContentValue(), equalTo("some value 3"));
+        assertThat(result.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(result.get(0).getProperties().get(1).getContentValue(), equalTo("some value 1"));
+        assertThat(result.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 1 2"));
+        assertThat(result.get(0).getProperties().get(2).getContentValue(), equalTo("some value 2"));
+        assertThat(result.get(0).getProperties().get(3).getDeveloperName(), equalTo("field 1 3"));
+        assertThat(result.get(0).getProperties().get(3).getContentValue(), equalTo("some value 3"));
+        assertThat(result.get(0).getProperties().get(4).getDeveloperName(), equalTo("___sourceId"));
+        assertThat(result.get(0).getProperties().get(4).getContentValue(), equalTo("TESTING"));
 
-        assertThat(result.get(0).getProperties().get(6).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.MATCH_FIELD));
-        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getDeveloperName(), equalTo("testing"));
+        assertThat(result.get(0).getProperties().get(6).getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.DUPLICATE_FIELD));
+        assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
         assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().size(), equalTo(5));
         assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
         assertThat(result.get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
@@ -167,14 +167,9 @@ public class DatabaseSaveMatchEntryTests {
         properties.put("field 1 1", "some value 1");
         properties.put("field 1 2", "some value 2");
         properties.put("field 1 3", "some value 3");
-        var testing = new HashMap<String, Object>();
+        var testing = new HashMap<String, Map<String, Object>>();
         testing.put("testing", properties);
-        matches.add(testing);
-
-        HashMap<String, Map<String, Object>> entityResult = new HashMap<>();
-        entityResult.put("entity", testing);
-
-        matchResult.setEntity(entityResult);
+        matchResult.setEntity(testing);
 
         var fuzzyProperties = new HashMap<String, Object>();
         fuzzyProperties.put("field", "name");
@@ -189,8 +184,8 @@ public class DatabaseSaveMatchEntryTests {
 
         matchResult.setMatch(matches);
         matchResult.setDuplicate(new ArrayList<>(matches));
-
         matchEntityResponse.setMatchResults(List.of(matchResult));
+
         return matchEntityResponse;
     }
 

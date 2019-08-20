@@ -73,7 +73,7 @@ public class GoldenRecordRepository {
 
                     queryFilter.setUpdatedDate(dateFilter);
                 }
-                
+
                 var entityFields = filter.getWhere().stream()
                         .sorted(Comparator.comparing(ListFilterWhere::getColumnName))
                         .dropWhile(where -> Arrays.asList(GoldenRecordConstants.CREATED_DATE_FIELD, GoldenRecordConstants.UPDATED_DATE_FIELD).contains(where.getColumnName()))
@@ -161,27 +161,9 @@ public class GoldenRecordRepository {
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
         var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
 
-        // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
-        String idField = universe.getLayout().getIdXPath()
-                .split("/")
-                [2];
-
-        for (var object : objects) {
-            if (Strings.isNullOrEmpty(object.getExternalId())) {
-                // We're creating this object so let's collectTypes an ID
-                var id = UUID.randomUUID().toString();
-
-                // Set the ID property, so it can be referenced in a Flow
-                for (var property : object.getProperties()) {
-                    if (property.getDeveloperName().equals(idField)) {
-                        property.setContentValue(id);
-                    }
-                }
-
-                // Set the object's external ID too, which is only used inside Flow itself
-                object.setExternalId(id);
-            }
-        }
+        objects.stream()
+                .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
+                .forEach(object -> Entities.AddRandomUniqueId(object, universe.getIdField()));
 
         var objectsBySource = objects.stream()
                 .collect(Collectors.groupingBy(object -> object.getProperties()
@@ -209,7 +191,7 @@ public class GoldenRecordRepository {
                                         property -> (Object) property.getContentValue()
                                 ));
 
-                        fields.put(idField, entity.getExternalId());
+                        fields.put(universe.getIdField(), entity.getExternalId());
 
                         return new BatchUpdateRequest.Entity()
                                 .setOp(operation)

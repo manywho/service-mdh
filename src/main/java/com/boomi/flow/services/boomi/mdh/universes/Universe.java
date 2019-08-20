@@ -72,6 +72,12 @@ public class Universe implements Type {
         this.sources = sources;
     }
 
+
+    public String getIdField() {
+        // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
+        return this.getLayout().getIdXPath().split("/")[2];
+    }
+
     public static class Sources {
         private List<Source> sources = new ArrayList<>();
 
