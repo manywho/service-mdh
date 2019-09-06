@@ -1,10 +1,11 @@
 package com.boomi.flow.services.boomi.mdh.client;
 
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.boomi.flow.services.boomi.mdh.universes.UniversesResponse;
 import com.manywho.sdk.api.run.ServiceProblemException;
@@ -136,7 +137,7 @@ public class MdhClient {
         return sendRequestExpectingResponse(username, password, url, query, QuarantineQueryResponse.class, "quarantine entry");
     }
 
-    public void updateGoldenRecords(String hostname, String username, String password, String universe, GoldenRecordUpdateRequest request) {
+    public void updateGoldenRecords(String hostname, String username, String password, String universe, BatchUpdateRequest request) {
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("https")
                 .host(hostname)
@@ -174,6 +175,17 @@ public class MdhClient {
                 .build();
 
         return sendRequestExpectingResponse(username, password, url, query, GoldenRecordQueryResponse.class, "golden record");
+    }
+
+    public MatchEntityResponse  queryMatchEntity(String hostname, String username, String password, String universe, BatchUpdateRequest query) {
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("https")
+                .host(hostname)
+                .addPathSegments("mdm/universes")
+                .addPathSegments(universe)
+                .addPathSegments("match")
+                .build();
+        return sendRequestExpectingResponse(username, password, url, query, MatchEntityResponse.class, "match");
     }
 
     private Response sendRequest(String username, String password, HttpUrl url, Object query, String type) {

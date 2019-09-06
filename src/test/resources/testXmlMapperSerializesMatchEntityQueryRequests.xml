@@ -1,0 +1,36 @@
+<batch src="SF">
+    <contact>
+        <id>1</id>
+        <name>bobby</name>
+        <city>berwyn</city>
+        <phones>
+            <phone>
+                <number>311 555-1234</number>
+                <type>home</type>
+            </phone>
+            <phone>
+                <number>311 555-4321</number>
+                <type>mobile</type>
+            </phone>
+        </phones>
+        <email>bob@gmail.com</email>
+        <spouse>1001</spouse>
+    </contact>
+    <contact>
+        <id>2</id>
+        <name>mike</name>
+        <city>chesterbrook</city>
+        <phones>
+            <phone>
+                <number>311 555-2345</number>
+                <type>home</type>
+            </phone>
+            <phone>
+                <number>311 555-5432</number>
+                <type>mobile</type>
+            </phone>
+        </phones>
+        <email>mike@gmail.com</email>
+        <spouse>1002</spouse>
+    </contact>
+</batch>

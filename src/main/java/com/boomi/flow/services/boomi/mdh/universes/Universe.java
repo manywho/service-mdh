@@ -26,6 +26,8 @@ public class Universe implements Type {
 
     private Layout layout;
 
+    private Sources sources;
+
     public UUID getId() {
         return id;
     }
@@ -60,6 +62,42 @@ public class Universe implements Type {
     public Universe setLayout(Layout layout) {
         this.layout = layout;
         return this;
+    }
+
+    public Sources getSources() {
+        return sources;
+    }
+
+    public void setSources(Sources sources) {
+        this.sources = sources;
+    }
+
+
+    public String getIdField() {
+        // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
+        return this.getLayout().getIdXPath().split("/")[2];
+    }
+
+    public static class Sources {
+        private List<Source> sources = new ArrayList<>();
+
+        @XmlElement(name = "source")
+        public List<Source> getSources() {
+            return sources;
+        }
+
+        public static class Source {
+            private String code;
+
+            @XmlAttribute
+            public String getCode() {
+                return code;
+            }
+
+            public void setCode(String code) {
+                this.code = code;
+            }
+        }
     }
 
     public static class Layout {
@@ -115,6 +153,9 @@ public class Universe implements Type {
                 private String prettyName;
                 private String type;
                 private boolean required;
+                private List<Element> elements;
+                private String collectionUniqueId;
+                boolean repeatable;
 
                 @XmlAttribute
                 public String getUniqueId() {
@@ -155,6 +196,37 @@ public class Universe implements Type {
                 @XmlAttribute
                 public boolean isRequired() {
                     return required;
+                }
+
+                public void setRequired(boolean required) {
+                    this.required = required;
+                }
+
+                @XmlElement(name = "element")
+                public List<Element> getElements() {
+                    return elements;
+                }
+
+                public void setElements(List<Element> elements) {
+                    this.elements = elements;
+                }
+
+                @XmlAttribute
+                public String getCollectionUniqueId() {
+                    return collectionUniqueId;
+                }
+
+                public void setCollectionUniqueId(String collectionUniqueId) {
+                    this.collectionUniqueId = collectionUniqueId;
+                }
+
+                @XmlAttribute
+                public boolean isRepeatable() {
+                    return repeatable;
+                }
+
+                public void setRepeatable(boolean repeatable) {
+                    this.repeatable = repeatable;
                 }
             }
         }

@@ -1,11 +1,13 @@
 package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
+import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetails;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.google.common.io.Resources;
 import org.junit.Test;
 import org.xmlunit.builder.Input;
@@ -17,6 +19,7 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +106,7 @@ public class XmlMapperTests {
 
     @Test
     public void testXmlMapperSerializesGoldenRecordUpdateRequests() throws JAXBException {
-        var entityOne = new GoldenRecordUpdateRequest.Entity()
+        var entityOne = new BatchUpdateRequest.Entity()
                 .setFields(Map.ofEntries(
                         Map.entry("id", 1),
                         Map.entry("name", "bob"),
@@ -123,7 +126,7 @@ public class XmlMapperTests {
                 .setName("contact")
                 .setOp(null);
 
-        var entityTwo = new GoldenRecordUpdateRequest.Entity()
+        var entityTwo = new BatchUpdateRequest.Entity()
                 .setFields(Map.ofEntries(
                         Map.entry("id", 2),
                         Map.entry("name", "sam"),
@@ -139,7 +142,7 @@ public class XmlMapperTests {
                 .setName("contact")
                 .setOp("CREATE");
 
-        var request = new GoldenRecordUpdateRequest()
+        var request = new BatchUpdateRequest()
                 .setSource("SF")
                 .setEntities(List.of(
                         entityOne,
@@ -218,5 +221,113 @@ public class XmlMapperTests {
         assertThat(actual.getRecords().get(1).getStartDate(), equalTo(OffsetDateTime.parse("2016-03-14T14:17:07.000-04:00")));
         assertThat(actual.getRecords().get(1).getTransactionId(), equalTo("01234567-89ab-cdef-0123-456789abcdef"));
         assertThat(actual.getRecords().get(1).getVersion(), equalTo(823L));
+    }
+
+    @Test
+    public void testXmlMapperSerializesMatchEntityQueryRequests() {
+        var entityOne = new BatchUpdateRequest.Entity()
+                .setFields(Map.ofEntries(
+                        Map.entry("id", 1),
+                        Map.entry("name", "bobby"),
+                        Map.entry("city", "berwyn"),
+                        Map.entry("phones", List.of(
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-1234"),
+                                        Map.entry("type", "home")
+                                )),
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-4321"),
+                                        Map.entry("type", "mobile")
+                                ))
+                        )),
+                        Map.entry("email", "bob@gmail.com"),
+                        Map.entry("spouse", "1001")
+                ))
+                .setName("contact");
+
+        var entityTwo = new BatchUpdateRequest.Entity()
+                .setFields(Map.ofEntries(
+                        Map.entry("id", 2),
+                        Map.entry("name", "mike"),
+                        Map.entry("city", "chesterbrook"),
+                        Map.entry("phones", List.of(
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-2345"),
+                                        Map.entry("type", "home")
+                                )),
+                                Map.entry("phone", Map.ofEntries(
+                                        Map.entry("number", "311 555-5432"),
+                                        Map.entry("type", "mobile")
+                                ))
+                        )),
+                        Map.entry("email", "mike@gmail.com"),
+                        Map.entry("spouse", "1002")
+                ))
+                .setName("contact");
+
+        var request = new BatchUpdateRequest()
+                .setSource("SF")
+                .setEntities(List.of(
+                        entityOne,
+                        entityTwo
+                ));
+
+        var requestContent = new StringWriter();
+        JAXB.marshal(request, requestContent);
+
+        var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesMatchEntityQueryRequests.xml"));
+
+        assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
+    }
+
+    @Test
+    public void testXmlMapperDeserializesMatchEntityResponse() {
+        var data = Resources.getResource("testXmlMapperDeserializesMatchEntitiesResponse.xml");
+        var actual = JAXB.unmarshal(data, MatchEntityResponse.class);
+
+        assertThat(actual, not(nullValue()));
+
+        assertThat( actual.getMatchResults().get(0).getMatchRule(), equalTo("Incoming name is similar to (Jaro-Winkler) Existing name"));
+        assertThat( actual.getMatchResults().get(0).getStatus(), equalTo("SUCCESS"));
+        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("id"), equalTo("1"));
+        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("name"), equalTo("bobby"));
+        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("city"), equalTo("berwyn"));
+        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("email"), equalTo("bob@gmail.com"));
+        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("spouse"), equalTo("1001"));
+        //assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("phones"), notNull); // not working properly need to be fixed for child elements
+
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("id"), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("name"), equalTo("bob"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("city"), equalTo("berwyn"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("email"), equalTo("bob@gmail.com"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("spouse"), equalTo("1001"));
+
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("field"), equalTo("name"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("first"), equalTo("BOBBY"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("second"), equalTo("BOB"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("method"), equalTo("jarowinkler"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("matchStrength"), equalTo("0.90666664"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("threshold"), equalTo("0.85"));
+
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("id"), equalTo("fc8cd5be-ac26-4e9a-9d0c-6b397a124172"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("name"), equalTo("bob"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("city"), equalTo("berwyn"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("email"), equalTo("bob@gmail.com"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("spouse"), equalTo("1001"));
+
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("field"), equalTo("name"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("first"), equalTo("BOBBY"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("second"), equalTo("BOB"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("method"), equalTo("jarowinkler"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("matchStrength"), equalTo("0.90666664"));
+        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("threshold"), equalTo("0.85"));
+
+        assertThat( actual.getMatchResults().get(1).getMatchRule(), nullValue());
+        assertThat( actual.getMatchResults().get(1).getStatus(), equalTo("ALREADY_LINKED"));
+        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("id"), equalTo("2"));
+        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("name"), equalTo("mike"));
+        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("city"), equalTo("chesterbrook"));
+        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("email"), equalTo("mike@gmail.com"));
+        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("spouse"), equalTo("1002"));
     }
 }

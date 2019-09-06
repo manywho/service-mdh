@@ -1,24 +1,22 @@
-package com.boomi.flow.services.boomi.mdh.records;
+package com.boomi.flow.services.boomi.mdh.common;
 
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @XmlRootElement(name = "batch")
-public class GoldenRecordUpdateRequest {
+public class BatchUpdateRequest {
     private String source;
-    private List<Entity> entities;
+    private List<Entity> entities = new ArrayList<>();
 
     @XmlAttribute(name = "src")
     public String getSource() {
         return source;
     }
 
-    public GoldenRecordUpdateRequest setSource(String source) {
+    public BatchUpdateRequest setSource(String source) {
         this.source = source;
         return this;
     }
@@ -28,16 +26,16 @@ public class GoldenRecordUpdateRequest {
         return entities;
     }
 
-    public GoldenRecordUpdateRequest setEntities(List<Entity> entities) {
+    public BatchUpdateRequest setEntities(List<Entity> entities) {
         this.entities = entities;
         return this;
     }
 
-    @XmlJavaTypeAdapter(GoldenRecordUpdateRequestEntityAdapter.class)
+    @XmlJavaTypeAdapter(BatchUpdateRequestEntityAdapter.class)
     public static class Entity {
         private String op;
         private String name;
-        private Map<String, Object> fields;
+        private Map<String, Object> fields = new HashMap<>();
 
         @XmlAttribute
         public String getOp() {
@@ -100,7 +98,7 @@ public class GoldenRecordUpdateRequest {
             return false;
         }
 
-        GoldenRecordUpdateRequest that = (GoldenRecordUpdateRequest) o;
+        BatchUpdateRequest that = (BatchUpdateRequest) o;
 
         return Objects.equals(source, that.source) &&
                 Objects.equals(entities, that.entities);

@@ -2,7 +2,6 @@ package com.boomi.flow.services.boomi.mdh.common;
 
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
-
 import java.time.OffsetDateTime;
 import java.util.function.Consumer;
 
