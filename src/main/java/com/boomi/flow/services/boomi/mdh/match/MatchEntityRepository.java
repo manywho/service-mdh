@@ -25,7 +25,7 @@ public class MatchEntityRepository {
     }
 
     public List<MObject> matchEntity(ApplicationConfiguration configuration, String universeId, List<MObject> objects)  {
-        var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
+        var universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
         objects.stream()
                 .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
@@ -56,8 +56,8 @@ public class MatchEntityRepository {
                     .setSource(sourceId)
                     .setEntities(entities);
 
-            MatchEntityResponse matchResponse = client.queryMatchEntity(configuration.getAtomHostname(),
-                    configuration.getAtomUsername(), configuration.getAtomPassword(), universe.getId().toString(),
+            MatchEntityResponse matchResponse = client.queryMatchEntity(configuration.getHubHostname(),
+                    configuration.getHubUsername(), configuration.getHubToken(), universe.getId().toString(),
                     updateRequest);
 
             List<MatchEntityResponse.MatchResult> matchesResult = matchResponse.getMatchResults();

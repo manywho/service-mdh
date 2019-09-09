@@ -4,39 +4,39 @@ import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.services.configuration.Configuration;
 
 public class ApplicationConfiguration implements Configuration {
-    @Configuration.Setting(name = "Atom Hostname", contentType = ContentType.String)
-    private String atomHostname;
+    @Configuration.Setting(name = "Hub Hostname", contentType = ContentType.String)
+    private String hubHostname;
 
-    @Configuration.Setting(name = "Atom Username", contentType = ContentType.String)
-    private String atomUsername;
+    @Configuration.Setting(name = "Hub Username", contentType = ContentType.String)
+    private String hubUsername;
 
-    @Configuration.Setting(name = "Atom Password", contentType = ContentType.Password)
-    private String atomPassword;
+    @Configuration.Setting(name = "Hub Token", contentType = ContentType.Password)
+    private String hubToken;
 
-    public String getAtomHostname() {
-        return atomHostname;
+    public String getHubHostname() {
+        return hubHostname;
     }
 
-    public ApplicationConfiguration setAtomHostname(String atomHostname) {
-        this.atomHostname = atomHostname;
+    public ApplicationConfiguration setHubHostname(String hubHostname) {
+        this.hubHostname = hubHostname;
         return this;
     }
 
-    public String getAtomUsername() {
-        return atomUsername;
+    public String getHubUsername() {
+        return hubUsername;
     }
 
-    public ApplicationConfiguration setAtomUsername(String atomUsername) {
-        this.atomUsername = atomUsername;
+    public ApplicationConfiguration setHubUsername(String hubUsername) {
+        this.hubUsername = hubUsername;
         return this;
     }
 
-    public String getAtomPassword() {
-        return atomPassword;
+    public String getHubToken() {
+        return hubToken;
     }
 
-    public ApplicationConfiguration setAtomPassword(String atomPassword) {
-        this.atomPassword = atomPassword;
+    public ApplicationConfiguration setHubToken(String hubToken) {
+        this.hubToken = hubToken;
         return this;
     }
 }

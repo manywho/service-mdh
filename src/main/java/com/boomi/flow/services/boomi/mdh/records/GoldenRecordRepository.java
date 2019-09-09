@@ -31,7 +31,7 @@ public class GoldenRecordRepository {
     }
 
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getAtomHostname(), configuration.getAtomUsername());
+        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
 
         var request = new GoldenRecordQueryRequest();
 
@@ -144,7 +144,7 @@ public class GoldenRecordRepository {
             }
         }
 
-        var result = client.queryGoldenRecords(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universe, request);
+        var result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
         if (result == null || result.getRecords() == null || result.getResultCount() == 0) {
             return new ArrayList<>();
         }
@@ -159,7 +159,7 @@ public class GoldenRecordRepository {
     }
 
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
-        var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
+        var universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
         objects.stream()
                 .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
@@ -207,9 +207,9 @@ public class GoldenRecordRepository {
 
             // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map? Do we care about creating golden records?
             client.updateGoldenRecords(
-                    configuration.getAtomHostname(),
-                    configuration.getAtomUsername(),
-                    configuration.getAtomPassword(),
+                    configuration.getHubHostname(),
+                    configuration.getHubUsername(),
+                    configuration.getHubToken(),
                     universe.getId().toString(),
                     updateRequest
             );

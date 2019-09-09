@@ -21,9 +21,9 @@ public class UniverseDatabase implements ReadOnlyDatabase<ApplicationConfigurati
     @Override
     public Universe find(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, String id) {
         return repository.find(
-                configuration.getAtomHostname(),
-                configuration.getAtomUsername(),
-                configuration.getAtomPassword(),
+                configuration.getHubHostname(),
+                configuration.getHubUsername(),
+                configuration.getHubToken(),
                 id
         );
     }
@@ -31,9 +31,9 @@ public class UniverseDatabase implements ReadOnlyDatabase<ApplicationConfigurati
     @Override
     public List<Universe> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter, List<MObject> objects) {
         return repository.findAll(
-                configuration.getAtomHostname(),
-                configuration.getAtomUsername(),
-                configuration.getAtomPassword()
+                configuration.getHubHostname(),
+                configuration.getHubUsername(),
+                configuration.getHubToken()
         );
     }
 }
