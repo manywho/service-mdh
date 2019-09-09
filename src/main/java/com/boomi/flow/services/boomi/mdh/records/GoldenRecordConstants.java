@@ -1,9 +1,9 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
 public class GoldenRecordConstants {
-    public static final String CREATED_DATE = "Golden Record/Quarantine (Filter): Created Date";
+    public static final String CREATED_DATE = "Golden Record (Filter): Created Date";
     public static final String CREATED_DATE_FIELD = "___filterCreatedDate";
-    public static final String SOURCE_ID = "Golden Record (Filter): Source ID";
+    public static final String SOURCE_ID = "Golden Record: Source ID";
     public static final String SOURCE_ID_FIELD = "___sourceId";
     public static final String UPDATED_DATE = "Golden Record (Filter): Updated Date";
     public static final String UPDATED_DATE_FIELD = "___filterUpdatedDate";

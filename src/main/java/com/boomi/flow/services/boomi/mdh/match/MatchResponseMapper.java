@@ -21,9 +21,9 @@ public class MatchResponseMapper {
     private static MObject createMobjectFromResult(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
         var externalId = result.getEntity().get(universe.getName()).get(universe.getIdField()).toString();
 
-        var propertiesMatched = new Property(FuzzyMatchDetialsConstants.MATCH_FIELD, new ArrayList<>());
-        var propertiesDuplicated = new Property(FuzzyMatchDetialsConstants.DUPLICATE_FIELD, new ArrayList<>());
-        var propertiesAlreadyLinked = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD, new ArrayList<>());
+        var propertiesMatched = new Property(FuzzyMatchDetialsConstants.MATCH, new ArrayList<>());
+        var propertiesDuplicated = new Property(FuzzyMatchDetialsConstants.DUPLICATE, new ArrayList<>());
+        var propertiesAlreadyLinked = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED, new ArrayList<>());
         var object = new MObject(universeId + " match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 

@@ -107,7 +107,7 @@ public class DatabaseLoadMatchEntryTests {
         // matched entities
         var matchedEntityProperty = result.get(0).getProperties().get(5);
 
-        assertThat(matchedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.MATCH_FIELD));
+        assertThat(matchedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.MATCH));
         assertThat(matchedEntityProperty.getObjectData(), hasSize(1));
         assertThat(matchedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
 
@@ -144,7 +144,7 @@ public class DatabaseLoadMatchEntryTests {
         // duplicated entities
         var duplicatedEntityProperty = result.get(0).getProperties().get(6);
 
-        assertThat(duplicatedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.DUPLICATE_FIELD));
+        assertThat(duplicatedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.DUPLICATE));
         assertThat(duplicatedEntityProperty.getObjectData(), hasSize(1));
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
 
@@ -181,7 +181,7 @@ public class DatabaseLoadMatchEntryTests {
         // duplicated entities
         var alreadyLinkedEntityProperty = result.get(1).getProperties().get(7);
 
-        assertThat(alreadyLinkedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD));
+        assertThat(alreadyLinkedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.ALREADY_LINKED));
         assertThat(alreadyLinkedEntityProperty.getObjectData(), hasSize(1));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties(), hasSize(3));

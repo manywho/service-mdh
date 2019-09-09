@@ -1,12 +1,14 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
 public class QuarantineEntryConstants {
+    public static final String CREATED_DATE = "Quarantine (Filter): Created Date";
+    public static final String CREATED_DATE_FIELD = "createdDate";
+    public static final String SOURCE_ID = "Quarantine (Filter): Source ID";
     public static final String SOURCE_ID_FIELD = "sourceId";
-    public static final String SOURCE_ENTITY_ID = "Source Entity ID";
+    public static final String SOURCE_ENTITY_ID = "Quarantine: Source Entity ID";
     public static final String SOURCE_ENTITY_ID_FIELD = "sourceEntityId";
     public static final String STATUS = "Quarantine: Status";
     public static final String STATUS_FIELD = "status";
-    public static final String CREATED_DATE_FIELD = "createdDate";
     public static final String END_DATE = "Quarantine (Filter): End Date";
     public static final String END_DATE_FIELD = "endDate";
     public static final String TRANSACTION_ID = "Quarantine: Transaction ID";

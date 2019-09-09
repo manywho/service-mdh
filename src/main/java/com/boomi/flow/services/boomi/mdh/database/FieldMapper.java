@@ -45,10 +45,6 @@ class FieldMapper {
             }
         }
 
-        // common for golden Records and Quarantine
-        properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
-        properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
-
         addPropertiesForGoldenRecord(properties);
         addPropertiesForQuarantine(properties);
         addPropertiesForMatchEntities(typePrettyName, properties);
@@ -75,11 +71,14 @@ class FieldMapper {
     }
 
     private static void addPropertiesForGoldenRecord(List<TypeElementProperty> properties) {
-        // add properties for filter by Golden Record
+        properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
+        properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
     }
 
     private static void addPropertiesForQuarantine(List<TypeElementProperty> properties) {
+        properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ID, ContentType.String));
+        properties.add(new TypeElementProperty(QuarantineEntryConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ENTITY_ID, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.STATUS, ContentType.String));
 
@@ -110,9 +109,9 @@ class FieldMapper {
         List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
 
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.MATCH, FuzzyMatchDetialsConstants.MATCH_FIELD));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.DUPLICATE, FuzzyMatchDetialsConstants.DUPLICATE_FIELD));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.ALREADY_LINKED, FuzzyMatchDetialsConstants.ALREADY_LINKED_FIELD));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.MATCH, FuzzyMatchDetialsConstants.MATCH));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.DUPLICATE, FuzzyMatchDetialsConstants.DUPLICATE));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.ALREADY_LINKED, FuzzyMatchDetialsConstants.ALREADY_LINKED));
         var developerName = typePrettyName + " Match";
         var databaseTableName = name + " match";
 
@@ -125,9 +124,9 @@ class FieldMapper {
         List<TypeElementPropertyBinding> propertyBindingsQuarantine = new ArrayList<>(propertyBindings);
 
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.STATUS, QuarantineEntryConstants.STATUS_FIELD));
-        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ID, QuarantineEntryConstants.SOURCE_ID_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ENTITY_ID, QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD));
-        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
+        propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CREATED_DATE, QuarantineEntryConstants.CREATED_DATE_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.END_DATE, QuarantineEntryConstants.END_DATE_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.TRANSACTION_ID, QuarantineEntryConstants.TRANSACTION_ID_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CAUSE, QuarantineEntryConstants.CAUSE_FIELD));
