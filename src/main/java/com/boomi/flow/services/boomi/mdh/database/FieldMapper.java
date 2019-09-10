@@ -1,6 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
-import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetialsConstants;
+import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -108,10 +108,10 @@ class FieldMapper {
 
         List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
 
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.MATCH, FuzzyMatchDetialsConstants.MATCH));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.DUPLICATE, FuzzyMatchDetialsConstants.DUPLICATE));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.ALREADY_LINKED, FuzzyMatchDetialsConstants.ALREADY_LINKED));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.MATCH, FuzzyMatchDetailsConstants.MATCH));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.DUPLICATE, FuzzyMatchDetailsConstants.DUPLICATE));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.ALREADY_LINKED, FuzzyMatchDetailsConstants.ALREADY_LINKED));
         var developerName = typePrettyName + " Match";
         var databaseTableName = name + "-match";
 

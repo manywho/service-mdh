@@ -51,7 +51,7 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
             var universe = removeEndingSubstring(typeName,"-match");
 
             if(objects == null || objects.size() <1) {
-                throw new RuntimeException("A list of object need to be provided to load Match entities");
+                throw new RuntimeException("Only list values are supported when loading entity matches");
             }
 
             return matchEntityRespository.matchEntity(configuration, universe, objects);

@@ -6,7 +6,7 @@ import com.manywho.sdk.services.types.Type;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.UUID;
 
-import static com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS;
+import static com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS;
 
 @Type.Element(name = FUZZY_MATCH_DETAILS)
 public class FuzzyMatchDetails implements Type {

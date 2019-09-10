@@ -21,9 +21,9 @@ public class MatchResponseMapper {
     private static MObject createMobjectFromResult(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
         var externalId = result.getEntity().get(universe.getName()).get(universe.getIdField()).toString();
 
-        var propertiesMatched = new Property(FuzzyMatchDetialsConstants.MATCH, new ArrayList<>());
-        var propertiesDuplicated = new Property(FuzzyMatchDetialsConstants.DUPLICATE, new ArrayList<>());
-        var propertiesAlreadyLinked = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED, new ArrayList<>());
+        var propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>());
+        var propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>());
+        var propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
         var object = new MObject(universeId + "-match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
@@ -32,7 +32,7 @@ public class MatchResponseMapper {
                 .forEach((key, value) -> properties.add(new Property(key, (String) value)));
 
         properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
-        properties.add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
+        properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
         properties.addAll(object.getProperties());
 
         object.setProperties(properties);
@@ -81,7 +81,7 @@ public class MatchResponseMapper {
     }
 
     private static void addFuzzyMatchDetails(MObject object, Map<String, Object> result) {
-        var fuzzyMatchEmpty = new MObject(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS);
+        var fuzzyMatchEmpty = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS);
         fuzzyMatchEmpty.setExternalId(UUID.randomUUID().toString());
         var properties = new ArrayList<Property>();
         if (result != null) {
@@ -94,6 +94,6 @@ public class MatchResponseMapper {
         }
         fuzzyMatchEmpty.setProperties(properties);
 
-        object.getProperties().add(new Property(FuzzyMatchDetialsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchEmpty));
+        object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchEmpty));
     }
 }
