@@ -415,13 +415,13 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[2].propertyBindings[1].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseContentType", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseFieldName", equalTo("Matched Entities"))
-                .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Matched Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].databaseFieldName", equalTo("Matching Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("Matching Entities"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[2].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseContentType", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseFieldName", equalTo("Duplicated Entities"))
-                .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Duplicated Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].databaseFieldName", equalTo("Duplicate Entities"))
+                .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyDeveloperName", equalTo("Duplicate Entities"))
                 .body("install.typeElements[2].bindings[2].propertyBindings[3].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[4].databaseContentType", nullValue())

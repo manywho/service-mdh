@@ -74,7 +74,7 @@ public class MatchResponseMapper {
         });
 
         if (addFuzzyMatchDetails) {
-            addFuzzyMatchDetails(object, (HashMap<String, Object>) matchResults.get("fuzzyMatchDetails"));
+            addFuzzyMatchDetails(object, (Map<String, Object>) matchResults.get("fuzzyMatchDetails"));
         }
 
         propertyMatches.getObjectData().add(object);
