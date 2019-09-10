@@ -37,7 +37,7 @@ public class DatabaseLoadQuarantineEntryTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("universe-name quarantine");
+            .setDeveloperName("universe-name-quarantine");
 
     private QuarantineQueryResponse response = new QuarantineQueryResponse()
             .setEntries(
@@ -57,7 +57,7 @@ public class DatabaseLoadQuarantineEntryTests {
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name quarantine"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
         assertThat(objects.get(0).getProperties(), hasSize(10));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));

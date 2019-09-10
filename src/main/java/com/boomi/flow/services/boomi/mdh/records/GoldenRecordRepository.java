@@ -163,7 +163,7 @@ public class GoldenRecordRepository {
 
         objects.stream()
                 .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
-                .forEach(object -> Entities.AddRandomUniqueId(object, universe.getIdField()));
+                .forEach(object -> Entities.addRandomUniqueId(object, universe.getIdField()));
 
         var objectsBySource = objects.stream()
                 .collect(Collectors.groupingBy(object -> object.getProperties()

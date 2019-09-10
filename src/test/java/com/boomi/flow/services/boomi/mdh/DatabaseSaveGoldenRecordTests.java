@@ -32,7 +32,7 @@ public class DatabaseSaveGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731 golden-record");
+            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
 
     @Test
     public void testSaveWithSingleExistingObjectReturnsObject() {

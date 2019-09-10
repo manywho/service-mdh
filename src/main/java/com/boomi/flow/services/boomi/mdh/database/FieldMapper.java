@@ -29,13 +29,13 @@ class FieldMapper {
 
             var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
             // TODO: Ignore field groups (child types) until the bindings for child Types are supported in engine
-            var isChildType = ContentType.Object.equals(contentType) || ContentType.List.equals(contentType);
+            var isChildType = ContentType.Object == contentType || ContentType.List == contentType;
 
             if (contentType == null || isChildType) {
                 continue;
             }
 
-            if (ContentType.Object.equals(contentType) || ContentType.List.equals(contentType)) {
+            if (ContentType.Object == contentType || ContentType.List == contentType) {
                 collectTypes(element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
                 properties.add(new TypeElementProperty(element.getPrettyName(), contentType, element.getPrettyName()));
                 propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
@@ -100,7 +100,7 @@ class FieldMapper {
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
 
-        bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + " golden-record", propertyBindingsGoldenRecord));
+        bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + "-golden-record", propertyBindingsGoldenRecord));
     }
 
     private static void addBindingForMatches(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
@@ -113,7 +113,7 @@ class FieldMapper {
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.DUPLICATE, FuzzyMatchDetialsConstants.DUPLICATE));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetialsConstants.ALREADY_LINKED, FuzzyMatchDetialsConstants.ALREADY_LINKED));
         var developerName = typePrettyName + " Match";
-        var databaseTableName = name + " match";
+        var databaseTableName = name + "-match";
 
         bindings.add(new TypeElementBinding(developerName, developerSummary, databaseTableName, propertyBindingsForMatches));
     }
@@ -133,7 +133,7 @@ class FieldMapper {
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.REASON, QuarantineEntryConstants.REASON_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.RESOLUTION, QuarantineEntryConstants.RESOLUTION_FIELD));
 
-        bindings.add(new TypeElementBinding(typePrettyName + " Quarantine", developerSummary, name + " quarantine", propertyBindingsQuarantine));
+        bindings.add(new TypeElementBinding(typePrettyName + " Quarantine", developerSummary, name + "-quarantine", propertyBindingsQuarantine));
     }
 
     private static ContentType fieldTypeToContentType(String type, boolean repeatable) {

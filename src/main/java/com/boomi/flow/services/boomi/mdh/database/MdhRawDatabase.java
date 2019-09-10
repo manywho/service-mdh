@@ -35,20 +35,20 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.endsWith("quarantine")) {
-            var universe = removeEndingSubstring(typeName, " quarantine");
+        if (typeName.endsWith("-quarantine")) {
+            var universe = removeEndingSubstring(typeName, "-quarantine");
 
             return quarantineRepository.findAll(configuration, universe, filter);
         }
 
-        if (typeName.endsWith("golden-record")) {
-            var universe = removeEndingSubstring(typeName, " golden-record");
+        if (typeName.endsWith("-golden-record")) {
+            var universe = removeEndingSubstring(typeName, "-golden-record");
 
             return goldenRecordRepository.findAll(configuration, universe, filter);
         }
 
-        if (typeName.endsWith("match")) {
-            var universe = removeEndingSubstring(typeName," match");
+        if (typeName.endsWith("-match")) {
+            var universe = removeEndingSubstring(typeName,"-match");
 
             if(objects == null || objects.size() <1) {
                 throw new RuntimeException("A list of object need to be provided to load Match entities");
@@ -84,8 +84,8 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.endsWith("golden-record")) {
-            var universe = typeName.replace(" golden-record", "");
+        if (typeName.endsWith("-golden-record")) {
+            var universe = typeName.replace("-golden-record", "");
 
             goldenRecordRepository.delete(configuration, universe, objects);
             return;
@@ -106,8 +106,8 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public List<MObject> update(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.endsWith("golden-record")) {
-            var universe = removeEndingSubstring(typeName," golden-record");
+        if (typeName.endsWith("-golden-record")) {
+            var universe = removeEndingSubstring(typeName,"-golden-record");
 
             return goldenRecordRepository.update(configuration, universe, objects);
         }

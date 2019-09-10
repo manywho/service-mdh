@@ -32,7 +32,7 @@ public class DatabaseLoadMatchEntryTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731 match");
+            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-match");
 
     @Test
     public void testLoadMatchEntityObjectsReturnsObject() {
@@ -109,7 +109,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(matchedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.MATCH));
         assertThat(matchedEntityProperty.getObjectData(), hasSize(1));
-        assertThat(matchedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-match"));
 
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1"));
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("some value 1"));
@@ -146,7 +146,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(duplicatedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.DUPLICATE));
         assertThat(duplicatedEntityProperty.getObjectData(), hasSize(1));
-        assertThat(duplicatedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-match"));
 
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1"));
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("some value 1"));
@@ -183,7 +183,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(alreadyLinkedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetialsConstants.ALREADY_LINKED));
         assertThat(alreadyLinkedEntityProperty.getObjectData(), hasSize(1));
-        assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731 match"));
+        assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-match"));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties(), hasSize(3));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1"));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("some value 1"));

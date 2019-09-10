@@ -28,15 +28,15 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
             return false;
         }
 
-        if (name.endsWith(" quarantine")) {
+        if (name.endsWith("-quarantine")) {
             return true;
         }
 
-        if (name.endsWith(" golden-record")) {
+        if (name.endsWith("-golden-record")) {
             return true;
         }
 
-        if (name.endsWith(" match")) {
+        if (name.endsWith("-match")) {
             return true;
         }
 

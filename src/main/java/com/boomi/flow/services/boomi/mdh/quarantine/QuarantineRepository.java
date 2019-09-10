@@ -141,7 +141,7 @@ public class QuarantineRepository {
         }
 
         return result.getEntries().stream()
-                .map(entry -> Entities.createQuarantineMObject(universe, entry, entry.getEntity()))
+                .map(entry -> Entities.createQuarantineMObject(universe, entry))
                 .collect(Collectors.toList());
     }
 }

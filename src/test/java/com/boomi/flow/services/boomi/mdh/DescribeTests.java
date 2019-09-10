@@ -315,7 +315,7 @@ public class DescribeTests {
 
         response
                 .body("install.typeElements[2].bindings", hasSize(3))
-                .body("install.typeElements[2].bindings[0].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065 golden-record"))
+                .body("install.typeElements[2].bindings[0].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065-golden-record"))
                 .body("install.typeElements[2].bindings[0].developerName", equalTo("artist Golden Record"))
                 .body("install.typeElements[2].bindings[0].developerSummary", equalTo("The structure of a golden record for the artist universe"))
                 .body("install.typeElements[2].bindings[0].id", nullValue())
@@ -338,7 +338,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[0].propertyBindings[3].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[0].serviceElementId", nullValue())
 
-                .body("install.typeElements[2].bindings[1].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065 quarantine"))
+                .body("install.typeElements[2].bindings[1].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065-quarantine"))
                 .body("install.typeElements[2].bindings[1].developerName", equalTo("artist Quarantine"))
                 .body("install.typeElements[2].bindings[1].developerSummary", equalTo("The structure of a Quarantine artist for the artist universe"))
                 .body("install.typeElements[2].bindings[1].id", nullValue())
@@ -398,7 +398,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[1].propertyBindings[9].typeElementPropertyId", nullValue())
                 .body("install.typeElements[2].bindings[1].serviceElementId", nullValue())
 
-                .body("install.typeElements[2].bindings[2].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065 match"))
+                .body("install.typeElements[2].bindings[2].databaseTableName", equalTo("ad7820f3-92a7-4919-9647-db934bda0065-match"))
                 .body("install.typeElements[2].bindings[2].developerName", equalTo("artist Match"))
                 .body("install.typeElements[2].bindings[2].developerSummary", equalTo("The structure of matches for the artist universe"))
                 .body("install.typeElements[2].bindings[2].id", nullValue())

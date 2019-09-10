@@ -37,7 +37,7 @@ public class DatabaseLoadGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("universe-name golden-record");
+            .setDeveloperName("universe-name-golden-record");
 
     private GoldenRecordQueryResponse response = new GoldenRecordQueryResponse()
             .setResultCount(2)
@@ -58,7 +58,7 @@ public class DatabaseLoadGoldenRecordTests {
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name golden-record"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
         assertThat(objects.get(0).getProperties(), hasSize(3));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));

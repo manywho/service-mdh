@@ -24,7 +24,7 @@ public class MatchResponseMapper {
         var propertiesMatched = new Property(FuzzyMatchDetialsConstants.MATCH, new ArrayList<>());
         var propertiesDuplicated = new Property(FuzzyMatchDetialsConstants.DUPLICATE, new ArrayList<>());
         var propertiesAlreadyLinked = new Property(FuzzyMatchDetialsConstants.ALREADY_LINKED, new ArrayList<>());
-        var object = new MObject(universeId + " match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
+        var object = new MObject(universeId + "-match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         var properties =  new ArrayList<Property>();
@@ -50,7 +50,7 @@ public class MatchResponseMapper {
 
 
     private static void addAlreadyLinked(Property alreadyLinkedProperty, Universe universe, Map<String, Object> entity, String idField){
-        var object = new MObject(universe.getId().toString() + " match");
+        var object = new MObject(universe.getId().toString() + "-match");
         object.setExternalId(entity.get(idField).toString());
 
         entity.forEach((key, value) -> {
@@ -63,7 +63,7 @@ public class MatchResponseMapper {
 
     private static void addMatchesToProperty(Property propertyMatches, Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
         var entity = (Map<String, Object>) matchResults.get(universe.getName());
-        var object = new MObject(universe.getId().toString() + " match");
+        var object = new MObject(universe.getId().toString() + "-match");
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         object.setExternalId(entity.get(idField).toString());
