@@ -58,7 +58,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
             return new ArrayList<>();
         }
 
-        var universes = repository.findAll(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword());
+        var universes = repository.findAll(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken());
 
         return loadModelTypes(universes);
     }

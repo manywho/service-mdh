@@ -76,9 +76,9 @@ public class DatabaseDeleteGoldenRecordTests {
 
         verify(client)
                 .updateGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "12fa66f9-e14d-f642-878f-030b13b64731",
                         expectedRequest
                 );

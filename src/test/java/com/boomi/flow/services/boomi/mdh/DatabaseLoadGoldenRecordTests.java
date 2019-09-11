@@ -82,9 +82,9 @@ public class DatabaseLoadGoldenRecordTests {
 
         verify(client)
                 .queryGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
@@ -189,9 +189,9 @@ public class DatabaseLoadGoldenRecordTests {
 
         verify(client)
                 .queryGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );

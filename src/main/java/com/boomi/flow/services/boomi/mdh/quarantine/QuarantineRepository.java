@@ -69,7 +69,7 @@ public class QuarantineRepository {
     }
 
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universe, configuration.getAtomHostname(), configuration.getAtomUsername());
+        LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
 
         var queryFilter = new QuarantineQueryRequest.Filter();
 
@@ -135,7 +135,7 @@ public class QuarantineRepository {
             }
         }
 
-        var result = mdhClient.queryQuarantineEntries(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universe, queryRequest);
+        var result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, queryRequest);
         if (result == null || result.getEntries() == null) {
             return new ArrayList<>();
         }

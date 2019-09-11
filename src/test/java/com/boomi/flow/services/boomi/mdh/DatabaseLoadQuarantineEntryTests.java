@@ -100,9 +100,9 @@ public class DatabaseLoadQuarantineEntryTests {
 
         verify(client)
                 .queryQuarantineEntries(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
@@ -158,9 +158,9 @@ public class DatabaseLoadQuarantineEntryTests {
 
         verify(client)
                 .queryQuarantineEntries(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
