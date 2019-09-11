@@ -558,7 +558,7 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].properties[17].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[17].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[17].developerName", equalTo("Match Entity: Source ID"))
+                .body("install.typeElements[2].properties[17].developerName", equalTo("Golden Record: Source ID"))
                 .body("install.typeElements[2].properties[17].id", nullValue())
                 .body("install.typeElements[2].properties[17].typeElementDeveloperName",  nullValue())
                 .body("install.typeElements[2].properties[17].typeElementId", nullValue())

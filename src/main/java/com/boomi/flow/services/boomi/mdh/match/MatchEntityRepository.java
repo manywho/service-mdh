@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
@@ -36,7 +37,7 @@ public class MatchEntityRepository {
                 .collect(Collectors.groupingBy(object ->
                         object.getProperties()
                         .stream()
-                        .filter(property -> property.getDeveloperName().equals(MatchEntityConstants.SOURCE_ID_FIELD))
+                        .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
                         .map(Property::getContentValue)
 //                        .filter(source -> source != null && source.isEmpty() == false)
                         .findFirst()
@@ -46,7 +47,7 @@ public class MatchEntityRepository {
         for (var sourceGroup : objectsBySource.entrySet()) {
             // TODO: Check if we should be setting this to a default value, or error if no source was set
             var sourceId = sourceGroup.getKey().isBlank()
-                    ? MatchEntityConstants.DEFAULT_SOURCE_ID
+                    ? GoldenRecordConstants.DEFAULT_SOURCE_ID
                     : sourceGroup.getKey();
 
             var entities = sourceGroup.getValue().stream()

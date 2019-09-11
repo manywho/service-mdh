@@ -1,7 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
 import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
-import com.boomi.flow.services.boomi.mdh.match.MatchEntityConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -64,7 +63,7 @@ class FieldMapper {
         properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelBasicName));
         properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelBasicName));
         properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelBasicName));
-        properties.add(new TypeElementProperty(MatchEntityConstants.SOURCE_ID, ContentType.String));
+        properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
 
         // adding bindings for Golden Records
         List<TypeElementBinding> bindings = new ArrayList<>();
@@ -96,7 +95,7 @@ class FieldMapper {
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.MATCH, FuzzyMatchDetailsConstants.MATCH));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.DUPLICATE, FuzzyMatchDetailsConstants.DUPLICATE));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.ALREADY_LINKED, FuzzyMatchDetailsConstants.ALREADY_LINKED));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(MatchEntityConstants.SOURCE_ID, MatchEntityConstants.SOURCE_ID_FIELD));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
         bindings.add(new TypeElementBinding(modelBasicName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
 
         return new TypeElement(modelBasicName, properties, bindings);

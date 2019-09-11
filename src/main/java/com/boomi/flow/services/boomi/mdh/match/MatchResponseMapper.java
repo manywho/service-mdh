@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.match;
 
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -22,7 +23,7 @@ public class MatchResponseMapper {
                 .map(entry -> new Property(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
 
-        properties.add(new Property(MatchEntityConstants.SOURCE_ID_FIELD, result.getIdResource()));
+        properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
         properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
         properties.addAll(object.getProperties());
 
