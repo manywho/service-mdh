@@ -537,14 +537,14 @@ public class DescribeTests {
 
                 .body("install.typeElements[2].properties[14].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[14].contentType", equalTo("ContentList"))
-                .body("install.typeElements[2].properties[14].developerName", equalTo("Duplicated Entities"))
+                .body("install.typeElements[2].properties[14].developerName", equalTo("Duplicate Entities"))
                 .body("install.typeElements[2].properties[14].id", nullValue())
                 .body("install.typeElements[2].properties[14].typeElementDeveloperName", equalTo("artist"))
                 .body("install.typeElements[2].properties[14].typeElementId",  nullValue())
 
                 .body("install.typeElements[2].properties[15].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[15].contentType", equalTo("ContentList"))
-                .body("install.typeElements[2].properties[15].developerName", equalTo("Matched Entities"))
+                .body("install.typeElements[2].properties[15].developerName", equalTo("Matching Entities"))
                 .body("install.typeElements[2].properties[15].id", nullValue())
                 .body("install.typeElements[2].properties[15].typeElementDeveloperName", equalTo("artist"))
                 .body("install.typeElements[2].properties[15].typeElementId", nullValue())
