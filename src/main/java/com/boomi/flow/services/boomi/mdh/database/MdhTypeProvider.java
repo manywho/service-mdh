@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
     private final static Logger LOGGER = LoggerFactory.getLogger(MdhTypeProvider.class);
@@ -43,13 +44,11 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
         return false;
     }
 
-    private static void loadModelTypes(List<Universe> universes, List<TypeElement> typeElements) {
-        universes.stream()
+    private static List<TypeElement> loadModelTypes(List<Universe> universes) {
+        return universes.stream()
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
-                .forEach(universe ->
-                    FieldMapper.collectTypes(universe.getLayout().getModel().getElements(),
-                            universe.getName(), TypeNameGenerator.createModelName(universe.getName()), universe.getName(),
-                            universe.getId().toString(), typeElements, true));
+                .map(FieldMapper::createModelType)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -61,9 +60,6 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
 
         var universes = repository.findAll(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword());
 
-        var types = new ArrayList<TypeElement>();
-        loadModelTypes(universes, types);
-
-        return types;
+        return loadModelTypes(universes);
     }
 }

@@ -16,9 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import java.util.*;
-
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -95,7 +93,7 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(result.get(0).getProperties().get(2).getDeveloperName(), equalTo("id"));
         assertThat(result.get(0).getProperties().get(2).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
 
-        assertThat(result.get(0).getProperties().get(3).getDeveloperName(), equalTo("___sourceId"));
+        assertThat(result.get(0).getProperties().get(3).getDeveloperName(), equalTo("___matchSourceId"));
         assertThat(result.get(0).getProperties().get(3).getContentValue(), equalTo("TESTING"));
 
         assertThat(result.get(0).getProperties().get(4).getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
@@ -292,7 +290,7 @@ public class DatabaseLoadMatchEntryTests {
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         object.getProperties().add(new Property("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
-        object.getProperties().add(new Property("___sourceId", "TESTING"));
+        object.getProperties().add(new Property("___matchSourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 11"));
         object.getProperties().add(new Property("field 2", "some value 12"));
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
@@ -305,7 +303,7 @@ public class DatabaseLoadMatchEntryTests {
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2");
         object.getProperties().add(new Property("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2"));
-        object.getProperties().add(new Property("___sourceId", "TESTING"));
+        object.getProperties().add(new Property("___matchSourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 21"));
         object.getProperties().add(new Property("field 2", "some value 22"));
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));

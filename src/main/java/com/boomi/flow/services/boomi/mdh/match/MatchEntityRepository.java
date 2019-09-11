@@ -3,14 +3,12 @@ package com.boomi.flow.services.boomi.mdh.match;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.Entities;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
-
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,48 +22,66 @@ public class MatchEntityRepository {
         this.client = mdhClient;
     }
 
-    public List<MObject> matchEntity(ApplicationConfiguration configuration, String universeId, List<MObject> objects)  {
+    public List<MObject> matchEntity(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
         var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
 
-        objects.stream()
-                .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
-                .forEach(object -> Entities.addRandomUniqueId(object, universe.getIdField()));
-
         var objectsBySource = objects.stream()
-                .collect(Collectors.groupingBy(object -> object.getProperties()
+                .map(object -> {
+                    if (Strings.isNullOrEmpty(object.getExternalId())) {
+                        Entities.addRandomUniqueId(object, universe.getIdField());
+                    }
+
+                    return object;
+                })
+                .collect(Collectors.groupingBy(object ->
+                        object.getProperties()
                         .stream()
-                        .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
+                        .filter(property -> property.getDeveloperName().equals(MatchEntityConstants.SOURCE_ID_FIELD))
                         .map(Property::getContentValue)
 //                        .filter(source -> source != null && source.isEmpty() == false)
                         .findFirst()
                         .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
-        List<MatchEntityResponse.MatchResult> results = new ArrayList<>();
+        List<List<MatchEntityResponse.MatchResult>> resultsList = new ArrayList<>();
         for (var sourceGroup : objectsBySource.entrySet()) {
             // TODO: Check if we should be setting this to a default value, or error if no source was set
             var sourceId = sourceGroup.getKey().isBlank()
-                    ? GoldenRecordConstants.DEFAULT_SOURCE_ID
+                    ? MatchEntityConstants.DEFAULT_SOURCE_ID
                     : sourceGroup.getKey();
 
             var entities = sourceGroup.getValue().stream()
                     .map(entity -> createUpdateEntity(universe, entity))
                     .collect(Collectors.toList());
 
-            // Now we ned to load the match entity information
-            var updateRequest = new BatchUpdateRequest()
-                    .setSource(sourceId)
-                    .setEntities(entities);
-
-            MatchEntityResponse matchResponse = client.queryMatchEntity(configuration.getAtomHostname(),
-                    configuration.getAtomUsername(), configuration.getAtomPassword(), universe.getId().toString(),
-                    updateRequest);
-
-            List<MatchEntityResponse.MatchResult> matchesResult = matchResponse.getMatchResults();
-            matchesResult.forEach(result -> result.setIdResource(sourceId));
-            results.addAll(matchesResult);
+            resultsList.add(getResults(configuration, entities, sourceId, universe));
         }
 
-        return MatchResponseMapper.createMobjectsFromResults(universe, universeId, results);
+        return resultsList.stream()
+                .flatMap(Collection::stream)
+                .filter(result -> result.getEntity() != null && result.getEntity().get(universe.getName()) != null)
+                .map(matchResult -> MatchResponseMapper.createMobjectFromResult(universeId, universe, matchResult))
+                .collect(Collectors.toList());
+    }
+
+    private List<MatchEntityResponse.MatchResult> getResults(ApplicationConfiguration configuration,
+                                                       List<BatchUpdateRequest.Entity> entities, String sourceId,
+                                                       Universe universe) {
+
+        // Now we ned to load the match entity information
+        var updateRequest = new BatchUpdateRequest()
+                .setSource(sourceId)
+                .setEntities(entities);
+
+        MatchEntityResponse matchResponse = client.queryMatchEntity(configuration.getAtomHostname(),
+                configuration.getAtomUsername(), configuration.getAtomPassword(), universe.getId().toString(),
+                updateRequest);
+
+        return matchResponse.getMatchResults().stream()
+                .map(result -> {
+                    result.setIdResource(sourceId);
+
+                    return result;
+                }).collect(Collectors.toList());
     }
 
     private BatchUpdateRequest.Entity createUpdateEntity(Universe universe, MObject entity) {

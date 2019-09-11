@@ -4,7 +4,6 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +30,6 @@ public class Entities {
 
         var entity = entry.getEntity().entrySet().iterator().next();
 
-
         List<Property> properties = createPropertiesModel(entry.getSourceEntityId(), entity.getValue());
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
         properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
@@ -44,7 +42,7 @@ public class Entities {
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
     }
 
-    public static void addRandomUniqueId(MObject object, String idField) {
+    public static MObject addRandomUniqueId(MObject object, String idField) {
         // We are requesting an object without id
         var id = UUID.randomUUID().toString();
 
@@ -57,6 +55,8 @@ public class Entities {
 
         // Set the object's external ID too, which is only used inside Flow itself
         object.setExternalId(id);
+
+        return object;
     }
 
     private static List<Property> createPropertiesModel(String id, Map<String, Object> map) {

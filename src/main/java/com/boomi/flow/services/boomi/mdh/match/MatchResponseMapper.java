@@ -1,24 +1,14 @@
 package com.boomi.flow.services.boomi.mdh.match;
 
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class MatchResponseMapper {
 
-    public static List<MObject> createMobjectsFromResults(Universe universe, String universeId, List<MatchEntityResponse.MatchResult> results) {
-        return results.stream()
-                .filter(result -> result.getEntity() != null && result.getEntity().get(universe.getName()) != null)
-                .map(result -> MatchResponseMapper.createMobjectFromResult(universeId, universe, result))
-                .collect(Collectors.toList());
-
-    }
-
-    private static MObject createMobjectFromResult(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
+    public static MObject createMobjectFromResult(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
         var externalId = result.getEntity().get(universe.getName()).get(universe.getIdField()).toString();
 
         var propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>());
@@ -27,19 +17,23 @@ public class MatchResponseMapper {
         var object = new MObject(universeId + "-match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
-        var properties =  new ArrayList<Property>();
-        result.getEntity().get(universe.getName())
-                .forEach((key, value) -> properties.add(new Property(key, (String) value)));
+        var properties = result.getEntity().get(universe.getName()).entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof String)
+                .map(entry -> new Property(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
 
-        properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
+        properties.add(new Property(MatchEntityConstants.SOURCE_ID_FIELD, result.getIdResource()));
         properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
         properties.addAll(object.getProperties());
 
         object.setProperties(properties);
 
         if ("SUCCESS".equals(result.getStatus())) {
-            result.getMatch().forEach(match -> addMatchesToProperty(propertiesMatched, universe, match, universe.getIdField(), true));
-            result.getDuplicate().forEach(match -> addMatchesToProperty(propertiesDuplicated, universe, match, universe.getIdField(), true));
+            result.getMatch()
+                    .forEach(match -> addMatchesToProperty(propertiesMatched, universe, match, universe.getIdField(), true));
+
+            result.getDuplicate()
+                    .forEach(match -> addMatchesToProperty(propertiesDuplicated, universe, match, universe.getIdField(), true));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
             var entityH = result.getEntity().get(universe.getName());
             addAlreadyLinked(propertiesAlreadyLinked, universe, entityH, universe.getIdField());
@@ -47,7 +41,6 @@ public class MatchResponseMapper {
 
         return object;
     }
-
 
     private static void addAlreadyLinked(Property alreadyLinkedProperty, Universe universe, Map<String, Object> entity, String idField){
         var object = new MObject(universe.getId().toString() + "-match");

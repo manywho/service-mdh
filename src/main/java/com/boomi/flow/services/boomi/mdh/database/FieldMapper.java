@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
 import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -17,15 +18,16 @@ import java.util.List;
 class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
-    static void collectTypes(List<Universe.Layout.Model.Element> elements,
-                             String name, String typePrettyName, String universeName, String universeId,
-                             List<TypeElement> typeCollected, boolean isModel) {
+    static TypeElement createModelType(Universe universe) {
+        var modelBasicName = universe.getName();
+        var universeName = TypeNameGenerator.createModelName(universe.getName());
+        var universeId = universe.getId().toString();
 
         List<TypeElementProperty> properties = new ArrayList<>();
         List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
 
         // TODO: This doesn't add an ID field... is that a problem? It's only in layout->fields, not layout->model->elements
-        for (var element : elements) {
+        for (var element : universe.getLayout().getModel().getElements()) {
 
             var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
             // TODO: Ignore field groups (child types) until the bindings for child Types are supported in engine
@@ -35,94 +37,47 @@ class FieldMapper {
                 continue;
             }
 
-            if (ContentType.Object == contentType || ContentType.List == contentType) {
-                collectTypes(element.getElements(), element.getName(), element.getPrettyName(), universeName, universeId, typeCollected,false);
-                properties.add(new TypeElementProperty(element.getPrettyName(), contentType, element.getPrettyName()));
-                propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
-            } else {
-                properties.add(new TypeElementProperty(element.getPrettyName(), contentType));
-                propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
-            }
+            properties.add(new TypeElementProperty(element.getPrettyName(), contentType));
+            propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
         }
 
-        addPropertiesForGoldenRecord(properties);
-        addPropertiesForQuarantine(properties);
-        addPropertiesForMatchEntities(typePrettyName, properties);
+        // adding the default properties and bindings for each model type
 
-        List<TypeElementBinding> bindings = new ArrayList<>();
-
-        if (isModel == false) {
-            var developerSummary = "The type " + typePrettyName + " for the " + universeName + " universe";
-            bindings.add(new TypeElementBinding(typePrettyName, developerSummary, name, propertyBindings));
-        } else {
-            addBindingForGoldenRecord(bindings, universeId, universeName, typePrettyName, propertyBindings);
-            addBindingForQuarantine(bindings, universeId, universeName, typePrettyName, propertyBindings);
-            addBindingForMatches(bindings, universeId, universeName, typePrettyName, propertyBindings);
-        }
-
-        typeCollected.add(new TypeElement(typePrettyName, properties, bindings));
-    }
-
-    private static void addPropertiesForMatchEntities(String name, List<TypeElementProperty> properties) {
-        properties.add(new TypeElementProperty("Fuzzy Match Details", ContentType.Object, "Fuzzy Match Details"));
-        properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, name));
-        properties.add(new TypeElementProperty("Matching Entities", ContentType.List, name));
-        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, name));
-    }
-
-    private static void addPropertiesForGoldenRecord(List<TypeElementProperty> properties) {
+        // adding properties for golden record
         properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
         properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
-    }
 
-    private static void addPropertiesForQuarantine(List<TypeElementProperty> properties) {
+        // adding properties for quarantine
         properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ID, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ENTITY_ID, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.STATUS, ContentType.String));
-
-        // These properties are all for the response
         properties.add(new TypeElementProperty(QuarantineEntryConstants.END_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.TRANSACTION_ID, ContentType.String));
-
         properties.add(new TypeElementProperty(QuarantineEntryConstants.CAUSE, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.REASON, ContentType.String));
         properties.add(new TypeElementProperty(QuarantineEntryConstants.RESOLUTION, ContentType.String));
-    }
 
-    private static void addBindingForGoldenRecord(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
-        var developerSummary = "The structure of a golden record for the " + universeName + " universe";
+        // adding properties for match entities
+        properties.add(new TypeElementProperty("Fuzzy Match Details", ContentType.Object, "Fuzzy Match Details"));
+        properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelBasicName));
+        properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelBasicName));
+        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelBasicName));
+        properties.add(new TypeElementProperty(MatchEntityConstants.SOURCE_ID, ContentType.String));
 
+        // adding bindings for Golden Records
+        List<TypeElementBinding> bindings = new ArrayList<>();
+        var developerSummaryGoldenRecords = "The structure of a golden record for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsGoldenRecord = new ArrayList<>(propertyBindings);
-
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
+        bindings.add(new TypeElementBinding(modelBasicName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
 
-        bindings.add(new TypeElementBinding(typePrettyName + " Golden Record", developerSummary, name + "-golden-record", propertyBindingsGoldenRecord));
-    }
-
-    private static void addBindingForMatches(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
-        var developerSummary = "The structure of matches for the " + universeName + " universe";
-
-        List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
-
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.MATCH, FuzzyMatchDetailsConstants.MATCH));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.DUPLICATE, FuzzyMatchDetailsConstants.DUPLICATE));
-        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.ALREADY_LINKED, FuzzyMatchDetailsConstants.ALREADY_LINKED));
-        var developerName = typePrettyName + " Match";
-        var databaseTableName = name + "-match";
-
-        bindings.add(new TypeElementBinding(developerName, developerSummary, databaseTableName, propertyBindingsForMatches));
-    }
-
-    private static void addBindingForQuarantine(List<TypeElementBinding> bindings, String name, String universeName, String typePrettyName, List<TypeElementPropertyBinding> propertyBindings) {
-        var developerSummary = "The structure of a Quarantine " + typePrettyName + " for the " + universeName + " universe";
-
+        // adding bindings for Quarantine
+        var developerSummaryQuarantine = "The structure of a Quarantine " + modelBasicName + " for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsQuarantine = new ArrayList<>(propertyBindings);
-
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.STATUS, QuarantineEntryConstants.STATUS_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ID, QuarantineEntryConstants.SOURCE_ID_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ENTITY_ID, QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD));
@@ -132,9 +87,21 @@ class FieldMapper {
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CAUSE, QuarantineEntryConstants.CAUSE_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.REASON, QuarantineEntryConstants.REASON_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.RESOLUTION, QuarantineEntryConstants.RESOLUTION_FIELD));
+        bindings.add(new TypeElementBinding(modelBasicName + " Quarantine", developerSummaryQuarantine, universeId + "-quarantine", propertyBindingsQuarantine));
 
-        bindings.add(new TypeElementBinding(typePrettyName + " Quarantine", developerSummary, name + "-quarantine", propertyBindingsQuarantine));
+        // adding bindings for Matches
+        var developerSummaryMatches = "The structure of matches for the " + universeName + " universe";
+        List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.MATCH, FuzzyMatchDetailsConstants.MATCH));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.DUPLICATE, FuzzyMatchDetailsConstants.DUPLICATE));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.ALREADY_LINKED, FuzzyMatchDetailsConstants.ALREADY_LINKED));
+        propertyBindingsForMatches.add(new TypeElementPropertyBinding(MatchEntityConstants.SOURCE_ID, MatchEntityConstants.SOURCE_ID_FIELD));
+        bindings.add(new TypeElementBinding(modelBasicName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
+
+        return new TypeElement(modelBasicName, properties, bindings);
     }
+
 
     private static ContentType fieldTypeToContentType(String type, boolean repeatable) {
         if (repeatable && "CONTAINER".equals(type)) {

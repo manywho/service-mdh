@@ -161,11 +161,14 @@ public class GoldenRecordRepository {
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
         var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
 
-        objects.stream()
-                .filter(object -> Strings.isNullOrEmpty(object.getExternalId()))
-                .forEach(object -> Entities.addRandomUniqueId(object, universe.getIdField()));
-
         var objectsBySource = objects.stream()
+                .map(object -> {
+                    if (Strings.isNullOrEmpty(object.getExternalId())) {
+                        Entities.addRandomUniqueId(object, universe.getIdField());
+                    }
+
+                    return object;
+                })
                 .collect(Collectors.groupingBy(object -> object.getProperties()
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))

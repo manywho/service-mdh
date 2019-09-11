@@ -402,7 +402,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].bindings[2].developerName", equalTo("artist Match"))
                 .body("install.typeElements[2].bindings[2].developerSummary", equalTo("The structure of matches for the artist universe"))
                 .body("install.typeElements[2].bindings[2].id", nullValue())
-                .body("install.typeElements[2].bindings[2].propertyBindings", hasSize(5))
+                .body("install.typeElements[2].bindings[2].propertyBindings", hasSize(6))
 
                 .body("install.typeElements[2].bindings[2].propertyBindings[0].databaseContentType", nullValue())
                 .body("install.typeElements[2].bindings[2].propertyBindings[0].databaseFieldName", equalTo("name"))
@@ -436,7 +436,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].elementType", equalTo("TYPE"))
                 .body("install.typeElements[2].id", nullValue())
 
-                .body("install.typeElements[2].properties", hasSize(17))
+                .body("install.typeElements[2].properties", hasSize(18))
                 .body("install.typeElements[2].properties[0].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[0].contentType", equalTo("ContentString"))
                 .body("install.typeElements[2].properties[0].developerName", equalTo("name"))
@@ -555,6 +555,13 @@ public class DescribeTests {
                 .body("install.typeElements[2].properties[16].id", nullValue())
                 .body("install.typeElements[2].properties[16].typeElementDeveloperName",  equalTo("artist"))
                 .body("install.typeElements[2].properties[16].typeElementId", nullValue())
+
+                .body("install.typeElements[2].properties[17].contentFormat", nullValue())
+                .body("install.typeElements[2].properties[17].contentType", equalTo("ContentString"))
+                .body("install.typeElements[2].properties[17].developerName", equalTo("Match Entity: Source ID"))
+                .body("install.typeElements[2].properties[17].id", nullValue())
+                .body("install.typeElements[2].properties[17].typeElementDeveloperName",  nullValue())
+                .body("install.typeElements[2].properties[17].typeElementId", nullValue())
 
                 .body("install.typeElements[2].serviceElementId", nullValue())
                 .body("install.typeElements[2].updateByName", equalTo(false));
