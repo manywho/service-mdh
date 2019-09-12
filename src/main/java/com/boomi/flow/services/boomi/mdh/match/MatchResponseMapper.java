@@ -15,8 +15,25 @@ public class MatchResponseMapper {
         var propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>());
         var propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>());
         var propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
-        var object = new MObject(universeId + "-match", externalId, Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
-        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
+
+        if ("SUCCESS".equals(result.getStatus())) {
+            var matches = result.getMatch().stream()
+                    .map(match -> createMatchesToProperty(universe, match, universe.getIdField(), true))
+                    .collect(Collectors.toList());
+
+            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, matches);
+
+            var duplicates = result.getDuplicate().stream()
+                    .map(duplicate -> createMatchesToProperty(universe, duplicate, universe.getIdField(), true))
+                    .collect(Collectors.toList());
+
+            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, duplicates);
+
+        } else if ("ALREADY_LINKED".equals(result.getStatus())) {
+            var entityLinked = result.getEntity().get(universe.getName());
+            propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED,
+                    Arrays.asList(createAlreadyLinked(universe, entityLinked, universe.getIdField())));
+        }
 
         var properties = result.getEntity().get(universe.getName()).entrySet().stream()
                 .filter(entry -> entry.getValue() instanceof String)
@@ -25,69 +42,53 @@ public class MatchResponseMapper {
 
         properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
         properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
-        properties.addAll(object.getProperties());
 
-        object.setProperties(properties);
 
-        if ("SUCCESS".equals(result.getStatus())) {
-            result.getMatch()
-                    .forEach(match -> addMatchesToProperty(propertiesMatched, universe, match, universe.getIdField(), true));
-
-            result.getDuplicate()
-                    .forEach(match -> addMatchesToProperty(propertiesDuplicated, universe, match, universe.getIdField(), true));
-        } else if ("ALREADY_LINKED".equals(result.getStatus())) {
-            var entityH = result.getEntity().get(universe.getName());
-            addAlreadyLinked(propertiesAlreadyLinked, universe, entityH, universe.getIdField());
-        }
+        properties.addAll(Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
+        var object = new MObject(universeId + "-match", externalId, properties);
+        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         return object;
     }
 
-    private static void addAlreadyLinked(Property alreadyLinkedProperty, Universe universe, Map<String, Object> entity, String idField){
-        var object = new MObject(universe.getId().toString() + "-match");
-        object.setExternalId(entity.get(idField).toString());
+    private static MObject createAlreadyLinked(Universe universe, Map<String, Object> entity, String idField){
+        List<Property> properties = entity.entrySet().stream()
+                .map(element -> new Property(element.getKey(), element.getValue()))
+                .collect(Collectors.toList());
 
-        entity.forEach((key, value) -> {
-            var property = new Property(key, value);
-            object.getProperties().add(property);
-        });
-
-        alreadyLinkedProperty.getObjectData().add(object);
+        return new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(),
+                properties);
     }
 
-    private static void addMatchesToProperty(Property propertyMatches, Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
+    private static MObject createMatchesToProperty(Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
         var entity = (Map<String, Object>) matchResults.get(universe.getName());
-        var object = new MObject(universe.getId().toString() + "-match");
-        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
-        object.setExternalId(entity.get(idField).toString());
-
-        entity.forEach((key, value) -> {
-            var property = new Property(key, value);
-            object.getProperties().add(property);
-        });
+        var properties = entity.entrySet().stream()
+                .map(element -> new Property(element.getKey(), element.getValue()))
+                .collect(Collectors.toList());
 
         if (addFuzzyMatchDetails) {
-            addFuzzyMatchDetails(object, (Map<String, Object>) matchResults.get("fuzzyMatchDetails"));
+            var result = (Map<String, Object>) matchResults.get("fuzzyMatchDetails");
+
+            var propertiesFuzzy = new ArrayList<Property>();
+            if (result != null) {
+                propertiesFuzzy.add(new Property("Field", result.get("field")));
+                propertiesFuzzy.add(new Property("First", result.get("first")));
+                propertiesFuzzy.add(new Property("Second", result.get("second")));
+                propertiesFuzzy.add(new Property("Method", result.get("method")));
+                propertiesFuzzy.add(new Property("Match Strength", result.get("matchStrength")));
+                propertiesFuzzy.add(new Property("Threshold", result.get("threshold")));
+            }
+
+            var fuzzyMatchDetails = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
+            properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetails));
+
         }
 
-        propertyMatches.getObjectData().add(object);
-    }
+        var object = new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(), properties);
 
-    private static void addFuzzyMatchDetails(MObject object, Map<String, Object> result) {
-        var fuzzyMatchEmpty = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS);
-        fuzzyMatchEmpty.setExternalId(UUID.randomUUID().toString());
-        var properties = new ArrayList<Property>();
-        if (result != null) {
-            properties.add(new Property("Field", result.get("field")));
-            properties.add(new Property("First", result.get("first")));
-            properties.add(new Property("Second", result.get("second")));
-            properties.add(new Property("Method", result.get("method")));
-            properties.add(new Property("Match Strength", result.get("matchStrength")));
-            properties.add(new Property("Threshold", result.get("threshold")));
-        }
-        fuzzyMatchEmpty.setProperties(properties);
+        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
-        object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchEmpty));
+        return object;
     }
 }
