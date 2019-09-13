@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Entities {
 
-    public static MObject createGoldenRecordMObject(String universeId, String id, Map<String,  Map<String, Object>> entity) {
+    public static MObject createGoldenRecordMObject(String universeId, String id, Map<String, Map<String, Object>> entity) {
         if (entity == null || entity.isEmpty()) {
             return null;
         }

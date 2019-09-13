@@ -8,13 +8,13 @@ import java.util.Map;
 public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<String, Object>>> {
 
     @Override
-    public XmlMapWrapper marshal(Map<String,  Map<String, Object>> m) throws Exception {
+    public XmlMapWrapper marshal(Map<String, Map<String, Object>> m) throws Exception {
         throw new RuntimeException("Marshalling maps isn't supported yet");
     }
 
     @Override
-    public Map<String,  Map<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
-        var map = new HashMap<String,  Map<String, Object>>();
+    public Map<String, Map<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
+        var map = new HashMap<String, Map<String, Object>>();
 
         if (wrapper == null || wrapper.elements == null || wrapper.elements.isEmpty()) {
             return map;
@@ -31,8 +31,8 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<Str
         return map;
     }
 
-    private static  Map<String, Object> createChildNodes(NodeList elements) {
-        var childMap = new  HashMap<String, Object>();
+    private static Map<String, Object> createChildNodes(NodeList elements) {
+        var childMap = new HashMap<String, Object>();
 
         for (var i = 0; i < elements.getLength(); i++) {
             var childNode = elements.item(i);
