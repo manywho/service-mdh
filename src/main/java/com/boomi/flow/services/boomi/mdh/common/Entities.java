@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh.common;
 
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
+import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import java.util.List;
@@ -42,7 +43,10 @@ public class Entities {
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
     }
 
-    public static MObject addRandomUniqueId(MObject object, String idField) {
+    public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField) {
+        if (Strings.isNullOrEmpty(object.getExternalId()) == false) {
+            return object;
+        }
         // We are requesting an object without id
         var id = UUID.randomUUID().toString();
 
@@ -63,6 +67,7 @@ public class Entities {
         return map.entrySet().stream()
                 // Todo: we ignored child objects until get support in engine for child object bindings
                 .filter(field -> field.getValue() instanceof Map == false)
-                .map(field -> new Property(field.getKey(), field.getValue())).collect(Collectors.toList());
+                .map(field -> new Property(field.getKey(), field.getValue()))
+                .collect(Collectors.toList());
     }
 }

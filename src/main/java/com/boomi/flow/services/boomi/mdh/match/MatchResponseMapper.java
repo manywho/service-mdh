@@ -43,8 +43,10 @@ public class MatchResponseMapper {
         properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
         properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
 
+        properties.add(propertiesMatched);
+        properties.add(propertiesDuplicated);
+        properties.add(propertiesAlreadyLinked);
 
-        properties.addAll(Arrays.asList(propertiesMatched, propertiesDuplicated, propertiesAlreadyLinked));
         var object = new MObject(universeId + "-match", externalId, properties);
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 

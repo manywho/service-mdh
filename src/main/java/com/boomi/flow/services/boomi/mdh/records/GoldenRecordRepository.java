@@ -3,7 +3,6 @@ package com.boomi.flow.services.boomi.mdh.records;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
-import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -162,13 +161,7 @@ public class GoldenRecordRepository {
         var universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
         var objectsBySource = objects.stream()
-                .map(object -> {
-                    if (Strings.isNullOrEmpty(object.getExternalId())) {
-                        Entities.addRandomUniqueId(object, universe.getIdField());
-                    }
-
-                    return object;
-                })
+                .map(object -> Entities.setRandomUniqueIdIfEmpty(object, universe.getIdField()))
                 .collect(Collectors.groupingBy(object -> object.getProperties()
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
