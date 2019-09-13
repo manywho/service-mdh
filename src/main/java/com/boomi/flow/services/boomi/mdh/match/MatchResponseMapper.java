@@ -31,8 +31,7 @@ public class MatchResponseMapper {
 
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
             var entityLinked = result.getEntity().get(universe.getName());
-            propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED,
-                    Arrays.asList(createAlreadyLinked(universe, entityLinked, universe.getIdField())));
+            propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, createAlreadyLinked(universe, entityLinked, universe.getIdField()));
         }
 
         var properties = result.getEntity().get(universe.getName()).entrySet().stream()
