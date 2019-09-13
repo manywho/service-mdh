@@ -70,12 +70,11 @@ public class MatchEntityRepository {
                 configuration.getHubUsername(), configuration.getHubToken(), universe.getId().toString(),
                 updateRequest);
 
-        return matchResponse.getMatchResults().stream()
-                .map(result -> {
-                    result.setIdResource(sourceId);
+        for (var result: matchResponse.getMatchResults()) {
+            result.setIdResource(sourceId);
+        }
 
-                    return result;
-                }).collect(Collectors.toList());
+        return matchResponse.getMatchResults();
     }
 
     private BatchUpdateRequest.Entity createUpdateEntity(Universe universe, MObject entity) {
