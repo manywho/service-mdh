@@ -53,6 +53,7 @@ public class MatchResponseMapper {
 
     private static MObject createAlreadyLinked(Universe universe, Map<String, Object> entity, String idField){
         List<Property> properties = entity.entrySet().stream()
+                .filter(element -> element.getValue() instanceof Map == false)
                 .map(element -> new Property(element.getKey(), element.getValue()))
                 .collect(Collectors.toList());
 
@@ -64,6 +65,7 @@ public class MatchResponseMapper {
         var entity = (Map<String, Object>) matchResults.get(universe.getName());
 
         var properties = entity.entrySet().stream()
+                .filter(element-> element.getValue() instanceof Map == false)
                 .map(element -> new Property(element.getKey(), element.getValue()))
                 .collect(Collectors.toList());
 
