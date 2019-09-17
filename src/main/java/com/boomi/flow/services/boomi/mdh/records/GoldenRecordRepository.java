@@ -3,6 +3,7 @@ package com.boomi.flow.services.boomi.mdh.records;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
+import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -179,13 +180,7 @@ public class GoldenRecordRepository {
             var entities = sourceGroup.getValue().stream()
                     .map(entity -> {
                         // Map all the properties to fields, except our "internal" ones
-                        var fields = entity.getProperties().stream()
-                                .filter(property -> property.getDeveloperName().startsWith("___") == false)
-                                .filter(property -> property.getContentValue() != null)
-                                .collect(Collectors.toMap(
-                                        Property::getDeveloperName,
-                                        property -> (Object) property.getContentValue()
-                                ));
+                        var fields = FieldMapper.createMapFromMobject(entity);
 
                         fields.put(universe.getIdField(), entity.getExternalId());
 

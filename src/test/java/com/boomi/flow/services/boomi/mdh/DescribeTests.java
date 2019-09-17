@@ -577,7 +577,7 @@ public class DescribeTests {
                 .body("install.typeElements[3].bindings[0].propertyBindings[0].databaseFieldName", equalTo("name"))
                 .body("install.typeElements[3].bindings[0].propertyBindings[0].typeElementPropertyDeveloperName", equalTo("Name"))
                 .body("install.typeElements[3].bindings[0].propertyBindings[0].typeElementPropertyId", nullValue())
-                .body("install.typeElements[3].bindings[0].propertyBindings[1].databaseContentType", nullValue())
+                .body("install.typeElements[3].bindings[0].propertyBindings[1].databaseContentType", equalTo("region"))
                 .body("install.typeElements[3].bindings[0].propertyBindings[1].databaseFieldName", equalTo("region"))
                 .body("install.typeElements[3].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Region"))
                 .body("install.typeElements[3].bindings[0].propertyBindings[1].typeElementPropertyId", nullValue())
@@ -597,7 +597,7 @@ public class DescribeTests {
                 .body("install.typeElements[3].properties[1].contentType", equalTo("ContentObject"))
                 .body("install.typeElements[3].properties[1].developerName", equalTo("Region"))
                 .body("install.typeElements[3].properties[1].id", nullValue())
-                .body("install.typeElements[3].properties[1].typeElementDeveloperName", nullValue())
+                .body("install.typeElements[3].properties[1].typeElementDeveloperName", equalTo("region"))
                 .body("install.typeElements[3].properties[1].typeElementId", nullValue())
                 .body("install.typeElements[3].serviceElementId", nullValue())
                 .body("install.typeElements[3].updateByName", equalTo(false));
@@ -613,7 +613,7 @@ public class DescribeTests {
                 .body("install.typeElements[4].bindings[0].propertyBindings[0].typeElementPropertyDeveloperName", equalTo("Name"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[0].typeElementPropertyId", nullValue())
 
-                .body("install.typeElements[4].bindings[0].propertyBindings[1].databaseContentType", nullValue())
+                .body("install.typeElements[4].bindings[0].propertyBindings[1].databaseContentType", equalTo("capital"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[1].databaseFieldName", equalTo("capital"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Capital"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[1].typeElementPropertyId", nullValue())
@@ -644,7 +644,7 @@ public class DescribeTests {
                 .body("install.typeElements[4].bindings[1].propertyBindings[0].typeElementPropertyDeveloperName", equalTo("Name"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[0].typeElementPropertyId", nullValue())
 
-                .body("install.typeElements[4].bindings[1].propertyBindings[1].databaseContentType", nullValue())
+                .body("install.typeElements[4].bindings[1].propertyBindings[1].databaseContentType", equalTo("capital"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[1].databaseFieldName", equalTo("capital"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Capital"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[1].typeElementPropertyId", nullValue())
@@ -696,7 +696,7 @@ public class DescribeTests {
                 .body("install.typeElements[4].bindings[2].propertyBindings[0].typeElementPropertyDeveloperName", equalTo("Name"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[0].typeElementPropertyId", nullValue())
 
-                .body("install.typeElements[4].bindings[2].propertyBindings[1].databaseContentType", nullValue())
+                .body("install.typeElements[4].bindings[2].propertyBindings[1].databaseContentType", equalTo("capital"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[1].databaseFieldName", equalTo("capital"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Capital"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[1].typeElementPropertyId", nullValue())
@@ -742,7 +742,7 @@ public class DescribeTests {
                 .body("install.typeElements[4].properties[1].contentType", equalTo("ContentObject"))
                 .body("install.typeElements[4].properties[1].developerName", equalTo("Capital"))
                 .body("install.typeElements[4].properties[1].id", nullValue())
-                .body("install.typeElements[4].properties[1].typeElementDeveloperName", nullValue())
+                .body("install.typeElements[4].properties[1].typeElementDeveloperName", equalTo("capital"))
                 .body("install.typeElements[4].properties[1].typeElementId", nullValue())
 
                 .body("install.typeElements[4].properties[2].contentFormat", nullValue())
