@@ -19,8 +19,8 @@
                 <element uniqueId="NAME" name="name" prettyName="Name" type="STRING" required="true" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
                 <element uniqueId="CAPITAL" name="capital" prettyName="Capital" type="CONTAINER" required="true" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
                     <element uniqueId="NAME_1" name="name" prettyName="Name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
-                    <element uniqueId="REGION" name="region" prettyName="region" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
-                        <element uniqueId="NAME_2" name="name" prettyName="name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/></element>
+                    <element uniqueId="REGION" name="region" prettyName="Region" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                        <element uniqueId="NAME_2" name="name" prettyName="Name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/></element>
                 </element>
                 <element uniqueId="CITIES" name="cities" prettyName="cities" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="true" collectionMatchType="KEY" collectionMatchKeys="" collectionPrettyName="cities" collectionTag="cities" collectionUniqueId="CITIES_1">
                     <element uniqueId="NAME_3" name="name" prettyName="name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
