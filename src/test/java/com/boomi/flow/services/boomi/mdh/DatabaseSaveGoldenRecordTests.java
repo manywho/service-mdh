@@ -77,7 +77,7 @@ public class DatabaseSaveGoldenRecordTests {
                                         Map.entry("field 1 1", "some value 1"),
                                         Map.entry("field 2 1", "some value 2"),
                                         Map.entry("field 3 1", "some value 3"),
-                                        Map.entry("field 4", Map.ofEntries(Map.entry("object field 4", Map.ofEntries(Map.entry("property 4 1", "value property 4 1")))))
+                                        Map.entry("field 4", Map.ofEntries(Map.entry("property 4 1", "value property 4 1")))
                                 ))
                                 .setOp(null)
                 ))
@@ -95,7 +95,7 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result, not(nullValue()));
         assertThat(result.getDeveloperName(), equalTo(objectDataType.getDeveloperName()));
         assertThat(result.getExternalId(), not(isEmptyOrNullString()));
-        assertThat(result.getProperties(), hasSize(5));
+        assertThat(result.getProperties(), hasSize(6));
         assertThat(result.getProperties().get(0).getDeveloperName(), equalTo("id"));
         assertThat(result.getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
         assertThat(result.getProperties().get(1).getDeveloperName(), equalTo("___sourceId"));
@@ -111,6 +111,5 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getProperties().get(5).getObjectData().get(0).getDeveloperName(), equalTo("object field 4"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("property 4 1"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 1"));
-
     }
 }
