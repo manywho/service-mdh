@@ -1,10 +1,16 @@
 package com.boomi.flow.services.boomi.mdh.common;
 
+import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -63,11 +69,99 @@ public class Entities {
         return object;
     }
 
-    private static List<Property> createPropertiesModel(String id, Map<String, Object> map) {
-        return map.entrySet().stream()
-                // Todo: we ignored child objects until get support in engine for child object bindings
-                .filter(field -> field.getValue() instanceof Map == false)
-                .map(field -> new Property(field.getKey(), field.getValue()))
+    public static MObject createMatchMObject(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
+        var externalId = result.getEntity().get(universe.getName()).get(universe.getIdField()).toString();
+
+        var propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>());
+        var propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>());
+        var propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
+
+        if ("SUCCESS".equals(result.getStatus())) {
+            var matches = result.getMatch().stream()
+                    .map(match -> createMatchesToProperty(universe, match, universe.getIdField(), true))
+                    .collect(Collectors.toList());
+
+            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, matches);
+
+            var duplicates = result.getDuplicate().stream()
+                    .map(duplicate -> createMatchesToProperty(universe, duplicate, universe.getIdField(), true))
+                    .collect(Collectors.toList());
+
+            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, duplicates);
+
+        } else if ("ALREADY_LINKED".equals(result.getStatus())) {
+            var entityLinked = result.getEntity().get(universe.getName());
+            propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, createAlreadyLinked(universe, entityLinked, universe.getIdField()));
+        }
+
+        var properties = result.getEntity().get(universe.getName()).entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof String)
+                .map(entry -> new Property(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+
+        properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
+        properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
+
+        properties.add(propertiesMatched);
+        properties.add(propertiesDuplicated);
+        properties.add(propertiesAlreadyLinked);
+
+        var object = new MObject(universeId + "-match", externalId, properties);
+        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
+
+        return object;
+    }
+
+    private static MObject createAlreadyLinked(Universe universe, Map<String, Object> entity, String idField){
+        var properties = createPropertiesModel("", entity);
+
+        return new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(),
+                properties);
+    }
+
+    private static MObject createMatchesToProperty(Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
+        var entity = (Map<String, Object>) matchResults.get(universe.getName());
+        var properties = createPropertiesModel("", entity);
+
+        if (addFuzzyMatchDetails) {
+            var result = (Map<String, Object>) matchResults.get("fuzzyMatchDetails");
+
+            var propertiesFuzzy = new ArrayList<Property>();
+            if (result != null) {
+                propertiesFuzzy.add(new Property("Field", result.get("field")));
+                propertiesFuzzy.add(new Property("First", result.get("first")));
+                propertiesFuzzy.add(new Property("Second", result.get("second")));
+                propertiesFuzzy.add(new Property("Method", result.get("method")));
+                propertiesFuzzy.add(new Property("Match Strength", result.get("matchStrength")));
+                propertiesFuzzy.add(new Property("Threshold", result.get("threshold")));
+            }
+
+            var fuzzyMatchDetails = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
+            properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetails));
+
+        }
+
+        var object = new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(), properties);
+
+        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
+
+        return object;
+    }
+
+    private static List<Property> createPropertiesModel(String id, Map<String, Object> map) {
+        var properties = new ArrayList<Property>();
+
+        for (var entry:map.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                MObject object = new MObject(entry.getKey(), createPropertiesModel("", (Map<String, Object>) entry.getValue()));
+                object.setTypeElementBindingDeveloperName(entry.getKey() + "-child");
+                object.setExternalId(UUID.randomUUID().toString());
+                properties.add(new Property(entry.getKey(), List.of(object)));
+            } else {
+                properties.add(new Property(entry.getKey(), entry.getValue()));
+            }
+        }
+
+        return properties;
     }
 }

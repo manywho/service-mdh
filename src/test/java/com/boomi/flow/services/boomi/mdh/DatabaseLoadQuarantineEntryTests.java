@@ -59,7 +59,7 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(10));
+        assertThat(objects.get(0).getProperties(), hasSize(11));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
 
@@ -69,20 +69,25 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
         assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
 
-        assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("___cause"));
-        assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a cause 1"));
-        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___createdDate"));
-        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("2018-02-04T12:34Z"));
-        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___endDate"));
-        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-05T13:57Z"));
-        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___reason"));
-        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a reason 1"));
-        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___resolution"));
-        assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a resolution 1"));
-        assertThat(objects.get(0).getProperties().get(8).getDeveloperName(), equalTo("___transactionId"));
-        assertThat(objects.get(0).getProperties().get(8).getContentValue(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties().get(9).getDeveloperName(), equalTo("___sourceEntityId"));
-        assertThat(objects.get(0).getProperties().get(9).getContentValue(), equalTo("a source entity ID 1"));
+        assertThat(objects.get(0).getProperties().get(3).getContentValue(), nullValue());
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 4 1"));
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 4 1 property"));
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 value 1 1"));
+
+        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___cause"));
+        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a cause 1"));
+        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___createdDate"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___endDate"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___reason"));
+        assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a reason 1"));
+        assertThat(objects.get(0).getProperties().get(8).getDeveloperName(), equalTo("___resolution"));
+        assertThat(objects.get(0).getProperties().get(8).getContentValue(), equalTo("a resolution 1"));
+        assertThat(objects.get(0).getProperties().get(9).getDeveloperName(), equalTo("___transactionId"));
+        assertThat(objects.get(0).getProperties().get(9).getContentValue(), equalTo("a transaction ID 1"));
+        assertThat(objects.get(0).getProperties().get(10).getDeveloperName(), equalTo("___sourceEntityId"));
+        assertThat(objects.get(0).getProperties().get(10).getContentValue(), equalTo("a source entity ID 1"));
     }
 
     @Test
@@ -171,6 +176,7 @@ public class DatabaseLoadQuarantineEntryTests {
         entityWrapper.put("field 1 " + number, "field 1 value " + number);
         entityWrapper.put("field 2 " + number, "field 2 value " + number);
         entityWrapper.put("field 3 " + number, "field 3 value " + number);
+        entityWrapper.put("field 4 " + number, Map.ofEntries(Map.entry("field 4 " + number + " property", "value property 4 value 1 " + number)));
 
         Map<String, Map<String, Object>> entity = new HashMap<>();
         entity.put("dunno", entityWrapper);
