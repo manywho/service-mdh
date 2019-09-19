@@ -122,7 +122,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("field 3 1"));
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getContentValue(), nullValue());
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 3 value 1 1"));
 
         var fuzzyMatchMatchedEntity = matchedEntityProperty.getObjectData().get(0).getProperties().get(4);

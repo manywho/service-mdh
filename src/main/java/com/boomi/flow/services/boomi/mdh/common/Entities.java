@@ -134,10 +134,12 @@ public class Entities {
                 propertiesFuzzy.add(new Property("Method", result.get("method")));
                 propertiesFuzzy.add(new Property("Match Strength", result.get("matchStrength")));
                 propertiesFuzzy.add(new Property("Threshold", result.get("threshold")));
-            }
 
-            var fuzzyMatchDetails = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
-            properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetails));
+                var fuzzyMatchDetails = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
+                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetails));
+            } else {
+                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, new ArrayList<>()));
+            }
 
         }
 
@@ -153,7 +155,7 @@ public class Entities {
 
         for (var entry:map.entrySet()) {
             if (entry.getValue() instanceof Map) {
-                MObject object = new MObject(entry.getKey(), createPropertiesModel("", (Map<String, Object>) entry.getValue()));
+                MObject object = new MObject(entry.getKey() + "-child", createPropertiesModel("", (Map<String, Object>) entry.getValue()));
                 object.setTypeElementBindingDeveloperName(entry.getKey() + "-child");
                 object.setExternalId(UUID.randomUUID().toString());
                 properties.add(new Property(entry.getKey(), List.of(object)));
