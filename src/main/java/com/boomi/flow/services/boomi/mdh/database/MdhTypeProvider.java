@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,8 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
     private static List<TypeElement> loadModelTypes(List<Universe> universes) {
         return universes.stream()
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
-                .map(FieldMapper::createModelType)
+                .map(FieldMapper::createModelTypes)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 

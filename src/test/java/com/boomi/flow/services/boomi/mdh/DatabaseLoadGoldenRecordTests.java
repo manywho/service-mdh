@@ -60,13 +60,17 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(3));
+        assertThat(objects.get(0).getProperties(), hasSize(4));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
         assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
         assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
         assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
+        assertThat(objects.get(0).getProperties().get(3).getContentValue(), nullValue());
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 4 1-child"));
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 4 1 property"));
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 value 1 1"));
     }
 
     @Test
@@ -202,6 +206,7 @@ public class DatabaseLoadGoldenRecordTests {
         fieldsWrapper.put("field 1 " + number, "field 1 value " + number);
         fieldsWrapper.put("field 2 " + number, "field 2 value " + number);
         fieldsWrapper.put("field 3 " + number, "field 3 value " + number);
+        fieldsWrapper.put("field 4 " + number, Map.ofEntries(Map.entry("field 4 " + number + " property", "value property 4 value 1 " + number)));
 
         Map<String, Map<String, Object>> fields = new HashMap<>();
         fields.put("universe-name", fieldsWrapper);

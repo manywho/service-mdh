@@ -53,7 +53,7 @@ public class MatchEntityRepository {
         return resultsList.stream()
                 .flatMap(Collection::stream)
                 .filter(result -> result.getEntity() != null && result.getEntity().get(universe.getName()) != null)
-                .map(matchResult -> MatchResponseMapper.createMobjectFromResult(universeId, universe, matchResult))
+                .map(matchResult -> Entities.createMatchMObject(universeId, universe, matchResult))
                 .collect(Collectors.toList());
     }
 
@@ -79,13 +79,7 @@ public class MatchEntityRepository {
 
     private BatchUpdateRequest.Entity createUpdateEntity(Universe universe, MObject entity) {
         // Map all the properties to fields, except our "internal" ones
-        var fields = entity.getProperties().stream()
-                .filter(property -> property.getDeveloperName().startsWith("___") == false)
-                .filter(property -> property.getContentValue() != null)
-                .collect(Collectors.toMap(
-                        Property::getDeveloperName,
-                        property -> (Object) property.getContentValue()
-                ));
+        var fields = mObjectToMap(entity);
 
         fields.put(universe.getIdField(), entity.getExternalId());
 
@@ -93,5 +87,21 @@ public class MatchEntityRepository {
                 .setOp(null)
                 .setName(universe.getLayout().getModel().getName())
                 .setFields(fields);
+    }
+
+    private Map<String, Object> mObjectToMap(MObject mObject) {
+        var map = new HashMap<String, Object>();
+        for (var property: mObject.getProperties()) {
+            if (property.getDeveloperName().startsWith("___")) {
+                continue;
+            }
+            if (property.getContentValue() != null) {
+                map.put(property.getDeveloperName(), property.getContentValue());
+            } else if (property.getObjectData() != null && property.getObjectData().size() == 1) {
+                map.put(property.getDeveloperName(), mObjectToMap(property.getObjectData().get(0)));
+            }
+        }
+
+        return map;
     }
 }

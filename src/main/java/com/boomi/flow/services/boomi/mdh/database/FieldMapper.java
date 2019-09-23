@@ -9,36 +9,32 @@ import com.manywho.sdk.api.draw.elements.type.TypeElement;
 import com.manywho.sdk.api.draw.elements.type.TypeElementBinding;
 import com.manywho.sdk.api.draw.elements.type.TypeElementProperty;
 import com.manywho.sdk.api.draw.elements.type.TypeElementPropertyBinding;
+import com.manywho.sdk.api.run.elements.type.MObject;
+import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
-import java.util.List;
 
-class FieldMapper {
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
-    static TypeElement createModelType(Universe universe) {
+    static List<TypeElement> createModelTypes(Universe universe) {
         var modelBasicName = universe.getName();
         var universeName = TypeNameGenerator.createModelName(universe.getName());
         var universeId = universe.getId().toString();
 
-        List<TypeElementProperty> properties = new ArrayList<>();
-        List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
+        // create child types
+        var types = extractOneLevelChildTypeElements(universe.getLayout().getModel().getElements())
+                .stream()
+                .map(FieldMapper::createChildTypesFromElement)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
-        // TODO: This doesn't add an ID field... is that a problem? It's only in layout->fields, not layout->model->elements
-        for (var element : universe.getLayout().getModel().getElements()) {
-
-            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
-            // TODO: Ignore field groups (child types) until the bindings for child Types are supported in engine
-            var isChildType = ContentType.Object == contentType || ContentType.List == contentType;
-
-            if (contentType == null || isChildType) {
-                continue;
-            }
-
-            properties.add(new TypeElementProperty(element.getPrettyName(), contentType));
-            propertyBindings.add(new TypeElementPropertyBinding(element.getPrettyName(), element.getName()));
-        }
+        // create properties and bindings
+        List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getElements());
+        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(universe.getLayout().getModel().getElements());
 
         // adding the default properties and bindings for each model type
 
@@ -98,7 +94,112 @@ class FieldMapper {
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
         bindings.add(new TypeElementBinding(modelBasicName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
 
-        return new TypeElement(modelBasicName, properties, bindings);
+        // add model root type
+        types.add(new TypeElement(modelBasicName, properties, bindings));
+
+        return types;
+    }
+
+    public static Map<String, Object> createMapFromMobject(MObject mObject) {
+        Map<String, Object> mapObject = new HashMap<>();
+
+        for (Property property: mObject.getProperties()) {
+            if (property.getDeveloperName().startsWith("___")) {
+                continue;
+            }
+
+            if (property.getContentValue() != null) {
+                mapObject.put(property.getDeveloperName(), property.getContentValue());
+            } else if (property.getObjectData() != null && property.getObjectData().size() > 0) {
+                mapObject.put(property.getDeveloperName(), createMapFromMobject(property.getObjectData().get(0)));
+            }
+        }
+
+        return mapObject;
+    }
+
+    private static List<Universe.Layout.Model.Element> extractOneLevelChildTypeElements(List<Universe.Layout.Model.Element> elements) {
+        List<Universe.Layout.Model.Element> childTypeElement= new ArrayList<>();
+
+        for (var element : elements) {
+            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
+
+            if (contentType == ContentType.Object) {
+                childTypeElement.add(element);
+            }
+        }
+
+        return childTypeElement;
+    }
+
+    private static List<TypeElementProperty> extractProperties(List<Universe.Layout.Model.Element> elements) {
+        List<TypeElementProperty> properties = new ArrayList<>();
+
+        for (var element : elements) {
+            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
+
+            if (contentType != null && contentType != ContentType.List) {
+                properties.add(createProperty(element, contentType));
+            }
+        }
+
+        return properties;
+    }
+
+    private static List<TypeElementPropertyBinding> extractPropertyBindings(List<Universe.Layout.Model.Element> elements) {
+        List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
+
+        for (var element : elements) {
+            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
+
+            if (contentType != null && contentType != ContentType.List) {
+                propertyBindings.add(creteTypeElementPropertyBinding(element, contentType));
+            }
+        }
+
+        return propertyBindings;
+    }
+
+    private static TypeElementProperty createProperty(Universe.Layout.Model.Element element, ContentType contentType) {
+        String typeElementDeveloperName = null;
+
+        if (contentType == ContentType.Object || contentType == ContentType.List) {
+            typeElementDeveloperName = element.getName();
+        }
+
+        return new TypeElementProperty(element.getPrettyName(), contentType, typeElementDeveloperName);
+    }
+
+    private static TypeElementPropertyBinding creteTypeElementPropertyBinding(Universe.Layout.Model.Element element, ContentType contentType) {
+        String typeElementDeveloperName = null;
+
+        if (contentType == ContentType.Object || contentType == ContentType.List) {
+            typeElementDeveloperName = element.getName();
+        }
+
+        return new TypeElementPropertyBinding(element.getPrettyName(), element.getName(), typeElementDeveloperName);
+    }
+
+    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement) {
+        // create child types
+        var types = extractOneLevelChildTypeElements(groupFieldElement.getElements())
+                .stream()
+                .map(FieldMapper::createChildTypesFromElement)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        List<TypeElementProperty> properties = extractProperties(groupFieldElement.getElements());
+        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
+        List<TypeElementBinding> bindings = new ArrayList<>();
+
+        var developerSummaryChildProperty = "The structure of a Child Type " + groupFieldElement.getPrettyName();
+
+        bindings.add(new TypeElementBinding(groupFieldElement.getPrettyName() + " Child Type Default",
+                developerSummaryChildProperty, groupFieldElement.getName() + "-child", propertyBindings));
+
+        types.add(new TypeElement(groupFieldElement.getName(), properties, bindings));
+
+        return types;
     }
 
 
