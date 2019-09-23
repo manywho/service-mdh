@@ -3,6 +3,7 @@ package com.boomi.flow.services.boomi.mdh;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
@@ -36,7 +37,7 @@ public class DatabaseLoadQuarantineEntryTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("quarantine-universe-name");
+            .setDeveloperName("universe-name-quarantine");
 
     private QuarantineQueryResponse response = new QuarantineQueryResponse()
             .setEntries(
@@ -51,40 +52,37 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(8));
-        assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("cause"));
-        assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
-        assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("createdDate"));
-        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34Z"));
-        assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("endDate"));
-        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57Z"));
-        assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("reason"));
-        assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a reason 1"));
-        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("resolution"));
-        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a resolution 1"));
-        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("transactionId"));
-        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("sourceEntityId"));
-        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a source entity ID 1"));
-        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("entity"));
-        assertThat(objects.get(0).getProperties().get(7).getContentValue(), nullValue());
-        assertThat(objects.get(0).getProperties().get(7).getObjectData(), hasSize(1));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getDeveloperName(), equalTo("dunno Model"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getExternalId(), equalTo("a source entity ID 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties(), hasSize(3));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(objects.get(0).getProperties().get(7).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
+        assertThat(objects.get(0).getProperties(), hasSize(10));
+        assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
+        assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
+
+        assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
+        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("field 2 value 1"));
+
+        assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
+
+        assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("___cause"));
+        assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a cause 1"));
+        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___createdDate"));
+        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___endDate"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___reason"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a reason 1"));
+        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___resolution"));
+        assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a resolution 1"));
+        assertThat(objects.get(0).getProperties().get(8).getDeveloperName(), equalTo("___transactionId"));
+        assertThat(objects.get(0).getProperties().get(8).getContentValue(), equalTo("a transaction ID 1"));
+        assertThat(objects.get(0).getProperties().get(9).getDeveloperName(), equalTo("___sourceEntityId"));
+        assertThat(objects.get(0).getProperties().get(9).getContentValue(), equalTo("a source entity ID 1"));
     }
 
     @Test
@@ -97,14 +95,14 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
                 .queryQuarantineEntries(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
@@ -115,18 +113,18 @@ public class DatabaseLoadQuarantineEntryTests {
     @Test
     public void testLoadWithComprehensiveFilter() {
         var wheres = new ArrayList<ListFilterWhere>();
-        wheres.add(createWhere("status", CriteriaType.Equal, "ACTIVE"));
-        wheres.add(createWhere("sourceId", CriteriaType.Equal, "a source ID"));
-        wheres.add(createWhere("sourceEntityId", CriteriaType.Equal, "a source entity ID"));
-        wheres.add(createWhere("createdDate", CriteriaType.GreaterThan, "2013-01-01T00:00:00.0000000+00:00"));
-        wheres.add(createWhere("createdDate", CriteriaType.LessThanOrEqual, "2019-02-28T00:00:00.0000000+00:00"));
-        wheres.add(createWhere("endDate", CriteriaType.GreaterThanOrEqual, "2019-02-01T00:00:00.0000000+00:00"));
-        wheres.add(createWhere("endDate", CriteriaType.LessThan, "2019-02-14T00:00:00.0000000+00:00"));
-        wheres.add(createWhere("cause", CriteriaType.Equal, "AMBIGUOUS_MATCH"));
-        wheres.add(createWhere("cause", CriteriaType.Equal, "MULTIPLE_MATCHES"));
-        wheres.add(createWhere("cause", CriteriaType.Equal, "REQUIRED_FIELD"));
-        wheres.add(createWhere("resolution", CriteriaType.Equal, "GRID_DELETED"));
-        wheres.add(createWhere("resolution", CriteriaType.Equal, "USER_APPROVED"));
+        wheres.add(createWhere("___status", CriteriaType.Equal, "ACTIVE"));
+        wheres.add(createWhere("___sourceId", CriteriaType.Equal, "a source ID"));
+        wheres.add(createWhere("___sourceEntityId", CriteriaType.Equal, "a source entity ID"));
+        wheres.add(createWhere("___createdDate", CriteriaType.GreaterThan, "2013-01-01T00:00:00.0000000+00:00"));
+        wheres.add(createWhere("___createdDate", CriteriaType.LessThanOrEqual, "2019-02-28T00:00:00.0000000+00:00"));
+        wheres.add(createWhere("___endDate", CriteriaType.GreaterThanOrEqual, "2019-02-01T00:00:00.0000000+00:00"));
+        wheres.add(createWhere("___endDate", CriteriaType.LessThan, "2019-02-14T00:00:00.0000000+00:00"));
+        wheres.add(createWhere("___cause", CriteriaType.Equal, "AMBIGUOUS_MATCH"));
+        wheres.add(createWhere("___cause", CriteriaType.Equal, "MULTIPLE_MATCHES"));
+        wheres.add(createWhere("___cause", CriteriaType.Equal, "REQUIRED_FIELD"));
+        wheres.add(createWhere("___resolution", CriteriaType.Equal, "GRID_DELETED"));
+        wheres.add(createWhere("___resolution", CriteriaType.Equal, "USER_APPROVED"));
 
         var listFilter = new ListFilter();
         listFilter.setComparisonType(ComparisonType.And);
@@ -155,21 +153,21 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter);
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)
                 .queryQuarantineEntries(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
-        Map<String, Object> entityWrapper = new HashMap<>();
+        Map<String, Object> entityWrapper = new  HashMap<String, Object>();
         entityWrapper.put("field 1 " + number, "field 1 value " + number);
         entityWrapper.put("field 2 " + number, "field 2 value " + number);
         entityWrapper.put("field 3 " + number, "field 3 value " + number);

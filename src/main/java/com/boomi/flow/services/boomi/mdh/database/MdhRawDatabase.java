@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.manywho.sdk.api.draw.content.Command;
@@ -9,18 +10,20 @@ import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.services.database.RawDatabase;
-
 import javax.inject.Inject;
 import java.util.List;
 
 public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     private final QuarantineRepository quarantineRepository;
     private final GoldenRecordRepository goldenRecordRepository;
+    private final MatchEntityRepository matchEntityRespository;
 
     @Inject
-    public MdhRawDatabase(QuarantineRepository quarantineRepository, GoldenRecordRepository goldenRecordRepository) {
+    public MdhRawDatabase(QuarantineRepository quarantineRepository, GoldenRecordRepository goldenRecordRepository,
+                          MatchEntityRepository matchEntityRepository) {
         this.quarantineRepository = quarantineRepository;
         this.goldenRecordRepository = goldenRecordRepository;
+        this.matchEntityRespository = matchEntityRepository;
     }
 
     @Override
@@ -29,23 +32,37 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     }
 
     @Override
-    public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter) {
+    public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.startsWith("quarantine-")) {
-            var universe = typeName.replace("quarantine-", "");
+        if (typeName.endsWith("-quarantine")) {
+            var universe = removeEndingSubstring(typeName, "-quarantine");
 
             return quarantineRepository.findAll(configuration, universe, filter);
         }
 
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
+        if (typeName.endsWith("-golden-record")) {
+            var universe = removeEndingSubstring(typeName, "-golden-record");
 
             return goldenRecordRepository.findAll(configuration, universe, filter);
         }
 
+        if (typeName.endsWith("-match")) {
+            var universe = removeEndingSubstring(typeName,"-match");
+
+            if(objects == null || objects.size() <1) {
+                throw new RuntimeException("Only list values are supported when loading entity matches");
+            }
+
+            return matchEntityRespository.matchEntity(configuration, universe, objects);
+        }
+
         // TODO
         return null;
+    }
+
+    private String removeEndingSubstring(String original, String ending) {
+        return original.substring(0, original.length() - ending.length());
     }
 
     @Override
@@ -67,8 +84,8 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
+        if (typeName.endsWith("-golden-record")) {
+            var universe = typeName.replace("-golden-record", "");
 
             goldenRecordRepository.delete(configuration, universe, objects);
             return;
@@ -89,8 +106,8 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
     public List<MObject> update(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
         var typeName = objectDataType.getDeveloperName();
 
-        if (typeName.startsWith("golden-record-")) {
-            var universe = typeName.replace("golden-record-", "");
+        if (typeName.endsWith("-golden-record")) {
+            var universe = removeEndingSubstring(typeName,"-golden-record");
 
             return goldenRecordRepository.update(configuration, universe, objects);
         }

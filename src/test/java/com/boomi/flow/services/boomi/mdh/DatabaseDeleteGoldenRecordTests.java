@@ -2,9 +2,10 @@ package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -29,7 +30,7 @@ public class DatabaseDeleteGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("golden-record-universe-name");
+            .setDeveloperName("universe-name-golden-record");
 
     @Test
     public void testDeleteWithSingleNewObjectWorks() {
@@ -55,13 +56,13 @@ public class DatabaseDeleteGoldenRecordTests {
         object.getProperties().add(new Property("field 3 1", "some value 3"));
 
         // Delete the incoming object
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .delete(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the delete in MDH, with the request that we're expecting
-        var expectedRequest = new GoldenRecordUpdateRequest()
+        var expectedRequest = new BatchUpdateRequest()
                 .setEntities(List.of(
-                        new GoldenRecordUpdateRequest.Entity()
+                        new BatchUpdateRequest.Entity()
                                 .setName("testing")
                                 .setFields(Map.ofEntries(
                                         Map.entry("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a"),
@@ -75,9 +76,9 @@ public class DatabaseDeleteGoldenRecordTests {
 
         verify(client)
                 .updateGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "12fa66f9-e14d-f642-878f-030b13b64731",
                         expectedRequest
                 );

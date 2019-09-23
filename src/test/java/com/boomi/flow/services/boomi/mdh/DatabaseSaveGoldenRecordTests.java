@@ -2,9 +2,10 @@ package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -31,7 +32,7 @@ public class DatabaseSaveGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("golden-record-12fa66f9-e14d-f642-878f-030b13b64731");
+            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
 
     @Test
     public void testSaveWithSingleExistingObjectReturnsObject() {
@@ -57,13 +58,13 @@ public class DatabaseSaveGoldenRecordTests {
         object.getProperties().add(new Property("field 3 1", "some value 3"));
 
         // Update using the incoming object
-        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
+        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting
-        var expectedRequest = new GoldenRecordUpdateRequest()
+        var expectedRequest = new BatchUpdateRequest()
                 .setEntities(List.of(
-                        new GoldenRecordUpdateRequest.Entity()
+                        new BatchUpdateRequest.Entity()
                                 .setName("testing")
                                 .setFields(Map.ofEntries(
                                         Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"),
@@ -77,9 +78,9 @@ public class DatabaseSaveGoldenRecordTests {
 
         verify(client)
                 .updateGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "12fa66f9-e14d-f642-878f-030b13b64731",
                         expectedRequest
                 );

@@ -1,8 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.client;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,20 +36,19 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<Str
 
         for (var i = 0; i < elements.getLength(); i++) {
             var childNode = elements.item(i);
+
             if (childNode.hasChildNodes() == false) {
                 continue;
             }
 
-            var firstChild = childNode.getFirstChild();
-            if (firstChild.hasChildNodes()) {
-                // TODO: We don't care about nested objects right now...
+            if (childNode.getFirstChild().getNodeType() != 1) {
+                childMap.put(childNode.getNodeName(), childNode.getFirstChild().getNodeValue());
             } else {
-                childMap.put(childNode.getNodeName(), firstChild.getNodeValue());
+                // it is a list
+                childMap.put(childNode.getNodeName(), createChildNodes(childNode.getChildNodes()));
             }
-
         }
 
         return childMap;
     }
 }
-

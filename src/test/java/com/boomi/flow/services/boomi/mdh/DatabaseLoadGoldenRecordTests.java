@@ -3,6 +3,7 @@ package com.boomi.flow.services.boomi.mdh;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
+import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
@@ -36,7 +37,7 @@ public class DatabaseLoadGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("golden-record-universe-name");
+            .setDeveloperName("universe-name-golden-record");
 
     private GoldenRecordQueryResponse response = new GoldenRecordQueryResponse()
             .setResultCount(2)
@@ -52,12 +53,12 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name Golden Record"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
         assertThat(objects.get(0).getProperties(), hasSize(3));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
@@ -76,14 +77,14 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null);
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
                 .queryGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
@@ -183,21 +184,21 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter);
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)
                 .queryGoldenRecords(
-                        TestConstants.CONFIGURATION.getAtomHostname(),
-                        TestConstants.CONFIGURATION.getAtomUsername(),
-                        TestConstants.CONFIGURATION.getAtomPassword(),
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
                         "universe-name",
                         query
                 );
     }
 
     private static GoldenRecord createGoldenRecord(int number) {
-        Map<String, Object> fieldsWrapper = new HashMap<>();
+        Map<String, Object> fieldsWrapper = new HashMap<String, Object>();
         fieldsWrapper.put("field 1 " + number, "field 1 value " + number);
         fieldsWrapper.put("field 2 " + number, "field 2 value " + number);
         fieldsWrapper.put("field 3 " + number, "field 3 value " + number);

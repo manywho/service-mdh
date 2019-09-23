@@ -2,11 +2,7 @@ package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
-import com.boomi.flow.services.boomi.mdh.common.DateFilter;
-import com.boomi.flow.services.boomi.mdh.common.Dates;
-import com.boomi.flow.services.boomi.mdh.common.Entities;
-import com.boomi.flow.services.boomi.mdh.common.ListFilters;
-import com.google.common.base.Strings;
+import com.boomi.flow.services.boomi.mdh.common.*;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -34,7 +30,7 @@ public class GoldenRecordRepository {
     }
 
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getAtomHostname(), configuration.getAtomUsername());
+        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
 
         var request = new GoldenRecordQueryRequest();
 
@@ -77,7 +73,6 @@ public class GoldenRecordRepository {
                     queryFilter.setUpdatedDate(dateFilter);
                 }
 
-                // Field values
                 var entityFields = filter.getWhere().stream()
                         .sorted(Comparator.comparing(ListFilterWhere::getColumnName))
                         .dropWhile(where -> Arrays.asList(GoldenRecordConstants.CREATED_DATE_FIELD, GoldenRecordConstants.UPDATED_DATE_FIELD).contains(where.getColumnName()))
@@ -148,13 +143,13 @@ public class GoldenRecordRepository {
             }
         }
 
-        var result = client.queryGoldenRecords(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universe, request);
+        var result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
         if (result == null || result.getRecords() == null || result.getResultCount() == 0) {
             return new ArrayList<>();
         }
 
         return result.getRecords().stream()
-                .map(record -> Entities.createEntityMObject(record.getRecordId(), "Golden Record", record.getFields()))
+                .map(record -> Entities.createGoldenRecordMObject(universe, record.getRecordId(), record.getFields()))
                 .collect(Collectors.toList());
     }
 
@@ -163,31 +158,10 @@ public class GoldenRecordRepository {
     }
 
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
-        var universe = client.findUniverse(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universeId);
-
-        // TODO: This isn't correct - it would be great to be able to get the actual ID field name (or make a global standard named one)
-        String idField = universe.getLayout().getIdXPath()
-                .split("/")
-                [2];
-
-        for (var object : objects) {
-            if (Strings.isNullOrEmpty(object.getExternalId())) {
-                // We're creating this object so let's create an ID
-                var id = UUID.randomUUID().toString();
-
-                // Set the ID property, so it can be referenced in a Flow
-                for (var property : object.getProperties()) {
-                    if (property.getDeveloperName().equals(idField)) {
-                        property.setContentValue(id);
-                    }
-                }
-
-                // Set the object's external ID too, which is only used inside Flow itself
-                object.setExternalId(id);
-            }
-        }
+        var universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
         var objectsBySource = objects.stream()
+                .map(object -> Entities.setRandomUniqueIdIfEmpty(object, universe.getIdField()))
                 .collect(Collectors.groupingBy(object -> object.getProperties()
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
@@ -213,9 +187,9 @@ public class GoldenRecordRepository {
                                         property -> (Object) property.getContentValue()
                                 ));
 
-                        fields.put(idField, entity.getExternalId());
+                        fields.put(universe.getIdField(), entity.getExternalId());
 
-                        return new GoldenRecordUpdateRequest.Entity()
+                        return new BatchUpdateRequest.Entity()
                                 .setOp(operation)
                                 .setName(universe.getLayout().getModel().getName())
                                 .setFields(fields);
@@ -223,15 +197,15 @@ public class GoldenRecordRepository {
                     .collect(Collectors.toList());
 
             // Now we can save the records into the Hub
-            var updateRequest = new GoldenRecordUpdateRequest()
+            var updateRequest = new BatchUpdateRequest()
                     .setSource(sourceId)
                     .setEntities(entities);
 
             // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map? Do we care about creating golden records?
             client.updateGoldenRecords(
-                    configuration.getAtomHostname(),
-                    configuration.getAtomUsername(),
-                    configuration.getAtomPassword(),
+                    configuration.getHubHostname(),
+                    configuration.getHubUsername(),
+                    configuration.getHubToken(),
                     universe.getId().toString(),
                     updateRequest
             );

@@ -12,7 +12,6 @@ import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.MObject;
-import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +69,7 @@ public class QuarantineRepository {
     }
 
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universe, configuration.getAtomHostname(), configuration.getAtomUsername());
+        LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
 
         var queryFilter = new QuarantineQueryRequest.Filter();
 
@@ -136,30 +135,13 @@ public class QuarantineRepository {
             }
         }
 
-        var result = mdhClient.queryQuarantineEntries(configuration.getAtomHostname(), configuration.getAtomUsername(), configuration.getAtomPassword(), universe, queryRequest);
+        var result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, queryRequest);
         if (result == null || result.getEntries() == null) {
             return new ArrayList<>();
         }
 
         return result.getEntries().stream()
-                .map(entry -> createQuarantineEntryObject(universe, entry))
+                .map(entry -> Entities.createQuarantineMObject(universe, entry))
                 .collect(Collectors.toList());
-    }
-
-    private static MObject createQuarantineEntryObject(String universe, QuarantineEntry entry) {
-        List<Property> properties = new ArrayList<>();
-
-        properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
-        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
-        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
-        properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
-        properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
-        properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
-        properties.add(new Property(QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, entry.getSourceEntityId()));
-
-        // Create the object data for the entity
-        properties.add(new Property(QuarantineEntryConstants.ENTITY_FIELD, Entities.createEntityMObject(entry.getSourceEntityId(), "Model", entry.getEntity())));
-
-        return new MObject(universe, entry.getTransactionId(), properties);
     }
 }
