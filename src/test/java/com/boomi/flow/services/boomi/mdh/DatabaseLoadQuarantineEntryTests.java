@@ -59,7 +59,7 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(11));
+        assertThat(objects.get(0).getProperties(), hasSize(12));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
 
@@ -88,6 +88,8 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(9).getContentValue(), equalTo("a transaction ID 1"));
         assertThat(objects.get(0).getProperties().get(10).getDeveloperName(), equalTo("___sourceEntityId"));
         assertThat(objects.get(0).getProperties().get(10).getContentValue(), equalTo("a source entity ID 1"));
+        assertThat(objects.get(0).getProperties().get(11).getDeveloperName(), equalTo("___sourceId"));
+        assertThat(objects.get(0).getProperties().get(11).getContentValue(), equalTo("a source ID 1"));
     }
 
     @Test

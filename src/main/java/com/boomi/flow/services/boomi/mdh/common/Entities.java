@@ -45,6 +45,7 @@ public class Entities {
         properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
         properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
         properties.add(new Property(QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD, entry.getSourceEntityId()));
+        properties.add(new Property(QuarantineEntryConstants.SOURCE_ID_FIELD, entry.getSourceId()));
 
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
     }
