@@ -52,31 +52,13 @@ public class DatabaseLoadMatchEntryTests {
                 new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, List.of(createObjectToLoad1(), createObjectToLoad2()));
 
-        // Make sure we perform the update in MDH, with the request that we're expecting
-        var expectedRequest = new BatchUpdateRequest()
-                .setEntities(List.of(new BatchUpdateRequest.Entity()
-                                        .setName("testing")
-                                        .setFields(Map.ofEntries(
-                                            Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"),
-                                            Map.entry("field 1", "some value 11"),
-                                            Map.entry("field 2", "some value 12")
-                                        )).setOp(null),
-                                    new BatchUpdateRequest.Entity()
-                                        .setName("testing")
-                                        .setFields(Map.ofEntries(
-                                            Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2"),
-                                            Map.entry("field 1", "some value 21"),
-                                            Map.entry("field 2", "some value 22")
-                                        )).setOp(null)
-                        )).setSource("TESTING");
-
         verify(client)
                 .queryMatchEntity(
                         TestConstants.CONFIGURATION.getHubHostname(),
                         TestConstants.CONFIGURATION.getHubUsername(),
                         TestConstants.CONFIGURATION.getHubToken(),
                         "12fa66f9-e14d-f642-878f-030b13b64731",
-                        expectedRequest
+                        createBatchUpdateRequest()
                 );
 
         assertThat(result.get(0), not(nullValue()));
@@ -208,6 +190,9 @@ public class DatabaseLoadMatchEntryTests {
         fields1.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         fields1.put("field 1", "some value 11");
         fields1.put("field 2", "some value 12");
+        var property31 = new HashMap<String, Object>();
+        property31.put("field 3 1 property", "value property 3 1");
+        fields1.put("field 3 1", property31);
 
         var entity1 = new BatchUpdateRequest.Entity();
         entity1.setName("testing");
@@ -217,6 +202,10 @@ public class DatabaseLoadMatchEntryTests {
         fields2.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2");
         fields2.put("field 1", "some value 21");
         fields2.put("field 2", "some value 22");
+
+        var property312 = new HashMap<String, Object>();
+        property312.put("field 3 1 property", "value property 3 1");
+        fields2.put("field 3 1", property31);
 
         var entity2 = new BatchUpdateRequest.Entity();
         entity2.setName("testing");
