@@ -59,7 +59,6 @@ public class FieldMapper {
         properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelBasicName));
         properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelBasicName));
         properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelBasicName));
-        properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
 
         // adding bindings for Golden Records
         List<TypeElementBinding> bindings = new ArrayList<>();
