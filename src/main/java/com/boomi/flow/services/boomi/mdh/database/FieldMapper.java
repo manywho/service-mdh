@@ -42,6 +42,7 @@ public class FieldMapper {
         properties.add(new TypeElementProperty(GoldenRecordConstants.SOURCE_ID, ContentType.String));
         properties.add(new TypeElementProperty(GoldenRecordConstants.CREATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
+        properties.add(new TypeElementProperty(GoldenRecordConstants.RECORD_ID, ContentType.String));
 
         // adding properties for quarantine
         properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ID, ContentType.String));
@@ -67,6 +68,7 @@ public class FieldMapper {
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.UPDATED_DATE, GoldenRecordConstants.UPDATED_DATE_FIELD));
+        propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.RECORD_ID, GoldenRecordConstants.RECORD_ID_FIELD));
         bindings.add(new TypeElementBinding(modelBasicName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
 
         // adding bindings for Quarantine

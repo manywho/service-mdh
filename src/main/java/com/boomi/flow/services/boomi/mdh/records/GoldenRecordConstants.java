@@ -8,4 +8,7 @@ public class GoldenRecordConstants {
     public static final String UPDATED_DATE = "Golden Record (Filter): Updated Date";
     public static final String UPDATED_DATE_FIELD = "___filterUpdatedDate";
     public static final String DEFAULT_SOURCE_ID = "flow";
+    public static final String RECORD_ID = "Golden Record: Record ID";
+    public static final String RECORD_ID_FIELD = "___recordId";
+
 }
