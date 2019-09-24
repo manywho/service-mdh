@@ -60,7 +60,7 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(4));
+        assertThat(objects.get(0).getProperties(), hasSize(5));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
@@ -71,6 +71,8 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 4 1-child"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 4 1 property"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 value 1 1"));
+        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___recordId"));
+        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("record ID 1"));
     }
 
     @Test

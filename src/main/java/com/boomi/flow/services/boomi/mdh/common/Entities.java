@@ -24,7 +24,8 @@ public class Entities {
         }
 
         var entry = entity.entrySet().iterator().next();
-        List<Property> properties = createPropertiesModel(id, entry.getValue());
+        List<Property> properties = createPropertiesModel(entry.getValue());
+        properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
 
         return new MObject(universeId + "-golden-record", id, properties);
     }
@@ -37,7 +38,7 @@ public class Entities {
 
         var entity = entry.getEntity().entrySet().iterator().next();
 
-        List<Property> properties = createPropertiesModel(entry.getSourceEntityId(), entity.getValue());
+        List<Property> properties = createPropertiesModel(entity.getValue());
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
         properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
         properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
@@ -114,7 +115,7 @@ public class Entities {
     }
 
     private static MObject createAlreadyLinked(Universe universe, Map<String, Object> entity, String idField){
-        var properties = createPropertiesModel("", entity);
+        var properties = createPropertiesModel(entity);
 
         return new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(),
                 properties);
@@ -122,7 +123,7 @@ public class Entities {
 
     private static MObject createMatchesToProperty(Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
         var entity = (Map<String, Object>) matchResults.get(universe.getName());
-        var properties = createPropertiesModel("", entity);
+        var properties = createPropertiesModel(entity);
 
         if (addFuzzyMatchDetails) {
             var result = (Map<String, Object>) matchResults.get("fuzzyMatchDetails");
@@ -151,12 +152,12 @@ public class Entities {
         return object;
     }
 
-    private static List<Property> createPropertiesModel(String id, Map<String, Object> map) {
+    private static List<Property> createPropertiesModel(Map<String, Object> map) {
         var properties = new ArrayList<Property>();
 
         for (var entry:map.entrySet()) {
             if (entry.getValue() instanceof Map) {
-                MObject object = new MObject(entry.getKey() + "-child", createPropertiesModel("", (Map<String, Object>) entry.getValue()));
+                MObject object = new MObject(entry.getKey() + "-child", createPropertiesModel((Map<String, Object>) entry.getValue()));
                 object.setTypeElementBindingDeveloperName(entry.getKey() + "-child");
                 object.setExternalId(UUID.randomUUID().toString());
                 properties.add(new Property(entry.getKey(), List.of(object)));
