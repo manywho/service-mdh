@@ -436,7 +436,7 @@ public class DescribeTests {
                 .body("install.typeElements[2].elementType", equalTo("TYPE"))
                 .body("install.typeElements[2].id", nullValue())
 
-                .body("install.typeElements[2].properties", hasSize(18))
+                .body("install.typeElements[2].properties", hasSize(17))
                 .body("install.typeElements[2].properties[0].contentFormat", nullValue())
                 .body("install.typeElements[2].properties[0].contentType", equalTo("ContentString"))
                 .body("install.typeElements[2].properties[0].developerName", equalTo("name"))
@@ -555,13 +555,6 @@ public class DescribeTests {
                 .body("install.typeElements[2].properties[16].id", nullValue())
                 .body("install.typeElements[2].properties[16].typeElementDeveloperName",  equalTo("artist"))
                 .body("install.typeElements[2].properties[16].typeElementId", nullValue())
-
-                .body("install.typeElements[2].properties[17].contentFormat", nullValue())
-                .body("install.typeElements[2].properties[17].contentType", equalTo("ContentString"))
-                .body("install.typeElements[2].properties[17].developerName", equalTo("Golden Record: Source ID"))
-                .body("install.typeElements[2].properties[17].id", nullValue())
-                .body("install.typeElements[2].properties[17].typeElementDeveloperName",  nullValue())
-                .body("install.typeElements[2].properties[17].typeElementId", nullValue())
 
                 .body("install.typeElements[2].serviceElementId", nullValue())
                 .body("install.typeElements[2].updateByName", equalTo(false));
@@ -730,7 +723,7 @@ public class DescribeTests {
                 .body("install.typeElements[4].developerSummary", nullValue())
                 .body("install.typeElements[4].elementType", equalTo("TYPE"))
                 .body("install.typeElements[4].id", nullValue())
-                .body("install.typeElements[4].properties", hasSize(19))
+                .body("install.typeElements[4].properties", hasSize(18))
                 .body("install.typeElements[4].properties[0].contentFormat", nullValue())
                 .body("install.typeElements[4].properties[0].contentType", equalTo("ContentString"))
                 .body("install.typeElements[4].properties[0].developerName", equalTo("Name"))
@@ -857,12 +850,6 @@ public class DescribeTests {
                 .body("install.typeElements[4].properties[17].typeElementDeveloperName", equalTo("country"))
                 .body("install.typeElements[4].properties[17].typeElementId", nullValue())
 
-                .body("install.typeElements[4].properties[18].contentFormat", nullValue())
-                .body("install.typeElements[4].properties[18].contentType", equalTo("ContentString"))
-                .body("install.typeElements[4].properties[18].developerName", equalTo("Golden Record: Source ID"))
-                .body("install.typeElements[4].properties[18].id", nullValue())
-                .body("install.typeElements[4].properties[18].typeElementDeveloperName", nullValue())
-                .body("install.typeElements[4].properties[18].typeElementId", nullValue())
                 .body("install.typeElements[4].serviceElementId", nullValue())
                 .body("install.typeElements[4].updateByName", equalTo(false));
 
