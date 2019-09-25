@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -115,7 +116,7 @@ public class FieldMapper {
                 if (property.getContentType() == ContentType.DateTime) {
                     var dateFormatted = OffsetDateTime
                             .parse(property.getContentValue())
-                            .format(DateTimeFormatter.ofPattern("YYYY-MM-dd'T'hh:mm:ss'Z'"));
+                            .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
 
                     mapObject.put(property.getDeveloperName(), dateFormatted);
                 } else {
