@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universes>
+    <universe>
+        <id>e967b337-a346-4cee-9f05-0808fe7eddb3</id>
+        <version>dd62bbe3-6d45-40b2-a995-db4e70595819</version>
+        <name>allfields</name>
+        <stats activeRecords="1" enddatedRecords="0" quarantinedRecords="10" asOf="2019-09-25T13:09:38.840Z">
+            <sourceStats sourceCode="flow" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0" undeliverableChannelDeliveries="0"/>
+        </stats>
+        <sources>
+            <source code="flow" componentId="6f51580b-f0dc-422a-a423-259f731c6b3f" state="STRAPPING" allowContribute="true">
+                <channel id="49371a1a-1147-4d1c-98a2-a994619697ac" updateType="FULL" state="CREATED" primary="true"/>
+            </source>
+        </sources>
+        <layoutid>e967b337-a346-4cee-9f05-0808fe7eddb3</layoutid>
+        <layout idXPath="/allfields/id">
+            <model name="allfields">
+                <element uniqueId="FIELD_DATE" name="field_date" prettyName="field_date" type="DATETIME" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_DATE_NO_TIME" name="field_date_no_time" prettyName="field_date_no_time" type="DATE" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_TIME_NO_DATE" name="field_time_no_date" prettyName="field_Time_no_date" type="TIME" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_TEXT" name="field_text" prettyName="field_text" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
+                <element uniqueId="FIELD_INTEGER" name="field_integer" prettyName="field_integer" type="INTEGER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_FLOAT" name="field_float" prettyName="field_float" type="FLOAT" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_BOOLEAN" name="field_boolean" prettyName="field_boolean" type="BOOLEAN" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_REFERENCE" name="field_reference" prettyName="field_reference" type="REFERENCE" required="false" referenceUniverseId="093a3572-8106-4d12-aa29-7e8dd8bf0fd2" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+                <element uniqueId="FIELD_ENUMERATION" name="field_enumeration" prettyName="field_enumeration" type="ENUMERATION" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                    <value>refi</value>
+                </element>
+                <element uniqueId="FIELD_LONGTEXT" name="field_longtext" prettyName="field_longtext" type="CLOB" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot;
+                xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;allfields&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_date&quot; type=&quot;xs:dateTime&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_date_no_time&quot; type=&quot;xs:date&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_time_no_date&quot; type=&quot;xs:time&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_text&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_integer&quot; type=&quot;xs:integer&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_float&quot; type=&quot;xs:double&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_boolean&quot; type=&quot;xs:boolean&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_reference&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_enumeration&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;field_longtext&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+            </xsd>
+            <field xpath="/allfields/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="FIELD_DATE" xpath="/allfields/field_date" type="DATETIME" prettyName="field_date" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_DATE_NO_TIME" xpath="/allfields/field_date_no_time" type="DATE" prettyName="field_date_no_time" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_TIME_NO_DATE" xpath="/allfields/field_time_no_date" type="TIME" prettyName="field_Time_no_date" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_TEXT" xpath="/allfields/field_text" type="STRING" prettyName="field_text" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+            <field uniqueId="FIELD_INTEGER" xpath="/allfields/field_integer" type="INTEGER" prettyName="field_integer" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_FLOAT" xpath="/allfields/field_float" type="FLOAT" prettyName="field_float" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_BOOLEAN" xpath="/allfields/field_boolean" type="BOOLEAN" prettyName="field_boolean" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_REFERENCE" xpath="/allfields/field_reference" type="REFERENCE" prettyName="field_reference" required="false" referenceUniverseId="093a3572-8106-4d12-aa29-7e8dd8bf0fd2" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+            <field uniqueId="FIELD_ENUMERATION" xpath="/allfields/field_enumeration" type="ENUMERATION" prettyName="field_enumeration" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false">
+                <value>refi</value>
+            </field>
+            <field uniqueId="FIELD_LONGTEXT" xpath="/allfields/field_longtext" type="CLOB" prettyName="field_longtext" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+        </layout>
+        <matchid>e967b337-a346-4cee-9f05-0808fe7eddb3</matchid>
+        <matchconfig>
+            <round>
+                <matchrule
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="FIELD_DATE" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="FIELD_DATE" type="EXISTING"/>
+                    </nestedExpression>
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="FIELD_DATE" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="FIELD_DATE" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+</universes>

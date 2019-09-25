@@ -228,6 +228,7 @@ public class FieldMapper {
             case "FLOAT":
                 return ContentType.Number;
             case "DATETIME":
+            case "DATE":
                 return ContentType.DateTime;
             case "BOOLEAN":
                 return ContentType.Boolean;
@@ -238,6 +239,8 @@ public class FieldMapper {
             case "REFERENCE":
                 return ContentType.String;
             case "CLOB":
+                return ContentType.String;
+            case "TIME":
                 return ContentType.String;
             default:
                 LOGGER.warn("Encountered an unsupported element type of {}", type);
