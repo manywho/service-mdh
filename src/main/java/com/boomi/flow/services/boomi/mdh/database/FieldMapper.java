@@ -14,6 +14,9 @@ import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,7 +113,15 @@ public class FieldMapper {
             }
 
             if (property.getContentValue() != null) {
-                mapObject.put(property.getDeveloperName(), property.getContentValue());
+                if (property.getContentType() == ContentType.DateTime) {
+                    var dateFormatted = OffsetDateTime
+                            .parse(property.getContentValue())
+                            .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
+
+                    mapObject.put(property.getDeveloperName(), dateFormatted);
+                } else {
+                    mapObject.put(property.getDeveloperName(), property.getContentValue());
+                }
             } else if (property.getObjectData() != null && property.getObjectData().size() > 0) {
                 mapObject.put(property.getDeveloperName(), createMapFromMobject(property.getObjectData().get(0)));
             }

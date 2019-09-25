@@ -7,6 +7,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -55,7 +56,7 @@ public class DatabaseSaveGoldenRecordTests {
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1 1", "some value 1"));
         object.getProperties().add(new Property("field 2 1", "some value 2"));
-        object.getProperties().add(new Property("field 3 1", "some value 3"));
+        object.getProperties().add(new Property("field 3 1", "2019-09-10T15:45:00+01:00", ContentType.DateTime));
 
         MObject objectField4 = new MObject("object field 4");
         objectField4.setExternalId("123");
@@ -76,7 +77,7 @@ public class DatabaseSaveGoldenRecordTests {
                                         Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"),
                                         Map.entry("field 1 1", "some value 1"),
                                         Map.entry("field 2 1", "some value 2"),
-                                        Map.entry("field 3 1", "some value 3"),
+                                        Map.entry("field 3 1", "2019-09-10T14:45:00Z"),
                                         Map.entry("field 4", Map.ofEntries(Map.entry("property 4 1", "value property 4 1")))
                                 ))
                                 .setOp(null)
@@ -105,7 +106,7 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getProperties().get(3).getDeveloperName(), equalTo("field 2 1"));
         assertThat(result.getProperties().get(3).getContentValue(), equalTo("some value 2"));
         assertThat(result.getProperties().get(4).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(result.getProperties().get(4).getContentValue(), equalTo("some value 3"));
+        assertThat(result.getProperties().get(4).getContentValue(), equalTo("2019-09-10T15:45:00+01:00"));
         assertThat(result.getProperties().get(5).getContentValue(), nullValue());
         assertThat(result.getProperties().get(5).getDeveloperName(), equalTo("field 4"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getDeveloperName(), equalTo("object field 4"));
