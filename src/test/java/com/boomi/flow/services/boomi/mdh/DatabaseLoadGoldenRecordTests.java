@@ -5,10 +5,7 @@ import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
-import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
+import com.boomi.flow.services.boomi.mdh.records.*;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
@@ -36,6 +33,9 @@ public class DatabaseLoadGoldenRecordTests {
     @Mock
     private MdhClient client;
 
+    @Mock
+    private ElementIdFinder elementIdFinder;
+
     private ObjectDataType objectDataType = new ObjectDataType()
             .setDeveloperName("universe-name-golden-record");
 
@@ -53,7 +53,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
@@ -83,7 +83,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
@@ -132,43 +132,43 @@ public class DatabaseLoadGoldenRecordTests {
                                 )
                                 .setFieldValues(List.of(
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 1")
+                                                .setFieldId("FIELD 1")
                                                 .setOperator("CONTAINS")
                                                 .setValue("contains something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 2")
+                                                .setFieldId("FIELD 2")
                                                 .setOperator("ENDS_WITH")
                                                 .setValue("ends with something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 1")
+                                                .setFieldId("FIELD 1")
                                                 .setOperator("EQUALS")
                                                 .setValue("equals something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 2")
+                                                .setFieldId("FIELD 2")
                                                 .setOperator("GREATER_THAN")
                                                 .setValue("greater than something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 1")
+                                                .setFieldId("FIELD 1")
                                                 .setOperator("GREATER_THAN_EQUAL")
                                                 .setValue("greater than or equal to something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 2")
+                                                .setFieldId("FIELD 2")
                                                 .setOperator("IS_NULL")
                                                 .setValue("is empty"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 1")
+                                                .setFieldId("FIELD 1")
                                                 .setOperator("LESS_THAN")
                                                 .setValue("less than something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 2")
+                                                .setFieldId("FIELD 2")
                                                 .setOperator("LESS_THAN_EQUAL")
                                                 .setValue("less than or equal to something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 1")
+                                                .setFieldId("FIELD 1")
                                                 .setOperator("NOT_EQUAL_TO")
                                                 .setValue("not equal to something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
-                                                .setFieldId("field 2")
+                                                .setFieldId("FIELD 2")
                                                 .setOperator("STARTS_WITH")
                                                 .setValue("starts with")
                                 ))
@@ -190,7 +190,12 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+
+        when(elementIdFinder.findIdFromNameOfElement(any(), any(), eq("field 1"))).thenReturn("FIELD 1");
+        when(elementIdFinder.findIdFromNameOfElement(any(), any(), eq("field 2"))).thenReturn("FIELD 2");
+
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, elementIdFinder), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)

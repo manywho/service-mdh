@@ -8,6 +8,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
+import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
@@ -52,7 +53,7 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
@@ -102,7 +103,7 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
@@ -160,7 +161,7 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)

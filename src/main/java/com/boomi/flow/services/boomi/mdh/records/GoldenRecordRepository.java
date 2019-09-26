@@ -20,10 +20,13 @@ public class GoldenRecordRepository {
     private final static Logger LOGGER = LoggerFactory.getLogger(GoldenRecordRepository.class);
 
     private final MdhClient client;
+    private final ElementIdFinder elementIdFinder;
 
     @Inject
-    public GoldenRecordRepository(MdhClient client) {
+    public GoldenRecordRepository(MdhClient client, ElementIdFinder elementIdFinder)
+    {
         this.client = client;
+        this.elementIdFinder = elementIdFinder;
     }
 
     public void delete(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
@@ -133,7 +136,7 @@ public class GoldenRecordRepository {
                         }
 
                         fieldFilters.add(new GoldenRecordQueryRequest.Filter.FieldValue()
-                                .setFieldId(field.getColumnName())
+                                .setFieldId(elementIdFinder.findIdFromNameOfElement(configuration, universe, field.getColumnName()))
                                 .setOperator(operator)
                                 .setValue(field.getContentValue())
                         );
