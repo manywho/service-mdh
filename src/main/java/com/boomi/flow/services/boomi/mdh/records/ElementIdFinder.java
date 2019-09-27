@@ -11,12 +11,11 @@ import java.util.Map;
 
 public class ElementIdFinder {
     // this map groups universeId -> [fieldName -> fieldId]
-    private Map<String, Map<String, String>> elementByUniverse;
+    private Map<String, Map<String, String>> elementByUniverse = new HashMap<>();
     private UniverseRepository universeRepository;
 
     @Inject
     public ElementIdFinder(UniverseRepository universeRepository) {
-        elementByUniverse = new HashMap<>();
         this.universeRepository = universeRepository;
 
     }
