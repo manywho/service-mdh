@@ -43,3 +43,13 @@ $ git push heroku master
 ```
 
 More information can be found [here](https://devcenter.heroku.com/categories/java).
+
+
+## Contributing
+
+Contributions are welcome to the project - whether they are feature requests, improvements or bug fixes! Refer to 
+[CONTRIBUTING.md](CONTRIBUTING.md) for our contribution requirements.
+
+## License
+
+This service is released under the [MIT License](https://opensource.org/licenses/MIT).
