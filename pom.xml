@@ -98,7 +98,6 @@
     </dependencies>
 
     <build>
-        <finalName>service-mdh</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
