@@ -1,7 +1,6 @@
 package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
-import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetails;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
@@ -18,7 +17,9 @@ import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,8 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 public class XmlMapperTests {
     @Test
     public void testXmlMapperSerializesQuarantineQueryRequests() {
-        var filter = new QuarantineQueryRequest.Filter()
-                .setCauses(List.of("cause 1", "cause 2"))
+        QuarantineQueryRequest.Filter filter = new QuarantineQueryRequest.Filter()
+                .setCauses(Arrays.asList("cause 1", "cause 2"))
                 .setCreatedDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2015-12-31T00:00Z"))
@@ -40,78 +41,78 @@ public class XmlMapperTests {
                         .setFrom(OffsetDateTime.parse("2018-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2018-12-31T00:00Z"))
                 )
-                .setResolutions(List.of("resolution 1", "resolution 2"))
+                .setResolutions(Arrays.asList("resolution 1", "resolution 2"))
                 .setSourceEntityId("a source entity id")
                 .setSourceId("a source id");
 
-        var request = new QuarantineQueryRequest()
+        QuarantineQueryRequest request = new QuarantineQueryRequest()
                 .setFilter(filter)
                 .setIncludeData(true)
                 .setType("a type");
 
-        var requestContent = new StringWriter();
+        StringWriter requestContent = new StringWriter();
         JAXB.marshal(request, requestContent);
 
-        var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesQuarantineQueryRequests.xml"));
+        Input.Builder expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesQuarantineQueryRequests.xml"));
 
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
     @Test
     public void testXmlMapperSerializesGoldenRecordQueryRequests() {
-        var fieldValueOne = new GoldenRecordQueryRequest.Filter.FieldValue()
+        GoldenRecordQueryRequest.Filter.FieldValue fieldValueOne = new GoldenRecordQueryRequest.Filter.FieldValue()
                 .setFieldId("field 1")
                 .setOperator("LESS_THAN")
                 .setValue("some value");
 
-        var fieldValueTwo = new GoldenRecordQueryRequest.Filter.FieldValue()
+        GoldenRecordQueryRequest.Filter.FieldValue fieldValueTwo = new GoldenRecordQueryRequest.Filter.FieldValue()
                 .setFieldId("field 2")
                 .setOperator("EQUAL")
                 .setValue("another value");
 
-        var filter = new GoldenRecordQueryRequest.Filter()
+        GoldenRecordQueryRequest.Filter filter = new GoldenRecordQueryRequest.Filter()
                 .setCreatedDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2015-12-31T00:00Z"))
                 )
                 .setCreatingSourceId("12345")
-                .setFieldValues(List.of(fieldValueOne, fieldValueTwo))
+                .setFieldValues(Arrays.asList(fieldValueOne, fieldValueTwo))
                 .setUpdatedDate(new DateFilter()
                         .setFrom(OffsetDateTime.parse("2018-01-01T00:00Z"))
                         .setTo(OffsetDateTime.parse("2018-12-31T00:00Z"))
                 );
 
-        var sortFieldOne = new GoldenRecordQueryRequest.Sort.Field()
+        GoldenRecordQueryRequest.Sort.Field sortFieldOne = new GoldenRecordQueryRequest.Sort.Field()
                 .setFieldId("field 1")
                 .setDirection("DESC");
 
-        var sortFieldTwo = new GoldenRecordQueryRequest.Sort.Field()
+        GoldenRecordQueryRequest.Sort.Field sortFieldTwo = new GoldenRecordQueryRequest.Sort.Field()
                 .setFieldId("field 2")
                 .setDirection("ASC");
 
-        var sort = new GoldenRecordQueryRequest.Sort()
-                .setFields(List.of(sortFieldOne, sortFieldTwo));
+        GoldenRecordQueryRequest.Sort sort = new GoldenRecordQueryRequest.Sort()
+                .setFields(Arrays.asList(sortFieldOne, sortFieldTwo));
 
-        var request = new GoldenRecordQueryRequest()
+        GoldenRecordQueryRequest request = new GoldenRecordQueryRequest()
                 .setFilter(filter)
                 .setSort(sort);
 
-        var requestContent = new StringWriter();
+        StringWriter requestContent = new StringWriter();
         JAXB.marshal(request, requestContent);
 
-        var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordQueryRequests.xml"));
+        Input.Builder expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordQueryRequests.xml"));
 
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
     @Test
     public void testXmlMapperSerializesGoldenRecordUpdateRequests() throws JAXBException {
-        var entityOne = new BatchUpdateRequest.Entity()
+        BatchUpdateRequest.Entity entityOne = new BatchUpdateRequest.Entity()
                 .setFields(Map.ofEntries(
                         Map.entry("id", 1),
                         Map.entry("name", "bob"),
                         Map.entry("city", "berwyn"),
-                        Map.entry("phones", List.of(
+                        Map.entry("phones", Arrays.asList(
                                 Map.entry("phone", Map.ofEntries(
                                         Map.entry("number", "311 555-1234"),
                                         Map.entry("type", "home")
@@ -126,12 +127,12 @@ public class XmlMapperTests {
                 .setName("contact")
                 .setOp(null);
 
-        var entityTwo = new BatchUpdateRequest.Entity()
+        BatchUpdateRequest.Entity entityTwo = new BatchUpdateRequest.Entity()
                 .setFields(Map.ofEntries(
                         Map.entry("id", 2),
                         Map.entry("name", "sam"),
                         Map.entry("city", "pottstown"),
-                        Map.entry("phones", List.of(
+                        Map.entry("phones", Arrays.asList(
                                 Map.entry("phone", Map.ofEntries(
                                         Map.entry("number", "311 555-8765"),
                                         Map.entry("type", "mobile")
@@ -142,26 +143,26 @@ public class XmlMapperTests {
                 .setName("contact")
                 .setOp("CREATE");
 
-        var request = new BatchUpdateRequest()
+        BatchUpdateRequest request = new BatchUpdateRequest()
                 .setSource("SF")
-                .setEntities(List.of(
+                .setEntities(Arrays.asList(
                         entityOne,
                         entityTwo
                 ));
 
-        var requestContent = new StringWriter();
+        StringWriter requestContent = new StringWriter();
         JAXB.marshal(request, requestContent);
 
-        var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordUpdateRequests.xml"));
+        Input.Builder expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordUpdateRequests.xml"));
 
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
     @Test
     public void testXmlMapperDeserializesGoldenRecordQueryResponses() throws IOException {
-        var data = Resources.getResource("testXmlMapperDeserializesGoldenRecordQueryResponses.xml");
+        URL data = Resources.getResource("testXmlMapperDeserializesGoldenRecordQueryResponses.xml");
 
-        var actual = JAXB.unmarshal(data, GoldenRecordQueryResponse.class);
+        GoldenRecordQueryResponse actual = JAXB.unmarshal(data, GoldenRecordQueryResponse.class);
 
         assertThat(actual, not(nullValue()));
         assertThat(actual.getResultCount(), equalTo(2));
@@ -188,9 +189,9 @@ public class XmlMapperTests {
 
     @Test
     public void testXmlMapperDeserializesGoldenRecordHistoryResponse() throws IOException {
-        var data = Resources.getResource("testXmlMapperDeserializesGoldenRecordHistoryResponse.xml");
+        URL data = Resources.getResource("testXmlMapperDeserializesGoldenRecordHistoryResponse.xml");
 
-        var actual = JAXB.unmarshal(data, GoldenRecordHistoryResponse.class);
+        GoldenRecordHistoryResponse actual = JAXB.unmarshal(data, GoldenRecordHistoryResponse.class);
 
         assertThat(actual, not(nullValue()));
         assertThat(actual.getResultCount(), equalTo(23));
@@ -225,12 +226,12 @@ public class XmlMapperTests {
 
     @Test
     public void testXmlMapperSerializesMatchEntityQueryRequests() {
-        var entityOne = new BatchUpdateRequest.Entity()
+        BatchUpdateRequest.Entity entityOne = new BatchUpdateRequest.Entity()
                 .setFields(Map.ofEntries(
                         Map.entry("id", 1),
                         Map.entry("name", "bobby"),
                         Map.entry("city", "berwyn"),
-                        Map.entry("phones", List.of(
+                        Map.entry("phones", Arrays.asList(
                                 Map.entry("phone", Map.ofEntries(
                                         Map.entry("number", "311 555-1234"),
                                         Map.entry("type", "home")
@@ -245,12 +246,12 @@ public class XmlMapperTests {
                 ))
                 .setName("contact");
 
-        var entityTwo = new BatchUpdateRequest.Entity()
+        BatchUpdateRequest.Entity entityTwo = new BatchUpdateRequest.Entity()
                 .setFields(Map.ofEntries(
                         Map.entry("id", 2),
                         Map.entry("name", "mike"),
                         Map.entry("city", "chesterbrook"),
-                        Map.entry("phones", List.of(
+                        Map.entry("phones", Arrays.asList(
                                 Map.entry("phone", Map.ofEntries(
                                         Map.entry("number", "311 555-2345"),
                                         Map.entry("type", "home")
@@ -265,25 +266,25 @@ public class XmlMapperTests {
                 ))
                 .setName("contact");
 
-        var request = new BatchUpdateRequest()
+        BatchUpdateRequest request = new BatchUpdateRequest()
                 .setSource("SF")
-                .setEntities(List.of(
+                .setEntities(Arrays.asList(
                         entityOne,
                         entityTwo
                 ));
 
-        var requestContent = new StringWriter();
+        StringWriter requestContent = new StringWriter();
         JAXB.marshal(request, requestContent);
 
-        var expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesMatchEntityQueryRequests.xml"));
+        Input.Builder expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesMatchEntityQueryRequests.xml"));
 
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
     @Test
     public void testXmlMapperDeserializesMatchEntityResponse() {
-        var data = Resources.getResource("testXmlMapperDeserializesMatchEntitiesResponse.xml");
-        var actual = JAXB.unmarshal(data, MatchEntityResponse.class);
+        URL data = Resources.getResource("testXmlMapperDeserializesMatchEntitiesResponse.xml");
+        MatchEntityResponse actual = JAXB.unmarshal(data, MatchEntityResponse.class);
 
         assertThat(actual, not(nullValue()));
 

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +62,7 @@ public class DatabaseSaveGoldenRecordTests {
 
         MObject objectField4 = new MObject("object field 4");
         objectField4.setExternalId("123");
-        objectField4.setProperties(List.of(new Property("property 4 1", "value property 4 1")));
+        objectField4.setProperties(Arrays.asList(new Property("property 4 1", "value property 4 1")));
 
         object.getProperties().add(new Property("field 4", objectField4));
 
@@ -70,8 +71,8 @@ public class DatabaseSaveGoldenRecordTests {
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting
-        var expectedRequest = new BatchUpdateRequest()
-                .setEntities(List.of(
+        BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
+                .setEntities(Arrays.asList(
                         new BatchUpdateRequest.Entity()
                                 .setName("testing")
                                 .setFields(Map.ofEntries(

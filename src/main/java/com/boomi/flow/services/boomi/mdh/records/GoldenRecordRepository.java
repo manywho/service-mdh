@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -36,15 +37,15 @@ public class GoldenRecordRepository {
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
         LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
 
-        var request = new GoldenRecordQueryRequest();
+        GoldenRecordQueryRequest request = new GoldenRecordQueryRequest();
 
         // TODO: Cleanup everything in this filter block cause it's super ugly
         if (filter != null) {
 
             if (filter.hasOrderBy()) {
-                var sort = new GoldenRecordQueryRequest.Sort();
+                GoldenRecordQueryRequest.Sort sort = new GoldenRecordQueryRequest.Sort();
 
-                for (var orderBy : filter.getOrderBy()) {
+                for (ListFilter.OrderBy orderBy : filter.getOrderBy()) {
                     sort.getFields().add(new GoldenRecordQueryRequest.Sort.Field()
                             .setFieldId(orderBy.getColumnName())
                             .setDirection(orderBy.getDirection())
@@ -55,12 +56,12 @@ public class GoldenRecordRepository {
             }
 
             if (filter.hasWhere()) {
-                var queryFilter = new GoldenRecordQueryRequest.Filter();
+                GoldenRecordQueryRequest.Filter queryFilter = new GoldenRecordQueryRequest.Filter();
 
                 // Created date
-                var createdDates = ListFilters.findEnumerableFilters(filter.getWhere(), GoldenRecordConstants.CREATED_DATE_FIELD);
+                List<ListFilterWhere> createdDates = ListFilters.findEnumerableFilters(filter.getWhere(), GoldenRecordConstants.CREATED_DATE_FIELD);
                 if (createdDates.isEmpty() == false) {
-                    var dateFilter = new DateFilter();
+                    DateFilter dateFilter = new DateFilter();
 
                     createdDates.forEach(Dates.createDateFilter(dateFilter));
 
@@ -68,24 +69,25 @@ public class GoldenRecordRepository {
                 }
 
                 // Updated date
-                var updatedDates = ListFilters.findEnumerableFilters(filter.getWhere(), GoldenRecordConstants.UPDATED_DATE_FIELD);
+                List<ListFilterWhere> updatedDates = ListFilters.findEnumerableFilters(filter.getWhere(), GoldenRecordConstants.UPDATED_DATE_FIELD);
                 if (updatedDates.isEmpty() == false) {
-                    var dateFilter = new DateFilter();
+                    DateFilter dateFilter = new DateFilter();
 
                     updatedDates.forEach(Dates.createDateFilter(dateFilter));
 
                     queryFilter.setUpdatedDate(dateFilter);
                 }
 
-                var entityFields = filter.getWhere().stream()
+                List<ListFilterWhere> entityFields = filter.getWhere().stream()
                         .sorted(Comparator.comparing(ListFilterWhere::getColumnName))
-                        .dropWhile(where -> Arrays.asList(GoldenRecordConstants.CREATED_DATE_FIELD, GoldenRecordConstants.UPDATED_DATE_FIELD).contains(where.getColumnName()))
+                        .filter(where -> GoldenRecordConstants.CREATED_DATE_FIELD.equals(where.getColumnName()) == false)
+                        .filter(where -> GoldenRecordConstants.UPDATED_DATE_FIELD.equals(where.getColumnName()) == false)
                         .collect(Collectors.toList());
 
                 if (entityFields.isEmpty() == false) {
-                    var fieldFilters = queryFilter.getFieldValues();
+                    List<GoldenRecordQueryRequest.Filter.FieldValue> fieldFilters = queryFilter.getFieldValues();
 
-                    for (var field : entityFields) {
+                    for (ListFilterWhere field : entityFields) {
 
                         String operator;
 
@@ -147,7 +149,7 @@ public class GoldenRecordRepository {
             }
         }
 
-        var result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
+        GoldenRecordQueryResponse result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
         if (result == null || result.getRecords() == null || result.getResultCount() == 0) {
             return new ArrayList<>();
         }
@@ -162,9 +164,9 @@ public class GoldenRecordRepository {
     }
 
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
-        var universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
+        Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
-        var objectsBySource = objects.stream()
+        Map<String, List<MObject>> objectsBySource = objects.stream()
                 .map(object -> Entities.setRandomUniqueIdIfEmpty(object, universe.getIdField()))
                 .collect(Collectors.groupingBy(object -> object.getProperties()
                         .stream()
@@ -174,16 +176,19 @@ public class GoldenRecordRepository {
                         .findFirst()
                         .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
-        for (var sourceGroup : objectsBySource.entrySet()) {
+        for (Map.Entry<String, List<MObject>> sourceGroup : objectsBySource.entrySet()) {
             // TODO: Check if we should be setting this to a default value, or error if no source was set
-            var sourceId = sourceGroup.getKey().isBlank()
-                    ? GoldenRecordConstants.DEFAULT_SOURCE_ID
-                    : sourceGroup.getKey();
+            String sourceId;
+            if (sourceGroup.getKey().isEmpty()){
+                sourceId = GoldenRecordConstants.DEFAULT_SOURCE_ID;
+            } else{
+                sourceId = sourceGroup.getKey();
+            }
 
-            var entities = sourceGroup.getValue().stream()
+            List<BatchUpdateRequest.Entity> entities = sourceGroup.getValue().stream()
                     .map(entity -> {
                         // Map all the properties to fields, except our "internal" ones
-                        var fields = FieldMapper.createMapFromMobject(entity);
+                        Map<String, Object> fields = FieldMapper.createMapFromMobject(entity);
 
                         fields.put(universe.getIdField(), entity.getExternalId());
 
@@ -195,7 +200,7 @@ public class GoldenRecordRepository {
                     .collect(Collectors.toList());
 
             // Now we can save the records into the Hub
-            var updateRequest = new BatchUpdateRequest()
+            BatchUpdateRequest updateRequest = new BatchUpdateRequest()
                     .setSource(sourceId)
                     .setEntities(entities);
 

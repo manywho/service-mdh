@@ -57,7 +57,7 @@ public class DatabaseLoadUniverseTests {
         interceptor.addRule(new Rule.Builder()
                 .respond(getClass().getClassLoader().getResourceAsStream("mocks/universes.xml")));
 
-        var request = new JSONObject()
+        JSONObject request = new JSONObject()
                 .put("configurationValues", new JSONArray()
                         .put(new JSONObject()
                                 .put("developerName", "Hub Hostname")
@@ -144,7 +144,7 @@ public class DatabaseLoadUniverseTests {
         interceptor.addRule(new Rule.Builder()
                 .respond(getClass().getClassLoader().getResourceAsStream("mocks/universe.xml")));
 
-        var request = new JSONObject()
+        JSONObject request = new JSONObject()
                 .put("configurationValues", new JSONArray()
                         .put(new JSONObject()
                                 .put("developerName", "Hub Hostname")
@@ -195,12 +195,12 @@ public class DatabaseLoadUniverseTests {
 
     @Test
     public void testLoadSingleUniverseWithBadRequest() throws IOException {
-        var responseBody = ResponseBody.create(mediaType, Resources.toByteArray(getClass().getClassLoader().getResource("mocks/universe-bad-request.xml")));
+        ResponseBody responseBody = ResponseBody.create(mediaType, Resources.toByteArray(getClass().getClassLoader().getResource("mocks/universe-bad-request.xml")));
 
         interceptor.addRule(new Rule.Builder()
                 .respond(400, responseBody));
 
-        var request = new JSONObject()
+        JSONObject request = new JSONObject()
                 .put("configurationValues", new JSONArray()
                         .put(new JSONObject()
                                 .put("developerName", "Hub Hostname")

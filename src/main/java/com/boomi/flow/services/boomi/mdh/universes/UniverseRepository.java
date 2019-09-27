@@ -22,7 +22,7 @@ public class UniverseRepository {
     public List<Universe> findAll(String atomHostname, String atomUsername, String atomPassword) {
         LOGGER.info("Loading all universes from the Atom at {} with the username {}", atomHostname, atomUsername);
 
-        var universes = client.findAllUniverses(atomHostname, atomUsername, atomPassword);
+        List<Universe> universes = client.findAllUniverses(atomHostname, atomUsername, atomPassword);
 
         return Optional.ofNullable(universes)
                 .orElse(new ArrayList<>());

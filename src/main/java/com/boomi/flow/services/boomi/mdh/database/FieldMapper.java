@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.ContentType;
+import com.manywho.sdk.api.draw.elements.Element;
 import com.manywho.sdk.api.draw.elements.type.TypeElement;
 import com.manywho.sdk.api.draw.elements.type.TypeElementBinding;
 import com.manywho.sdk.api.draw.elements.type.TypeElementProperty;
@@ -24,12 +25,12 @@ public class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
     static List<TypeElement> createModelTypes(Universe universe) {
-        var modelBasicName = universe.getName();
-        var universeName = TypeNameGenerator.createModelName(universe.getName());
-        var universeId = universe.getId().toString();
+        String modelBasicName = universe.getName();
+        String universeName = TypeNameGenerator.createModelName(universe.getName());
+        String universeId = universe.getId().toString();
 
         // create child types
-        var types = extractOneLevelChildTypeElements(universe.getLayout().getModel().getElements())
+        List<TypeElement> types = extractOneLevelChildTypeElements(universe.getLayout().getModel().getElements())
                 .stream()
                 .map(FieldMapper::createChildTypesFromElement)
                 .flatMap(Collection::stream)
@@ -66,7 +67,7 @@ public class FieldMapper {
 
         // adding bindings for Golden Records
         List<TypeElementBinding> bindings = new ArrayList<>();
-        var developerSummaryGoldenRecords = "The structure of a golden record for the " + universeName + " universe";
+        String developerSummaryGoldenRecords = "The structure of a golden record for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsGoldenRecord = new ArrayList<>(propertyBindings);
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.CREATED_DATE, GoldenRecordConstants.CREATED_DATE_FIELD));
@@ -75,7 +76,7 @@ public class FieldMapper {
         bindings.add(new TypeElementBinding(modelBasicName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
 
         // adding bindings for Quarantine
-        var developerSummaryQuarantine = "The structure of a Quarantine " + modelBasicName + " for the " + universeName + " universe";
+        String developerSummaryQuarantine = "The structure of a Quarantine " + modelBasicName + " for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsQuarantine = new ArrayList<>(propertyBindings);
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.STATUS, QuarantineEntryConstants.STATUS_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ID, QuarantineEntryConstants.SOURCE_ID_FIELD));
@@ -89,7 +90,7 @@ public class FieldMapper {
         bindings.add(new TypeElementBinding(modelBasicName + " Quarantine", developerSummaryQuarantine, universeId + "-quarantine", propertyBindingsQuarantine));
 
         // adding bindings for Matches
-        var developerSummaryMatches = "The structure of matches for the " + universeName + " universe";
+        String developerSummaryMatches = "The structure of matches for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsForMatches = new ArrayList<>(propertyBindings);
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.MATCH, FuzzyMatchDetailsConstants.MATCH));
@@ -114,7 +115,7 @@ public class FieldMapper {
 
             if (property.getContentValue() != null) {
                 if (property.getContentType() == ContentType.DateTime) {
-                    var dateFormatted = OffsetDateTime
+                    String dateFormatted = OffsetDateTime
                             .parse(property.getContentValue())
                             .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
 
@@ -133,8 +134,8 @@ public class FieldMapper {
     private static List<Universe.Layout.Model.Element> extractOneLevelChildTypeElements(List<Universe.Layout.Model.Element> elements) {
         List<Universe.Layout.Model.Element> childTypeElement= new ArrayList<>();
 
-        for (var element : elements) {
-            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
+        for (Universe.Layout.Model.Element element : elements) {
+            ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType == ContentType.Object) {
                 childTypeElement.add(element);
@@ -147,8 +148,8 @@ public class FieldMapper {
     private static List<TypeElementProperty> extractProperties(List<Universe.Layout.Model.Element> elements) {
         List<TypeElementProperty> properties = new ArrayList<>();
 
-        for (var element : elements) {
-            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
+        for (Universe.Layout.Model.Element element : elements) {
+            ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType != null && contentType != ContentType.List) {
                 properties.add(createProperty(element, contentType));
@@ -161,8 +162,8 @@ public class FieldMapper {
     private static List<TypeElementPropertyBinding> extractPropertyBindings(List<Universe.Layout.Model.Element> elements) {
         List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
 
-        for (var element : elements) {
-            var contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
+        for (Universe.Layout.Model.Element element : elements) {
+            ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType != null && contentType != ContentType.List) {
                 propertyBindings.add(creteTypeElementPropertyBinding(element, contentType));
@@ -194,7 +195,7 @@ public class FieldMapper {
 
     private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement) {
         // create child types
-        var types = extractOneLevelChildTypeElements(groupFieldElement.getElements())
+        List<TypeElement> types = extractOneLevelChildTypeElements(groupFieldElement.getElements())
                 .stream()
                 .map(FieldMapper::createChildTypesFromElement)
                 .flatMap(Collection::stream)
@@ -204,7 +205,7 @@ public class FieldMapper {
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
-        var developerSummaryChildProperty = "The structure of a Child Type " + groupFieldElement.getPrettyName();
+        String developerSummaryChildProperty = "The structure of a Child Type " + groupFieldElement.getPrettyName();
 
         bindings.add(new TypeElementBinding(groupFieldElement.getPrettyName() + " Child Type Default",
                 developerSummaryChildProperty, groupFieldElement.getName() + "-child", propertyBindings));

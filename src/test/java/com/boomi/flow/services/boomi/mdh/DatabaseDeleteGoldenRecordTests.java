@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,8 +62,8 @@ public class DatabaseDeleteGoldenRecordTests {
                 .delete(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the delete in MDH, with the request that we're expecting
-        var expectedRequest = new BatchUpdateRequest()
-                .setEntities(List.of(
+        BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
+                .setEntities(Arrays.asList(
                         new BatchUpdateRequest.Entity()
                                 .setName("testing")
                                 .setFields(Map.ofEntries(

@@ -23,9 +23,9 @@ public class MatchEntityRepository {
     }
 
     public List<MObject> matchEntity(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
-        var universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
+        Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
-        var objectsBySource = objects.stream()
+        Map<String, List<MObject>> objectsBySource = objects.stream()
                 .map(object -> Entities.setRandomUniqueIdIfEmpty(object, universe.getIdField()))
                 .collect(Collectors.groupingBy(object ->
                         object.getProperties()
@@ -37,13 +37,13 @@ public class MatchEntityRepository {
                         .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
         List<List<MatchEntityResponse.MatchResult>> resultsList = new ArrayList<>();
-        for (var sourceGroup : objectsBySource.entrySet()) {
+        for (Map.Entry<String, List<MObject>> sourceGroup : objectsBySource.entrySet()) {
             // TODO: Check if we should be setting this to a default value, or error if no source was set
-            var sourceId = sourceGroup.getKey().isBlank()
+            String sourceId = sourceGroup.getKey().isEmpty()
                     ? GoldenRecordConstants.DEFAULT_SOURCE_ID
                     : sourceGroup.getKey();
 
-            var entities = sourceGroup.getValue().stream()
+            List<BatchUpdateRequest.Entity> entities = sourceGroup.getValue().stream()
                     .map(entity -> createUpdateEntity(universe, entity))
                     .collect(Collectors.toList());
 
@@ -62,7 +62,7 @@ public class MatchEntityRepository {
                                                        Universe universe) {
 
         // Now we ned to load the match entity information
-        var updateRequest = new BatchUpdateRequest()
+        BatchUpdateRequest updateRequest = new BatchUpdateRequest()
                 .setSource(sourceId)
                 .setEntities(entities);
 
@@ -70,7 +70,7 @@ public class MatchEntityRepository {
                 configuration.getHubUsername(), configuration.getHubToken(), universe.getId().toString(),
                 updateRequest);
 
-        for (var result: matchResponse.getMatchResults()) {
+        for (MatchEntityResponse.MatchResult result: matchResponse.getMatchResults()) {
             result.setIdResource(sourceId);
         }
 
@@ -79,7 +79,7 @@ public class MatchEntityRepository {
 
     private BatchUpdateRequest.Entity createUpdateEntity(Universe universe, MObject entity) {
         // Map all the properties to fields, except our "internal" ones
-        var fields = mObjectToMap(entity);
+        Map<String, Object> fields = mObjectToMap(entity);
 
         fields.put(universe.getIdField(), entity.getExternalId());
 
@@ -90,8 +90,8 @@ public class MatchEntityRepository {
     }
 
     private Map<String, Object> mObjectToMap(MObject mObject) {
-        var map = new HashMap<String, Object>();
-        for (var property: mObject.getProperties()) {
+        HashMap<String, Object> map = new HashMap<>();
+        for (Property property: mObject.getProperties()) {
             if (property.getDeveloperName().startsWith("___")) {
                 continue;
             }

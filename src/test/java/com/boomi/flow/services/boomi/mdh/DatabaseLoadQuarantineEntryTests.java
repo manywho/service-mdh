@@ -22,10 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -42,7 +39,7 @@ public class DatabaseLoadQuarantineEntryTests {
 
     private QuarantineQueryResponse response = new QuarantineQueryResponse()
             .setEntries(
-                    List.of(
+                    Arrays.asList(
                             createQuarantineEntry(1),
                             createQuarantineEntry(2)
                     )
@@ -95,7 +92,7 @@ public class DatabaseLoadQuarantineEntryTests {
 
     @Test
     public void testLoadWithNoFilter() {
-        var query = new QuarantineQueryRequest()
+        QuarantineQueryRequest query = new QuarantineQueryRequest()
                 .setFilter(new QuarantineQueryRequest.Filter())
                 .setIncludeData(true);
 
@@ -120,7 +117,7 @@ public class DatabaseLoadQuarantineEntryTests {
 
     @Test
     public void testLoadWithComprehensiveFilter() {
-        var wheres = new ArrayList<ListFilterWhere>();
+        List<ListFilterWhere> wheres = new ArrayList<>();
         wheres.add(createWhere("___status", CriteriaType.Equal, "ACTIVE"));
         wheres.add(createWhere("___sourceId", CriteriaType.Equal, "a source ID"));
         wheres.add(createWhere("___sourceEntityId", CriteriaType.Equal, "a source entity ID"));
@@ -134,14 +131,14 @@ public class DatabaseLoadQuarantineEntryTests {
         wheres.add(createWhere("___resolution", CriteriaType.Equal, "GRID_DELETED"));
         wheres.add(createWhere("___resolution", CriteriaType.Equal, "USER_APPROVED"));
 
-        var listFilter = new ListFilter();
+        ListFilter listFilter = new ListFilter();
         listFilter.setComparisonType(ComparisonType.And);
         listFilter.setLimit(123);
         listFilter.setWhere(wheres);
 
-        var query = new QuarantineQueryRequest()
+        QuarantineQueryRequest query = new QuarantineQueryRequest()
                 .setFilter(new QuarantineQueryRequest.Filter()
-                        .setCauses(List.of("AMBIGUOUS_MATCH", "MULTIPLE_MATCHES", "REQUIRED_FIELD"))
+                        .setCauses(Arrays.asList("AMBIGUOUS_MATCH", "MULTIPLE_MATCHES", "REQUIRED_FIELD"))
                         .setCreatedDate(new DateFilter()
                                 .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                                 .setTo(OffsetDateTime.parse("2019-02-28T00:00Z"))
@@ -150,7 +147,7 @@ public class DatabaseLoadQuarantineEntryTests {
                                 .setFrom(OffsetDateTime.parse("2019-02-01T00:00Z"))
                                 .setTo(OffsetDateTime.parse("2019-02-14T00:00Z"))
                         )
-                        .setResolutions(List.of("GRID_DELETED", "USER_APPROVED"))
+                        .setResolutions(Arrays.asList("GRID_DELETED", "USER_APPROVED"))
                         .setSourceEntityId("a source entity ID")
                         .setSourceId("a source ID")
                 )
@@ -197,7 +194,7 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     private static ListFilterWhere createWhere(String columnName, CriteriaType criteriaType, String value) {
-        var where = new ListFilterWhere();
+        ListFilterWhere where = new ListFilterWhere();
 
         where.setColumnName(columnName);
         where.setCriteriaType(criteriaType);

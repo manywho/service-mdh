@@ -54,13 +54,13 @@ public class MdhClient {
             throw new ServiceProblemException(500, "Unable to fetch the list of universes due to an unexpected error");
         }
 
-        var body = response.body();
+        ResponseBody body = response.body();
         if (body == null) {
             throw new ServiceProblemException(500, "No response body was given when fetching the list of universes");
         }
 
         try {
-            var result = JAXB.unmarshal(body.byteStream(), UniversesResponse.class);
+            UniversesResponse result = JAXB.unmarshal(body.byteStream(), UniversesResponse.class);
             if (result == null) {
                 return new ArrayList<>();
             }
@@ -96,7 +96,7 @@ public class MdhClient {
             throw new ServiceProblemException(500, "Unable to fetch the universe " + id + " due to an unexpected error");
         }
 
-        var body = response.body();
+        ResponseBody body = response.body();
         if (body == null) {
             throw new ServiceProblemException(500, "No response body was given when fetching the universe " + id);
         }
@@ -112,7 +112,7 @@ public class MdhClient {
         }
 
         if (response.code() == 400) {
-            var error = JAXB.unmarshal(body.byteStream(), MdhError.class);
+            MdhError error = JAXB.unmarshal(body.byteStream(), MdhError.class);
             if (error != null) {
                 throw new ServiceProblemException(400, error.getMessage());
             }
@@ -146,18 +146,18 @@ public class MdhClient {
                 .addPathSegment("records")
                 .build();
 
-        var response = sendRequest(username, password, url, request, "golden record");
+        Response response = sendRequest(username, password, url, request, "golden record");
 
         if (response.isSuccessful()) {
             return;
         }
 
-        var body = response.body();
+        ResponseBody body = response.body();
         if (body == null) {
             throw new ServiceProblemException(response.code(), "An unknown error occurred while updating golden records");
         }
 
-        var error = JAXB.unmarshal(body.byteStream(), MdhError.class);
+        MdhError error = JAXB.unmarshal(body.byteStream(), MdhError.class);
         if (error != null) {
             throw new ServiceProblemException(response.code(), error.getMessage());
         }
@@ -189,7 +189,7 @@ public class MdhClient {
     }
 
     private Response sendRequest(String username, String password, HttpUrl url, Object query, String type) {
-        var bodyContent = new StringWriter();
+        StringWriter bodyContent = new StringWriter();
 
         try {
             JAXB.marshal(query, bodyContent);
@@ -199,7 +199,7 @@ public class MdhClient {
             throw new ServiceProblemException(500, "An unexpected error occurred while creating the request");
         }
 
-        var body = RequestBody.create(XML, bodyContent.toString());
+        RequestBody body = RequestBody.create(XML, bodyContent.toString());
 
         Request request = new Request.Builder()
                 .addHeader("Authorization", Credentials.basic(username, password))
@@ -219,7 +219,7 @@ public class MdhClient {
     }
 
     private <T> T sendRequestExpectingResponse(String username, String password, HttpUrl url, Object query, Class<T> aClass, String type) {
-        var response = sendRequest(username, password, url, query, type);
+        Response response = sendRequest(username, password, url, query, type);
         if (response.body() == null) {
             throw new ServiceProblemException(500, "No response body was given while querying for " + type + " objects");
         }

@@ -51,7 +51,7 @@ public class DatabaseLoadMatchEntryTests {
         // Update using the incoming object
         List<MObject> result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)),
                 new MatchEntityRepository(client))
-                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, List.of(createObjectToLoad1(), createObjectToLoad2()));
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, Arrays.asList(createObjectToLoad1(), createObjectToLoad2()));
 
         verify(client)
                 .queryMatchEntity(
@@ -86,7 +86,7 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(result.get(0).getProperties().get(4).getContentValue(), nullValue());
 
         // matched entities
-        var matchedEntityProperty = result.get(0).getProperties().get(5);
+        Property matchedEntityProperty = result.get(0).getProperties().get(5);
 
         assertThat(matchedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.MATCH));
         assertThat(matchedEntityProperty.getObjectData(), hasSize(1));
@@ -108,7 +108,7 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 3 value 1 1"));
 
-        var fuzzyMatchMatchedEntity = matchedEntityProperty.getObjectData().get(0).getProperties().get(4);
+        Property fuzzyMatchMatchedEntity = matchedEntityProperty.getObjectData().get(0).getProperties().get(4);
         assertThat(fuzzyMatchMatchedEntity.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
         assertThat(fuzzyMatchMatchedEntity.getObjectData().get(0).getProperties(), hasSize(6));
         assertThat(fuzzyMatchMatchedEntity.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("Field"));
@@ -130,7 +130,7 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(fuzzyMatchMatchedEntity.getObjectData().get(0).getProperties().get(5).getContentValue(), equalTo("0.85"));
 
         // duplicated entities
-        var duplicatedEntityProperty = result.get(0).getProperties().get(6);
+        Property duplicatedEntityProperty = result.get(0).getProperties().get(6);
 
         assertThat(duplicatedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.DUPLICATE));
         assertThat(duplicatedEntityProperty.getObjectData(), hasSize(1));
@@ -145,7 +145,7 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("id"));
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
 
-        var fuzzyMatchDuplicatedEntity = duplicatedEntityProperty.getObjectData().get(0).getProperties().get(4);
+        Property fuzzyMatchDuplicatedEntity = duplicatedEntityProperty.getObjectData().get(0).getProperties().get(4);
         assertThat(fuzzyMatchDuplicatedEntity.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
         assertThat(fuzzyMatchDuplicatedEntity.getObjectData().get(0).getProperties(), hasSize(6));
         assertThat(fuzzyMatchDuplicatedEntity.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("Field"));
@@ -167,7 +167,7 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(fuzzyMatchDuplicatedEntity.getObjectData().get(0).getProperties().get(5).getContentValue(), equalTo("0.85"));
 
         // duplicated entities
-        var alreadyLinkedEntityProperty = result.get(1).getProperties().get(7);
+        Property alreadyLinkedEntityProperty = result.get(1).getProperties().get(7);
 
         assertThat(alreadyLinkedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.ALREADY_LINKED));
         assertThat(alreadyLinkedEntityProperty.getObjectData(), hasSize(1));
@@ -184,31 +184,31 @@ public class DatabaseLoadMatchEntryTests {
     }
 
     private BatchUpdateRequest createBatchUpdateRequest() {
-        var updateRequest = new BatchUpdateRequest();
+        BatchUpdateRequest updateRequest = new BatchUpdateRequest();
         updateRequest.setSource("TESTING");
 
-        var fields1 = new HashMap<String, Object>();
+        Map<String, Object> fields1 = new HashMap<>();
         fields1.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         fields1.put("field 1", "some value 11");
         fields1.put("field 2", "some value 12");
-        var property31 = new HashMap<String, Object>();
+        Map<String, Object> property31 = new HashMap<>();
         property31.put("field 3 1 property", "value property 3 1");
         fields1.put("field 3 1", property31);
 
-        var entity1 = new BatchUpdateRequest.Entity();
+        BatchUpdateRequest.Entity entity1 = new BatchUpdateRequest.Entity();
         entity1.setName("testing");
         entity1.setFields(fields1);
 
-        var fields2 = new HashMap<String, Object>();
+        Map<String, Object> fields2 = new HashMap<>();
         fields2.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2");
         fields2.put("field 1", "some value 21");
         fields2.put("field 2", "some value 22");
 
-        var property312 = new HashMap<String, Object>();
+        Map<String, Object> property312 = new HashMap<>();
         property312.put("field 3 1 property", "value property 3 1");
         fields2.put("field 3 1", property31);
 
-        var entity2 = new BatchUpdateRequest.Entity();
+        BatchUpdateRequest.Entity entity2 = new BatchUpdateRequest.Entity();
         entity2.setName("testing");
         entity2.setFields(fields2);
 
@@ -224,7 +224,7 @@ public class DatabaseLoadMatchEntryTests {
         properties.put("field 1", "some value 1");
         properties.put("field 2", "some value 2");
 
-        var testing = new HashMap<String, Map<String, Object>>();
+        HashMap<String, Map<String, Object>> testing = new HashMap<>();
         testing.put("testing", properties);
 
         return testing;
@@ -236,30 +236,30 @@ public class DatabaseLoadMatchEntryTests {
         properties.put("field 1", "some value 1");
         properties.put("field 2", "some value 2");
 
-        var testing = new HashMap<String, Map<String, Object>>();
+        HashMap<String, Map<String, Object>> testing = new HashMap<>();
         testing.put("testing", properties);
 
         return testing;
     }
 
     private MatchEntityResponse createMatchEntityResponse() {
-        var matchEntityResponse = new MatchEntityResponse();
-        var matchResult = new MatchEntityResponse.MatchResult();
+        MatchEntityResponse matchEntityResponse = new MatchEntityResponse();
+        MatchEntityResponse.MatchResult matchResult = new MatchEntityResponse.MatchResult();
         matchResult.setStatus("SUCCESS");
         matchResult.setMatchRule("similar name found");
         matchResult.setEntity(createTestingEntity());
         matchResult.getEntity().put(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, null);
 
         List<Map<String, Object>> matchResultSuccess = new ArrayList<>();
-        var matchEntity = new HashMap<String, Object>();
-        var testingProperties = new HashMap<String, Object>();
+        Map<String, Object> matchEntity = new HashMap<>();
+        Map<String, Object> testingProperties = new HashMap<>();
         testingProperties.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         testingProperties.put("field 1", "some value 1");
         testingProperties.put("field 2", "some value 2");
         testingProperties.put("field 3 1", Map.ofEntries(Map.entry("field 3 1 property", "value property 3 value 1 1")));
         matchEntity.put("testing", testingProperties);
 
-        var fuzzyMatchDetailsProperties = new HashMap<String, Object>();
+        Map<String, Object> fuzzyMatchDetailsProperties = new HashMap<>();
         fuzzyMatchDetailsProperties.put("field", "name");
         fuzzyMatchDetailsProperties.put("first", "field 1");
         fuzzyMatchDetailsProperties.put("second", "field 2");
@@ -273,12 +273,12 @@ public class DatabaseLoadMatchEntryTests {
         matchResult.setMatch(matchResultSuccess);
         matchResult.setDuplicate(matchResultSuccess);
 
-        var matchResultAlreadyLinked = new MatchEntityResponse.MatchResult();
+        MatchEntityResponse.MatchResult matchResultAlreadyLinked = new MatchEntityResponse.MatchResult();
         matchResultAlreadyLinked.setStatus("ALREADY_LINKED");
         matchResultAlreadyLinked.setMatchRule("similar name found");
         matchResultAlreadyLinked.setEntity(createTestingAlreadyLinkedEntity());
 
-        matchEntityResponse.setMatchResults(List.of(matchResult, matchResultAlreadyLinked));
+        matchEntityResponse.setMatchResults(Arrays.asList(matchResult, matchResultAlreadyLinked));
 
         return matchEntityResponse;
     }
@@ -291,8 +291,8 @@ public class DatabaseLoadMatchEntryTests {
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 11"));
         object.getProperties().add(new Property("field 2", "some value 12"));
-        MObject childObject = new MObject("field 3 object", List.of(new Property("field 3 1 property", "value property 3 1")));
-        object.getProperties().add(new Property("field 3 1", List.of(childObject)));
+        MObject childObject = new MObject("field 3 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
+        object.getProperties().add(new Property("field 3 1", Arrays.asList(childObject)));
 
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
 
@@ -307,8 +307,8 @@ public class DatabaseLoadMatchEntryTests {
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 21"));
         object.getProperties().add(new Property("field 2", "some value 22"));
-        MObject childObject = new MObject("field 3 object", List.of(new Property("field 3 1 property", "value property 3 1")));
-        object.getProperties().add(new Property("field 3 1", List.of(childObject)));
+        MObject childObject = new MObject("field 3 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
+        object.getProperties().add(new Property("field 3 1", Arrays.asList(childObject)));
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
 
         return object;

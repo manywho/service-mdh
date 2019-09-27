@@ -33,8 +33,8 @@ public class BatchUpdateRequestEntityAdapter extends XmlAdapter<Object, BatchUpd
             element.setAttribute("op", entity.getOp());
         }
 
-        for (var entry : entity.getFields().entrySet()) {
-            var entryElement = document.createElement(entry.getKey());
+        for (Map.Entry<String, Object> entry : entity.getFields().entrySet()) {
+            Element entryElement = document.createElement(entry.getKey());
 
             element.appendChild(createElement(document, entryElement, entry.getValue()));
         }
@@ -60,8 +60,8 @@ public class BatchUpdateRequestEntityAdapter extends XmlAdapter<Object, BatchUpd
                 nestedEntities = (List<Map.Entry<String, Object>>) value;
             }
 
-            for (var nestedEntity : nestedEntities) {
-                var nestedEntryElement = document.createElement(nestedEntity.getKey());
+            for (Map.Entry<String, Object> nestedEntity : nestedEntities) {
+                Element nestedEntryElement = document.createElement(nestedEntity.getKey());
 
                 element.appendChild(createElement(document, nestedEntryElement, nestedEntity.getValue()));
             }
