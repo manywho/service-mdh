@@ -32,14 +32,14 @@ public class ElementIdFinder {
         // only fetch data if needed
         if( elementByUniverse.get(universeId) == null) {
             // we need to load the universe
-            var universe = universeRepository.find(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
+            Universe universe = universeRepository.find(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
             elementByUniverse.put(universeId, getNameAndId(universe.getLayout().getModel().getElements()));
         }
     }
 
     private HashMap<String, String> getNameAndId(List<Universe.Layout.Model.Element> elements) {
         HashMap<String, String> map = new HashMap<>();
-        for (var element: elements) {
+        for (Universe.Layout.Model.Element element: elements) {
             if (element.getElements() != null) {
                 map.putAll(getNameAndId(element.getElements()));
             }

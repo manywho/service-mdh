@@ -5,6 +5,7 @@ import com.manywho.sdk.services.servers.EmbeddedServer;
 import com.manywho.sdk.services.servers.undertow.UndertowServer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.mock.MockInterceptor;
 import okhttp3.mock.Rule;
@@ -156,7 +157,7 @@ public class DescribeTests {
         interceptor.addRule(new Rule.Builder()
                 .respond(getClass().getClassLoader().getResourceAsStream("mocks/universe-allfields.xml")));
 
-        var request = new JSONObject()
+        JSONObject request = new JSONObject()
                 .put("configurationValues", new JSONArray()
                         .put(new JSONObject()
                                 .put("developerName", "Hub Hostname")
@@ -172,7 +173,7 @@ public class DescribeTests {
                         )
                 );
 
-        var response = given()
+        ValidatableResponse response = given()
                 .contentType(ContentType.JSON)
                 .body(request.toString())
                 .when()
@@ -295,7 +296,7 @@ public class DescribeTests {
         interceptor.addRule(new Rule.Builder()
                 .respond(getClass().getClassLoader().getResourceAsStream("mocks/universes-nested-elements.xml")));
 
-        var request = new JSONObject()
+        JSONObject request = new JSONObject()
                 .put("configurationValues", new JSONArray()
                         .put(new JSONObject()
                                 .put("developerName", "Hub Hostname")
@@ -311,7 +312,7 @@ public class DescribeTests {
                         )
                 );
 
-        var response = given()
+        ValidatableResponse response = given()
                 .contentType(ContentType.JSON)
                 .body(request.toString())
                 .when()

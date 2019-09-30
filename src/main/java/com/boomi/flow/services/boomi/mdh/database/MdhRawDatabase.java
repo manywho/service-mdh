@@ -11,6 +11,8 @@ import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.services.database.RawDatabase;
 import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
@@ -33,22 +35,22 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public List<MObject> findAll(ApplicationConfiguration configuration, ObjectDataType objectDataType, Command command, ListFilter filter, List<MObject> objects) {
-        var typeName = objectDataType.getDeveloperName();
+        String typeName = objectDataType.getDeveloperName();
 
         if (typeName.endsWith("-quarantine")) {
-            var universe = removeEndingSubstring(typeName, "-quarantine");
+            String universe = removeEndingSubstring(typeName, "-quarantine");
 
             return quarantineRepository.findAll(configuration, universe, filter);
         }
 
         if (typeName.endsWith("-golden-record")) {
-            var universe = removeEndingSubstring(typeName, "-golden-record");
+            String universe = removeEndingSubstring(typeName, "-golden-record");
 
             return goldenRecordRepository.findAll(configuration, universe, filter);
         }
 
         if (typeName.endsWith("-match")) {
-            var universe = removeEndingSubstring(typeName,"-match");
+            String universe = removeEndingSubstring(typeName,"-match");
 
             if(objects == null || objects.size() <1) {
                 throw new RuntimeException("Only list values are supported when loading entity matches");
@@ -77,15 +79,15 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
-        delete(configuration, objectDataType, List.of(object));
+        delete(configuration, objectDataType, Collections.singletonList(object));
     }
 
     @Override
     public void delete(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
-        var typeName = objectDataType.getDeveloperName();
+        String typeName = objectDataType.getDeveloperName();
 
         if (typeName.endsWith("-golden-record")) {
-            var universe = typeName.replace("-golden-record", "");
+            String universe = typeName.replace("-golden-record", "");
 
             goldenRecordRepository.delete(configuration, universe, objects);
             return;
@@ -96,7 +98,7 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public MObject update(ApplicationConfiguration configuration, ObjectDataType objectDataType, MObject object) {
-        return update(configuration, objectDataType, List.of(object))
+        return update(configuration, objectDataType, Collections.singletonList(object))
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new ServiceProblemException(400, "No object was returned in the update request"));
@@ -104,10 +106,10 @@ public class MdhRawDatabase implements RawDatabase<ApplicationConfiguration> {
 
     @Override
     public List<MObject> update(ApplicationConfiguration configuration, ObjectDataType objectDataType, List<MObject> objects) {
-        var typeName = objectDataType.getDeveloperName();
+        String typeName = objectDataType.getDeveloperName();
 
         if (typeName.endsWith("-golden-record")) {
-            var universe = removeEndingSubstring(typeName,"-golden-record");
+            String universe = removeEndingSubstring(typeName,"-golden-record");
 
             return goldenRecordRepository.update(configuration, universe, objects);
         }

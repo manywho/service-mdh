@@ -8,6 +8,7 @@ import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.collect.ImmutableMap;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +63,7 @@ public class DatabaseSaveGoldenRecordTests {
 
         MObject objectField4 = new MObject("object field 4");
         objectField4.setExternalId("123");
-        objectField4.setProperties(List.of(new Property("property 4 1", "value property 4 1")));
+        objectField4.setProperties(Arrays.asList(new Property("property 4 1", "value property 4 1")));
 
         object.getProperties().add(new Property("field 4", objectField4));
 
@@ -70,17 +72,20 @@ public class DatabaseSaveGoldenRecordTests {
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting
-        var expectedRequest = new BatchUpdateRequest()
-                .setEntities(List.of(
+        BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
+                .setEntities(Arrays.asList(
                         new BatchUpdateRequest.Entity()
                                 .setName("testing")
-                                .setFields(Map.ofEntries(
-                                        Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"),
-                                        Map.entry("field 1 1", "some value 1"),
-                                        Map.entry("field 2 1", "some value 2"),
-                                        Map.entry("field 3 1", "2019-09-10T14:45:00Z"),
-                                        Map.entry("field 4", Map.ofEntries(Map.entry("property 4 1", "value property 4 1")))
-                                ))
+                                .setFields(ImmutableMap.<String, Object>builder()
+                                                .put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c")
+                                                .put("field 1 1", "some value 1")
+                                                .put("field 2 1", "some value 2")
+                                                .put("field 3 1", "2019-09-10T14:45:00Z")
+                                                .put("field 4", ImmutableMap.<String, Object>builder()
+                                                                    .put("property 4 1", "value property 4 1")
+                                                                    .build())
+                                                .build()
+                                )
                                 .setOp(null)
                 ))
                 .setSource("TESTING");

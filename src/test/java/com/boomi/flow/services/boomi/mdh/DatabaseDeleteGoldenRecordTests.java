@@ -8,14 +8,17 @@ import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.collect.ImmutableMap;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,16 +64,17 @@ public class DatabaseDeleteGoldenRecordTests {
                 .delete(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the delete in MDH, with the request that we're expecting
-        var expectedRequest = new BatchUpdateRequest()
-                .setEntities(List.of(
+        BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
+                .setEntities(Arrays.asList(
                         new BatchUpdateRequest.Entity()
                                 .setName("testing")
-                                .setFields(Map.ofEntries(
-                                        Map.entry("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a"),
-                                        Map.entry("field 1 1", "some value 1"),
-                                        Map.entry("field 2 1", "some value 2"),
-                                        Map.entry("field 3 1", "some value 3")
-                                ))
+                                .setFields(ImmutableMap.<String, Object>builder()
+                                        .put("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a")
+                                        .put("field 1 1", "some value 1")
+                                        .put("field 2 1", "some value 2")
+                                        .put("field 3 1", "some value 3")
+                                        .build()
+                                )
                                 .setOp("DELETE")
                 ))
                 .setSource("TESTING");

@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.client;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<Str
 
     @Override
     public Map<String, Map<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
-        var map = new HashMap<String, Map<String, Object>>();
+        Map<String, Map<String, Object>> map = new HashMap<>();
 
         if (wrapper == null || wrapper.elements == null || wrapper.elements.isEmpty()) {
             return map;
@@ -32,10 +33,10 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<Str
     }
 
     private static Map<String, Object> createChildNodes(NodeList elements) {
-        var childMap = new HashMap<String, Object>();
+        Map<String, Object> childMap = new HashMap<>();
 
-        for (var i = 0; i < elements.getLength(); i++) {
-            var childNode = elements.item(i);
+        for (int i = 0; i < elements.getLength(); i++) {
+            Node childNode = elements.item(i);
 
             if (childNode.hasChildNodes() == false) {
                 continue;

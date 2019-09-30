@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 public class Dates {
     public static Consumer<ListFilterWhere> createDateFilter(DateFilter dateFilter) {
         return where -> {
-            var date = OffsetDateTime.parse(where.getContentValue());
+            OffsetDateTime date = OffsetDateTime.parse(where.getContentValue());
 
             switch (where.getCriteriaType()) {
                 case Equal:

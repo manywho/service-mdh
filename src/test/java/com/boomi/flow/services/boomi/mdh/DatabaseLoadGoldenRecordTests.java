@@ -6,6 +6,7 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.*;
+import com.google.common.collect.ImmutableMap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
@@ -18,10 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -42,7 +40,7 @@ public class DatabaseLoadGoldenRecordTests {
     private GoldenRecordQueryResponse response = new GoldenRecordQueryResponse()
             .setResultCount(2)
             .setRecords(
-                    List.of(
+                    Arrays.asList(
                             createGoldenRecord(1),
                             createGoldenRecord(2)
                     )
@@ -77,7 +75,7 @@ public class DatabaseLoadGoldenRecordTests {
 
     @Test
     public void testLoadWithNoFilter() {
-        var query = new GoldenRecordQueryRequest();
+        GoldenRecordQueryRequest query = new GoldenRecordQueryRequest();
 
         // Actual test is below here
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
@@ -100,7 +98,7 @@ public class DatabaseLoadGoldenRecordTests {
 
     @Test
     public void testLoadWithComprehensiveFilter() {
-        var wheres = new ArrayList<ListFilterWhere>();
+        List<ListFilterWhere> wheres = new ArrayList<>();
         wheres.add(createWhere("___filterCreatedDate", CriteriaType.GreaterThan, "2013-01-01T00:00:00.0000000+00:00"));
         wheres.add(createWhere("___filterCreatedDate", CriteriaType.LessThanOrEqual, "2019-02-28T00:00:00.0000000+00:00"));
         wheres.add(createWhere("___filterUpdatedDate", CriteriaType.GreaterThanOrEqual, "2019-02-01T00:00:00.0000000+00:00"));
@@ -116,21 +114,21 @@ public class DatabaseLoadGoldenRecordTests {
         wheres.add(createWhere("field 1", CriteriaType.NotEqual, "not equal to something"));
         wheres.add(createWhere("field 2", CriteriaType.StartsWith, "starts with"));
 
-        var listFilter = new ListFilter();
+        ListFilter listFilter = new ListFilter();
         listFilter.setComparisonType(ComparisonType.And);
         listFilter.setLimit(123);
         listFilter.setWhere(wheres);
 
         listFilter.addOrderBy(new ListFilter.OrderBy("a field ID", "ASC"));
 
-        var query = new GoldenRecordQueryRequest()
+        GoldenRecordQueryRequest query = new GoldenRecordQueryRequest()
                 .setFilter(new GoldenRecordQueryRequest.Filter()
 //                        .setCreatingSourceId("a creating source ID")
                                 .setCreatedDate(new DateFilter()
                                         .setFrom(OffsetDateTime.parse("2013-01-01T00:00Z"))
                                         .setTo(OffsetDateTime.parse("2019-02-28T00:00Z"))
                                 )
-                                .setFieldValues(List.of(
+                                .setFieldValues(Arrays.asList(
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
                                                 .setFieldId("FIELD 1")
                                                 .setOperator("CONTAINS")
@@ -178,7 +176,7 @@ public class DatabaseLoadGoldenRecordTests {
                                 )
                 )
                 .setSort(new GoldenRecordQueryRequest.Sort()
-                        .setFields(List.of(
+                        .setFields(Arrays.asList(
                                 new GoldenRecordQueryRequest.Sort.Field()
                                         .setDirection("ASC")
                                         .setFieldId("a field ID")
@@ -213,7 +211,9 @@ public class DatabaseLoadGoldenRecordTests {
         fieldsWrapper.put("field 1 " + number, "field 1 value " + number);
         fieldsWrapper.put("field 2 " + number, "field 2 value " + number);
         fieldsWrapper.put("field 3 " + number, "field 3 value " + number);
-        fieldsWrapper.put("field 4 " + number, Map.ofEntries(Map.entry("field 4 " + number + " property", "value property 4 value 1 " + number)));
+        fieldsWrapper.put("field 4 " + number, ImmutableMap.<String, Object>builder()
+                                                    .put("field 4 " + number + " property", "value property 4 value 1 " + number)
+                                                    .build());
 
         Map<String, Map<String, Object>> fields = new HashMap<>();
         fields.put("universe-name", fieldsWrapper);
@@ -226,7 +226,7 @@ public class DatabaseLoadGoldenRecordTests {
     }
 
     private static ListFilterWhere createWhere(String columnName, CriteriaType criteriaType, String value) {
-        var where = new ListFilterWhere();
+        ListFilterWhere where = new ListFilterWhere();
 
         where.setColumnName(columnName);
         where.setCriteriaType(criteriaType);

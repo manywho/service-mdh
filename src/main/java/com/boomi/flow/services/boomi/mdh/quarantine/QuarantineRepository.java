@@ -71,9 +71,9 @@ public class QuarantineRepository {
     public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
         LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
 
-        var queryFilter = new QuarantineQueryRequest.Filter();
+        QuarantineQueryRequest.Filter queryFilter = new QuarantineQueryRequest.Filter();
 
-        var queryRequest = new QuarantineQueryRequest()
+        QuarantineQueryRequest queryRequest = new QuarantineQueryRequest()
                 .setFilter(queryFilter)
                 .setIncludeData(true);
 
@@ -104,7 +104,7 @@ public class QuarantineRepository {
                         .ifPresent(queryFilter::setSourceEntityId);
 
                 // Created Date
-                var createdDateFilter = new DateFilter();
+                DateFilter createdDateFilter = new DateFilter();
 
                 filter.getWhere().stream()
                         .filter(where -> where.getColumnName().equals(QuarantineEntryConstants.CREATED_DATE_FIELD))
@@ -113,7 +113,7 @@ public class QuarantineRepository {
                 queryFilter.setCreatedDate(createdDateFilter);
 
                 // End Date
-                var endDateFilter = new DateFilter();
+                DateFilter endDateFilter = new DateFilter();
 
                 filter.getWhere().stream()
                         .filter(where -> where.getColumnName().equals(QuarantineEntryConstants.END_DATE_FIELD))
@@ -122,20 +122,20 @@ public class QuarantineRepository {
                 queryFilter.setEndDate(endDateFilter);
 
                 // Cause
-                var causes = ListFilters.findEnumerableFilterValues(filter.getWhere(), QuarantineEntryConstants.CAUSE_FIELD, VALID_CAUSES);
+                List<String> causes = ListFilters.findEnumerableFilterValues(filter.getWhere(), QuarantineEntryConstants.CAUSE_FIELD, VALID_CAUSES);
                 if (causes.isEmpty() == false) {
                     queryFilter.setCauses(causes);
                 }
 
                 // Resolution
-                var resolutions = ListFilters.findEnumerableFilterValues(filter.getWhere(), QuarantineEntryConstants.RESOLUTION_FIELD, VALID_RESOLUTIONS);
+                List<String> resolutions = ListFilters.findEnumerableFilterValues(filter.getWhere(), QuarantineEntryConstants.RESOLUTION_FIELD, VALID_RESOLUTIONS);
                 if (resolutions.isEmpty() == false) {
                     queryFilter.setResolutions(resolutions);
                 }
             }
         }
 
-        var result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, queryRequest);
+        QuarantineQueryResponse result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, queryRequest);
         if (result == null || result.getEntries() == null) {
             return new ArrayList<>();
         }

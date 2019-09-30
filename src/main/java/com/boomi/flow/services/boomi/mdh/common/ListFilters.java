@@ -63,7 +63,7 @@ public class ListFilters {
             throw new ServiceProblemException(400, "An unsupported criteria type was given in a filter for the field '" + field + "'");
         }
 
-        var values = Arrays.asList(validValues);
+        List<String> values = Arrays.asList(validValues);
 
         if (filters.stream().noneMatch(where -> values.contains(where.getContentValue()))) {
             throw new ServiceProblemException(400, "The value of the " + field + " filter must be one of " + String.join(", ", values));
