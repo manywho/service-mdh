@@ -5,6 +5,7 @@
   <artifactId>mdh</artifactId>
   <version>1.0-SNAPSHOT</version>
   <build>
+    <finalName>service-mdh</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
