@@ -8,6 +8,7 @@ import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.collect.ImmutableMap;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -75,13 +76,16 @@ public class DatabaseSaveGoldenRecordTests {
                 .setEntities(Arrays.asList(
                         new BatchUpdateRequest.Entity()
                                 .setName("testing")
-                                .setFields(Map.ofEntries(
-                                        Map.entry("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"),
-                                        Map.entry("field 1 1", "some value 1"),
-                                        Map.entry("field 2 1", "some value 2"),
-                                        Map.entry("field 3 1", "2019-09-10T14:45:00Z"),
-                                        Map.entry("field 4", Map.ofEntries(Map.entry("property 4 1", "value property 4 1")))
-                                ))
+                                .setFields(ImmutableMap.<String, Object>builder()
+                                                .put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c")
+                                                .put("field 1 1", "some value 1")
+                                                .put("field 2 1", "some value 2")
+                                                .put("field 3 1", "2019-09-10T14:45:00Z")
+                                                .put("field 4", ImmutableMap.<String, Object>builder()
+                                                                    .put("property 4 1", "value property 4 1")
+                                                                    .build())
+                                                .build()
+                                )
                                 .setOp(null)
                 ))
                 .setSource("TESTING");

@@ -10,6 +10,7 @@ import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.collect.ImmutableMap;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -256,7 +257,9 @@ public class DatabaseLoadMatchEntryTests {
         testingProperties.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         testingProperties.put("field 1", "some value 1");
         testingProperties.put("field 2", "some value 2");
-        testingProperties.put("field 3 1", Map.ofEntries(Map.entry("field 3 1 property", "value property 3 value 1 1")));
+        testingProperties.put("field 3 1", ImmutableMap.<String, Object>builder()
+                                                .put("field 3 1 property", "value property 3 value 1 1")
+                                                .build());
         matchEntity.put("testing", testingProperties);
 
         Map<String, Object> fuzzyMatchDetailsProperties = new HashMap<>();

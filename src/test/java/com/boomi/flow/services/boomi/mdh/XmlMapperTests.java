@@ -7,6 +7,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import org.junit.Test;
 import org.xmlunit.builder.Input;
@@ -14,15 +15,12 @@ import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
 
 import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -106,55 +104,64 @@ public class XmlMapperTests {
     }
 
     @Test
-    public void testXmlMapperSerializesGoldenRecordUpdateRequests() throws JAXBException {
+    public void testXmlMapperSerializesGoldenRecordUpdateRequests() {
         BatchUpdateRequest.Entity entityOne = new BatchUpdateRequest.Entity()
-                .setFields(Map.ofEntries(
-                        Map.entry("id", 1),
-                        Map.entry("name", "bob"),
-                        Map.entry("city", "berwyn"),
-                        Map.entry("phones", Arrays.asList(
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-1234"),
-                                        Map.entry("type", "home")
-                                )),
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-4321"),
-                                        Map.entry("type", "mobile")
-                                ))
-                        )),
-                        Map.entry("email", "bob@gmail.com")
-                ))
+                .setFields(new HashMap<String, Object>() {
+                    {
+                        put("id", 1);
+                        put("name", "bob");
+                        put("city", "berwyn");
+                        put("phones", Arrays.asList(
+                                        new HashMap<String, Object>() {
+                                            {
+                                                put("phone", new HashMap<String, Object>() {
+                                                    {
+                                                        put("number", "311 555-1234");
+                                                        put("type", "home");
+                                                    }});
+                                            }},
+                                        new HashMap<String, Object>() {
+                                            {
+                                                put("phone", new HashMap<String, Object>() {
+                                                    {
+                                                        put("number", "311 555-4321");
+                                                        put("type", "mobile");
+                                                    }
+                                                });
+                                            }}));
+                        put("email", "bob@gmail.com");
+                    }})
                 .setName("contact")
                 .setOp(null);
 
         BatchUpdateRequest.Entity entityTwo = new BatchUpdateRequest.Entity()
-                .setFields(Map.ofEntries(
-                        Map.entry("id", 2),
-                        Map.entry("name", "sam"),
-                        Map.entry("city", "pottstown"),
-                        Map.entry("phones", Arrays.asList(
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-8765"),
-                                        Map.entry("type", "mobile")
-                                ))
-                        )),
-                        Map.entry("email", "sam@gmail.com")
-                ))
+                .setFields(new HashMap<String, Object>() {{
+                                put("id", 2);
+                                put("name", "sam");
+                                put("city", "pottstown");
+                                put("phones", Arrays.asList(
+                                        new HashMap<String, Object>() {
+                                            {
+                                                put("phone", new HashMap<String, Object>() {
+                                                    {
+                                                        put("number", "311 555-8765");
+                                                        put("type", "mobile");
+                                                    }
+                                                });
+                                            }}));
+                                put("email", "sam@gmail.com");
+                                }})
                 .setName("contact")
                 .setOp("CREATE");
 
         BatchUpdateRequest request = new BatchUpdateRequest()
                 .setSource("SF")
-                .setEntities(Arrays.asList(
-                        entityOne,
-                        entityTwo
-                ));
+                .setEntities(Arrays.asList(entityOne, entityTwo));
 
         StringWriter requestContent = new StringWriter();
         JAXB.marshal(request, requestContent);
 
         Input.Builder expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesGoldenRecordUpdateRequests.xml"));
-
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
@@ -227,57 +234,70 @@ public class XmlMapperTests {
     @Test
     public void testXmlMapperSerializesMatchEntityQueryRequests() {
         BatchUpdateRequest.Entity entityOne = new BatchUpdateRequest.Entity()
-                .setFields(Map.ofEntries(
-                        Map.entry("id", 1),
-                        Map.entry("name", "bobby"),
-                        Map.entry("city", "berwyn"),
-                        Map.entry("phones", Arrays.asList(
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-1234"),
-                                        Map.entry("type", "home")
-                                )),
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-4321"),
-                                        Map.entry("type", "mobile")
-                                ))
-                        )),
-                        Map.entry("email", "bob@gmail.com"),
-                        Map.entry("spouse", "1001")
-                ))
+                .setFields(new HashMap<String, Object>() {
+                    {
+                        put("id", 1);
+                        put("name", "bobby");
+                        put("city", "berwyn");
+                        put("phones", Arrays.asList(
+                                new HashMap<String, Object>() {{
+                                    put("phone", new HashMap<String, String>() {
+                                        {
+                                            put("number", "311 555-1234");
+                                            put("type", "home");
+                                        }});
+                                }},
+                                new HashMap<String, Object>() {
+                                    {
+                                        put("phone", new HashMap<String, String>() {
+                                            {
+                                                put("number", "311 555-4321");
+                                                put("type", "mobile");
+                                            }});
+                                }}));
+                        put("email", "bob@gmail.com");
+                        put("spouse", "1001");
+                    }})
                 .setName("contact");
 
         BatchUpdateRequest.Entity entityTwo = new BatchUpdateRequest.Entity()
-                .setFields(Map.ofEntries(
-                        Map.entry("id", 2),
-                        Map.entry("name", "mike"),
-                        Map.entry("city", "chesterbrook"),
-                        Map.entry("phones", Arrays.asList(
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-2345"),
-                                        Map.entry("type", "home")
-                                )),
-                                Map.entry("phone", Map.ofEntries(
-                                        Map.entry("number", "311 555-5432"),
-                                        Map.entry("type", "mobile")
-                                ))
-                        )),
-                        Map.entry("email", "mike@gmail.com"),
-                        Map.entry("spouse", "1002")
-                ))
+                .setFields(new HashMap<String, Object>() {
+                    {
+                        put("id", 2);
+                        put("name", "mike");
+                        put("city", "chesterbrook");
+                        put("phones", Arrays.asList(
+                                new HashMap<String, Object>() {
+                                    {
+                                        put("phone", new HashMap<String, Object>() {
+                                            {
+                                                put("number", "311 555-2345");
+                                                put("type", "home");
+                                            }});
+                                    }},
+                                new HashMap<String, Object>() {
+                                    {
+                                        put("phone", new HashMap<String, Object>() {
+                                            {
+                                                put("number", "311 555-5432");
+                                                put("type", "mobile");
+                                            }
+                                        });
+                                    }
+                                })
+                        );
+                        put("email", "mike@gmail.com");
+                        put("spouse", "1002");
+                    }})
                 .setName("contact");
 
         BatchUpdateRequest request = new BatchUpdateRequest()
-                .setSource("SF")
-                .setEntities(Arrays.asList(
-                        entityOne,
-                        entityTwo
-                ));
+                                .setSource("SF")
+                                .setEntities(Arrays.asList(entityOne, entityTwo));
 
         StringWriter requestContent = new StringWriter();
         JAXB.marshal(request, requestContent);
-
         Input.Builder expected = Input.fromURL(Resources.getResource("testXmlMapperSerializesMatchEntityQueryRequests.xml"));
-
         assertThat(requestContent.toString(), isSimilarTo(expected).ignoreWhitespace().withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)));
     }
 
