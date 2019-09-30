@@ -7,7 +7,6 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import org.junit.Test;
 import org.xmlunit.builder.Input;
