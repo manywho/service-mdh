@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -53,7 +54,7 @@ public class DatabaseDeleteGoldenRecordTests {
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("28cd81e7-c3f4-4174-824b-b1f5176fc64a");
-        object.getProperties().add(new Property("id", "28cd81e7-c3f4-4174-824b-b1f5176fc64a"));
+        object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "28cd81e7-c3f4-4174-824b-b1f5176fc64a"));
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1 1", "some value 1"));
         object.getProperties().add(new Property("field 2 1", "some value 2"));
