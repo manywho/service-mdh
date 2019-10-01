@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -190,7 +191,17 @@ public class GoldenRecordRepository {
                         // Map all the properties to fields, except our "internal" ones
                         Map<String, Object> fields = FieldMapper.createMapFromMobject(entity);
 
-                        fields.put(universe.getIdField(), entity.getExternalId());
+                        String randomUuid = UUID.randomUUID().toString();
+
+                        // we are adding Golden Record Entity ID because has been removed with the rest of special properties
+                        // the id is mandatory so if there is not Entity ID, we create a new random UUID
+                        String entityId = entity.getProperties().stream()
+                                .filter(p -> GoldenRecordConstants.ENTITY_ID_FIELD.equals(p.getDeveloperName()) && Strings.isNullOrEmpty(p.getContentValue()) == false)
+                                .findFirst()
+                                .map(Property::getContentValue)
+                                .orElse(randomUuid);
+
+                        fields.put(universe.getIdField(), entityId);
 
                         return new BatchUpdateRequest.Entity()
                                 .setOp(operation)

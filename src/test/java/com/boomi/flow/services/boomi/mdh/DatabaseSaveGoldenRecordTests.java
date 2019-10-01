@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -55,7 +56,7 @@ public class DatabaseSaveGoldenRecordTests {
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c");
-        object.getProperties().add(new Property("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
+        object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1 1", "some value 1"));
         object.getProperties().add(new Property("field 2 1", "some value 2"));
@@ -103,7 +104,7 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getDeveloperName(), equalTo(objectDataType.getDeveloperName()));
         assertThat(result.getExternalId(), not(isEmptyOrNullString()));
         assertThat(result.getProperties(), hasSize(6));
-        assertThat(result.getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(result.getProperties().get(0).getDeveloperName(), equalTo("___entityId"));
         assertThat(result.getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
         assertThat(result.getProperties().get(1).getDeveloperName(), equalTo("___sourceId"));
         assertThat(result.getProperties().get(1).getContentValue(), equalTo("TESTING"));
