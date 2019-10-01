@@ -44,6 +44,11 @@
             <version>${flow.sdk.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.github.manywho.sdk-java</groupId>
+            <artifactId>sdk-server-servlet3</artifactId>
+            <version>${flow.sdk.version}</version>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
