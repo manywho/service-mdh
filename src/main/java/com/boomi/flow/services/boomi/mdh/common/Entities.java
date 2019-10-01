@@ -28,12 +28,7 @@ public class Entities {
     }
 
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
-        List<Property> properties = new ArrayList<>();
-
-        if (entry.getEntity() != null && entry.getEntity().isEmpty() == false) {
-            Map.Entry<String, Map<String, Object>> entity = entry.getEntity().entrySet().iterator().next();
-            properties = createPropertiesModel(entity.getValue());
-        }
+        List<Property> properties = getPropertiesFromEntity(entry.getEntity());
 
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
         properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
@@ -45,6 +40,15 @@ public class Entities {
         properties.add(new Property(QuarantineEntryConstants.SOURCE_ID_FIELD, entry.getSourceId()));
 
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
+    }
+
+    private static List<Property> getPropertiesFromEntity(Map<String, Map<String, Object>> entity) {
+        if (entity == null || entity.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            Map.Entry<String, Map<String, Object>> entityEntry = entity.entrySet().iterator().next();
+            return createPropertiesModel(entityEntry.getValue());
+        }
     }
 
     public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField) {
