@@ -28,14 +28,13 @@ public class Entities {
     }
 
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
+        List<Property> properties = new ArrayList<>();
 
-        if (entry.getEntity() == null || entry.getEntity().isEmpty()) {
-            return null;
+        if (entry.getEntity() != null && entry.getEntity().isEmpty() == false) {
+            Map.Entry<String, Map<String, Object>> entity = entry.getEntity().entrySet().iterator().next();
+            properties = createPropertiesModel(entity.getValue());
         }
 
-        Map.Entry<String, Map<String, Object>> entity = entry.getEntity().entrySet().iterator().next();
-
-        List<Property> properties = createPropertiesModel(entity.getValue());
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
         properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
         properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
