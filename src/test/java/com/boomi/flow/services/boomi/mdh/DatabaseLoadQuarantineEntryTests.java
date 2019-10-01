@@ -92,6 +92,45 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     @Test
+    public void testLoadReturnsIncorrectlyFormattedMObjects() {
+
+        QuarantineQueryResponse incorrectlyFormattedEntity = new QuarantineQueryResponse()
+                .setEntries(
+                        Arrays.asList(
+                                createIncorrectFormattedQuarantineEntry(1)
+                        )
+                );
+        when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
+                .thenReturn(incorrectlyFormattedEntity);
+
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
+
+        assertThat(objects, not(nullValue()));
+        assertThat(objects, hasSize(1));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
+        assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
+        assertThat(objects.get(0).getProperties(), hasSize(8));
+
+        assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("___cause"));
+        assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
+        assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("___createdDate"));
+        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("___endDate"));
+        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("___reason"));
+        assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a reason 1"));
+        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___resolution"));
+        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a resolution 1"));
+        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___transactionId"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("a transaction ID 1"));
+        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___sourceEntityId"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("a source entity ID 1"));
+        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___sourceId"));
+        assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a source ID 1"));
+    }
+
+    @Test
     public void testLoadWithNoFilter() {
         QuarantineQueryRequest query = new QuarantineQueryRequest()
                 .setFilter(new QuarantineQueryRequest.Filter())
@@ -170,6 +209,20 @@ public class DatabaseLoadQuarantineEntryTests {
                         "universe-name",
                         query
                 );
+    }
+
+    private static QuarantineEntry createIncorrectFormattedQuarantineEntry(int number) {
+
+        return new QuarantineEntry()
+                .setCause("a cause " + number)
+                .setCreatedDate(OffsetDateTime.parse("2018-02-04T12:34Z"))
+                .setEndDate(OffsetDateTime.parse("2018-02-05T13:57Z"))
+                .setEntity(null)
+                .setReason("a reason " + number)
+                .setResolution("a resolution " + number)
+                .setSourceEntityId("a source entity ID " + number)
+                .setSourceId("a source ID " + number)
+                .setTransactionId("a transaction ID " + number);
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
