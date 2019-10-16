@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.base.Strings;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.draw.elements.Element;
 import com.manywho.sdk.api.draw.elements.type.TypeElement;
@@ -113,6 +114,10 @@ public class FieldMapper {
 
         for (Property property: mObject.getProperties()) {
             if (property.getDeveloperName().startsWith("___")) {
+                continue;
+            }
+            if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
+                // Ignore datetime with empty values
                 continue;
             }
 
