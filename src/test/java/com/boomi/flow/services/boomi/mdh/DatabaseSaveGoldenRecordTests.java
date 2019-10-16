@@ -59,7 +59,7 @@ public class DatabaseSaveGoldenRecordTests {
         object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1 1", "some value 1"));
-        object.getProperties().add(new Property("field 2 1", "some value 2"));
+        object.getProperties().add(new Property("field 2 1", "", ContentType.DateTime));
         object.getProperties().add(new Property("field 3 1", "2019-09-10T15:45:00+01:00", ContentType.DateTime));
 
         MObject objectField4 = new MObject("object field 4");
@@ -80,7 +80,6 @@ public class DatabaseSaveGoldenRecordTests {
                                 .setFields(ImmutableMap.<String, Object>builder()
                                                 .put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c")
                                                 .put("field 1 1", "some value 1")
-                                                .put("field 2 1", "some value 2")
                                                 .put("field 3 1", "2019-09-10T14:45:00Z")
                                                 .put("field 4", ImmutableMap.<String, Object>builder()
                                                                     .put("property 4 1", "value property 4 1")
@@ -111,7 +110,7 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getProperties().get(2).getDeveloperName(), equalTo("field 1 1"));
         assertThat(result.getProperties().get(2).getContentValue(), equalTo("some value 1"));
         assertThat(result.getProperties().get(3).getDeveloperName(), equalTo("field 2 1"));
-        assertThat(result.getProperties().get(3).getContentValue(), equalTo("some value 2"));
+        assertThat(result.getProperties().get(3).getContentValue(), equalTo(""));
         assertThat(result.getProperties().get(4).getDeveloperName(), equalTo("field 3 1"));
         assertThat(result.getProperties().get(4).getContentValue(), equalTo("2019-09-10T15:45:00+01:00"));
         assertThat(result.getProperties().get(5).getContentValue(), nullValue());
