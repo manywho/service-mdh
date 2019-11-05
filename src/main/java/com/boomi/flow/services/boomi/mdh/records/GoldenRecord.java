@@ -7,7 +7,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GoldenRecord {
@@ -15,6 +17,7 @@ public class GoldenRecord {
     private OffsetDateTime updatedDate;
     private String recordId;
     private Map<String, Map<String, Object>> fields = new HashMap<>();
+    private List<Link> links = new ArrayList<>();
 
     @XmlAttribute
     @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
@@ -57,5 +60,49 @@ public class GoldenRecord {
     public GoldenRecord setFields(Map<String, Map<String, Object>> fields) {
         this.fields = fields;
         return this;
+    }
+
+    @XmlElement(name = "links")
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    public GoldenRecord setLinks(List<Link> links) {
+        this.links = links;
+        return this;
+    }
+
+    public static class Link {
+        private String source;
+        private String entityId;
+        private OffsetDateTime establishedDate;
+
+        @XmlAttribute
+        @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
+        public OffsetDateTime getEstablishedDate() {
+            return establishedDate;
+        }
+
+        @XmlAttribute
+        public String getSource() {
+            return source;
+        }
+
+        @XmlAttribute
+        public String getEntityId() {
+            return entityId;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public void setEntityId(String entityId) {
+            this.entityId = entityId;
+        }
+
+        public void setEstablishedDate(OffsetDateTime establishedDate) {
+            this.establishedDate = establishedDate;
+        }
     }
 }
