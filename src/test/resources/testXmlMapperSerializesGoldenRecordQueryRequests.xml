@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<RecordQueryRequest>
+<RecordQueryRequest includeSourceLinks="true">
     <sort>
         <sortField>
             <fieldId>field 1</fieldId>

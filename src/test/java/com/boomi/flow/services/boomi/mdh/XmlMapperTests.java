@@ -91,6 +91,7 @@ public class XmlMapperTests {
                 .setFields(Arrays.asList(sortFieldOne, sortFieldTwo));
 
         GoldenRecordQueryRequest request = new GoldenRecordQueryRequest()
+                .setIncludeSourceLinks(true)
                 .setFilter(filter)
                 .setSort(sort);
 

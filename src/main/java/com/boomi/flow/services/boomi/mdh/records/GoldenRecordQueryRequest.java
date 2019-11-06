@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class GoldenRecordQueryRequest {
     private View view;
     private Sort sort;
     private Filter filter;
+    private Boolean includeSourceLinks = true;
 
     public View getView() {
         return view;
@@ -39,6 +41,16 @@ public class GoldenRecordQueryRequest {
 
     public GoldenRecordQueryRequest setFilter(Filter filter) {
         this.filter = filter;
+        return this;
+    }
+
+    @XmlAttribute(name = "includeSourceLinks")
+    public Boolean getIncludeSourceLinks() {
+        return includeSourceLinks;
+    }
+
+    public GoldenRecordQueryRequest setIncludeSourceLinks(Boolean includeSourceLinks) {
+        this.includeSourceLinks = includeSourceLinks;
         return this;
     }
 

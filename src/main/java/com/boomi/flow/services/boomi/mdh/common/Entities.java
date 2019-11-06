@@ -170,7 +170,7 @@ public class Entities {
         if (links == null) {
             return  properties;
         }
-
+        // this part is only for Golden Records
         List<MObject> mObjectLinks = links.stream()
                 .map(Entities::createMObjectForLink)
                 .collect(Collectors.toList());
@@ -179,13 +179,13 @@ public class Entities {
         return properties;
     }
 
-    private static MObject createMObjectForLink(GoldenRecord.Link links) {
+    private static MObject createMObjectForLink(GoldenRecord.Link link) {
         List<Property> linkProperties = new ArrayList<>();
 
-        linkProperties.add(new Property("Source", links.getSource()));
-        linkProperties.add(new Property("Entity ID", links.getEntityId()));
-        linkProperties.add(new Property("Established Date", links.getEstablishedDate()));
+        linkProperties.add(new Property("Source", link.getSource()));
+        linkProperties.add(new Property("Entity ID", link.getEntityId()));
+        linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
 
-        return new MObject(GoldenRecordConstants.LINK, links.getEntityId(), linkProperties);
+        return new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
     }
 }

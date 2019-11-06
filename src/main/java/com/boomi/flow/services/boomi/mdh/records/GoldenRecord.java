@@ -5,6 +5,7 @@ import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -61,8 +62,8 @@ public class GoldenRecord {
         this.fields = fields;
         return this;
     }
-
-    @XmlElement(name = "links")
+    @XmlElementWrapper
+    @XmlElement(name = "link")
     public List<Link> getLinks() {
         return links;
     }
@@ -77,32 +78,35 @@ public class GoldenRecord {
         private String entityId;
         private OffsetDateTime establishedDate;
 
-        @XmlAttribute
+        @XmlAttribute(name = "establishedDate")
         @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
         public OffsetDateTime getEstablishedDate() {
             return establishedDate;
         }
 
-        @XmlAttribute
+        @XmlAttribute(name = "source")
         public String getSource() {
             return source;
         }
 
-        @XmlAttribute
+        @XmlAttribute(name = "entityId")
         public String getEntityId() {
             return entityId;
         }
 
-        public void setSource(String source) {
+        public Link setSource(String source) {
             this.source = source;
+            return this;
         }
 
-        public void setEntityId(String entityId) {
+        public Link setEntityId(String entityId) {
             this.entityId = entityId;
+            return this;
         }
 
-        public void setEstablishedDate(OffsetDateTime establishedDate) {
+        public Link setEstablishedDate(OffsetDateTime establishedDate) {
             this.establishedDate = establishedDate;
+            return this;
         }
     }
 }
