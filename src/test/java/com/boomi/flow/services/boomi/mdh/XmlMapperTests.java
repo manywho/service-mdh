@@ -20,6 +20,7 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -185,13 +186,16 @@ public class XmlMapperTests {
         assertThat(actual.getRecords().get(0).getFields().get("account").get("account_number"), equalTo("1234561234"));
         assertThat(actual.getRecords().get(0).getFields().get("account").get("phone_number"), equalTo("(610) 111-1111"));
         assertThat(actual.getRecords().get(0).getFields().get("account").get("fax"), equalTo("(610) 111-4444"));
-//        assertThat(actual.getRecords().get(0).getFields().get("account").get("billing_address"), instanceOf(Map.class));
-//        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_address"), equalTo("801 Cassat Rd."));
-//        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_city"), equalTo("Berwyn"));
-//        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_state"), equalTo("PA"));
-//        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_postal_code"), equalTo("19312"));
+        assertThat(actual.getRecords().get(0).getFields().get("account").get("billing_address"), instanceOf(Map.class));
+        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_address"), equalTo("801 Cassat Rd."));
+        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_city"), equalTo("Berwyn"));
+        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_state"), equalTo("PA"));
+        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_postal_code"), equalTo("19312"));
         assertThat(actual.getRecords().get(0).getFields().get("account").get("website"), equalTo("http://boomi.com"));
         assertThat(actual.getRecords().get(0).getFields().get("account").get("number_of_employees"), equalTo("200"));
+        assertThat(actual.getRecords().get(0).getLinks().get(0).getEntityId(), equalTo("d39bc927-e005-4157-b73c-4956bfa2acb1"));
+        assertThat(actual.getRecords().get(0).getLinks().get(0).getSource(), equalTo("flow1"));
+        assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate().toString(), equalTo("2019-08-08T10:56:41Z"));
     }
 
     @Test
