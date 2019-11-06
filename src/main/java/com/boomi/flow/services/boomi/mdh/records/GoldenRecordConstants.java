@@ -14,5 +14,5 @@ public class GoldenRecordConstants {
     public static final String ENTITY_ID_FIELD = "___entityId";
     public static final String LINKS = "Golden Record: Links";
     public static final String LINKS_FIELD = "___links";
-    public static final String LINK = "Golden Record: LINK";
+    public static final String LINK = "Golden Record: Link";
 }
