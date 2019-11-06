@@ -48,7 +48,7 @@ public class FieldMapper {
         properties.add(new TypeElementProperty(GoldenRecordConstants.UPDATED_DATE, ContentType.DateTime));
         properties.add(new TypeElementProperty(GoldenRecordConstants.RECORD_ID, ContentType.String));
         properties.add(new TypeElementProperty(GoldenRecordConstants.ENTITY_ID, ContentType.String));
-        properties.add(new TypeElementProperty(GoldenRecordConstants.LINKS, ContentType.List));
+        properties.add(new TypeElementProperty(GoldenRecordConstants.LINKS, ContentType.List, GoldenRecordConstants.LINK));
 
         // adding properties for quarantine
         properties.add(new TypeElementProperty(QuarantineEntryConstants.SOURCE_ID, ContentType.String));

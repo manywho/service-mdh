@@ -705,7 +705,7 @@ public class DescribeTests {
                 .body("install.typeElements[3].properties[6].contentType", equalTo("ContentList"))
                 .body("install.typeElements[3].properties[6].developerName", equalTo("Golden Record: Links"))
                 .body("install.typeElements[3].properties[6].id", nullValue())
-                .body("install.typeElements[3].properties[6].typeElementDeveloperName",nullValue())
+                .body("install.typeElements[3].properties[6].typeElementDeveloperName", equalTo("Golden Record: Link"))
                 .body("install.typeElements[3].properties[6].typeElementId", nullValue())
 
                 .body("install.typeElements[3].properties[7].contentFormat", nullValue())
@@ -1035,7 +1035,7 @@ public class DescribeTests {
                 .body("install.typeElements[5].properties[7].contentType", equalTo("ContentList"))
                 .body("install.typeElements[5].properties[7].developerName", equalTo("Golden Record: Links"))
                 .body("install.typeElements[5].properties[7].id", nullValue())
-                .body("install.typeElements[5].properties[7].typeElementDeveloperName", nullValue())
+                .body("install.typeElements[5].properties[7].typeElementDeveloperName", equalTo("Golden Record: Link"))
                 .body("install.typeElements[5].properties[7].typeElementId", nullValue())
 
                 .body("install.typeElements[5].properties[8].contentFormat", nullValue())
