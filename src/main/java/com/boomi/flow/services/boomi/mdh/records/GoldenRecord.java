@@ -1,6 +1,8 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,15 +11,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GoldenRecord {
     private OffsetDateTime createdDate;
     private OffsetDateTime updatedDate;
     private String recordId;
-    private Map<String, Map<String, Object>> fields = new HashMap<>();
+    private Multimap<String, Object> fields = ArrayListMultimap.create();
     private List<Link> links = new ArrayList<>();
 
     @XmlAttribute
@@ -54,14 +54,15 @@ public class GoldenRecord {
 
     @XmlElement(name = "Fields")
     @XmlJavaTypeAdapter(XmlMapAdapter.class)
-    public Map<String, Map<String, Object>> getFields() {
+    public Multimap<String, Object> getFields() {
         return fields;
     }
 
-    public GoldenRecord setFields(Map<String, Map<String, Object>> fields) {
+    public GoldenRecord setFields(Multimap<String, Object> fields) {
         this.fields = fields;
         return this;
     }
+
     @XmlElementWrapper
     @XmlElement(name = "link")
     public List<Link> getLinks() {

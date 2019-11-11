@@ -1,4 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.client;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -6,16 +8,11 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<String, Object>>> {
+public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Multimap<String, Multimap<String, Object>>> {
 
     @Override
-    public XmlMapWrapper marshal(Map<String, Map<String, Object>> m) throws Exception {
-        throw new RuntimeException("Marshalling maps isn't supported yet");
-    }
-
-    @Override
-    public Map<String, Map<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
-        Map<String, Map<String, Object>> map = new HashMap<>();
+    public Multimap<String, Multimap<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
+        Multimap<String, Multimap<String, Object>> map = ArrayListMultimap.create();
 
         if (wrapper == null || wrapper.elements == null || wrapper.elements.isEmpty()) {
             return map;
@@ -32,8 +29,13 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<Str
         return map;
     }
 
-    private static Map<String, Object> createChildNodes(NodeList elements) {
-        Map<String, Object> childMap = new HashMap<>();
+    @Override
+    public XmlMapWrapper marshal(Multimap<String, Multimap<String, Object>> stringMultimapMap) throws Exception {
+        throw new RuntimeException("Marshalling maps isn't supported yet");
+    }
+
+    private static Multimap<String, Object> createChildNodes(NodeList elements) {
+        Multimap<String, Object> childMap = ArrayListMultimap.create();
 
         for (int i = 0; i < elements.getLength(); i++) {
             Node childNode = elements.item(i);

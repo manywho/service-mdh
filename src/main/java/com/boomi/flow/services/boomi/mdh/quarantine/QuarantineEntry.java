@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
+import com.google.common.collect.Multimap;
 import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,7 +18,7 @@ public class QuarantineEntry {
     private String cause;
     private String reason;
     private String resolution;
-    private Map<String, Map<String, Object>> entity;
+    private Map<String, Multimap<String, Object>> entity;
 
     @XmlAttribute
     @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
@@ -99,11 +100,11 @@ public class QuarantineEntry {
     }
 
     @XmlJavaTypeAdapter(XmlMapAdapter.class)
-    public Map<String, Map<String, Object>> getEntity() {
+    public Map<String, Multimap<String, Object>> getEntity() {
         return entity;
     }
 
-    public QuarantineEntry setEntity(Map<String, Map<String, Object>> entity) {
+    public QuarantineEntry setEntity(Map<String, Multimap<String, Object>> entity) {
         this.entity = entity;
         return this;
     }

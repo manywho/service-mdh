@@ -145,7 +145,7 @@ public class FieldMapper {
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
-            if (contentType == ContentType.Object) {
+            if (contentType == ContentType.Object || contentType == ContentType.List) {
                 childTypeElement.add(element);
             }
         }
@@ -159,7 +159,7 @@ public class FieldMapper {
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
-            if (contentType != null && contentType != ContentType.List) {
+            if (contentType != null) {
                 properties.add(createProperty(element, contentType));
             }
         }
@@ -173,7 +173,7 @@ public class FieldMapper {
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
-            if (contentType != null && contentType != ContentType.List) {
+            if (contentType != null) {
                 propertyBindings.add(creteTypeElementPropertyBinding(element, contentType));
             }
         }

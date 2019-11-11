@@ -10,7 +10,9 @@ import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -219,25 +221,25 @@ public class DatabaseLoadMatchEntryTests {
         return updateRequest;
     }
 
-    private HashMap<String, Map<String, Object>> createTestingEntity() {
-        HashMap<String, Object> properties = new HashMap<>();
+    private Multimap<String, Object> createTestingEntity() {
+        Multimap<String, Object> properties = ArrayListMultimap.create();
         properties.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         properties.put("field 1", "some value 1");
         properties.put("field 2", "some value 2");
 
-        HashMap<String, Map<String, Object>> testing = new HashMap<>();
+        Multimap<String, Object> testing = ArrayListMultimap.create();
         testing.put("testing", properties);
 
         return testing;
     }
 
-    private HashMap<String, Map<String, Object>> createTestingAlreadyLinkedEntity() {
-        HashMap<String, Object> properties = new HashMap<>();
+    private Multimap<String, Object> createTestingAlreadyLinkedEntity() {
+        Multimap<String, Object> properties = ArrayListMultimap.create();
         properties.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf123456");
         properties.put("field 1", "some value 1");
         properties.put("field 2", "some value 2");
 
-        HashMap<String, Map<String, Object>> testing = new HashMap<>();
+        Multimap<String, Object> testing = ArrayListMultimap.create();
         testing.put("testing", properties);
 
         return testing;
@@ -251,9 +253,10 @@ public class DatabaseLoadMatchEntryTests {
         matchResult.setEntity(createTestingEntity());
         matchResult.getEntity().put(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, null);
 
-        List<Map<String, Object>> matchResultSuccess = new ArrayList<>();
-        Map<String, Object> matchEntity = new HashMap<>();
-        Map<String, Object> testingProperties = new HashMap<>();
+        Multimap<String, Object> matchResultSuccess = ArrayListMultimap.create();
+        Multimap<String, Object> matchEntity = ArrayListMultimap.create();
+        Multimap<String, Object> testingProperties = ArrayListMultimap.create();
+
         testingProperties.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
         testingProperties.put("field 1", "some value 1");
         testingProperties.put("field 2", "some value 2");
@@ -271,8 +274,9 @@ public class DatabaseLoadMatchEntryTests {
         fuzzyMatchDetailsProperties.put("threshold", "0.85");
 
         matchEntity.put("fuzzyMatchDetails", fuzzyMatchDetailsProperties);
-        matchResultSuccess.add(matchEntity);
+        matchResultSuccess.put("", matchEntity);
 
+        matchResult.setEntity(matchResultSuccess);
         matchResult.setMatch(matchResultSuccess);
         matchResult.setDuplicate(matchResultSuccess);
 

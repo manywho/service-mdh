@@ -10,7 +10,9 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
@@ -226,7 +228,7 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
-        Map<String, Object> entityWrapper = new  HashMap<String, Object>();
+        Multimap<String, Object> entityWrapper = ArrayListMultimap.create();
         entityWrapper.put("field 1 " + number, "field 1 value " + number);
         entityWrapper.put("field 2 " + number, "field 2 value " + number);
         entityWrapper.put("field 3 " + number, "field 3 value " + number);
@@ -234,7 +236,7 @@ public class DatabaseLoadQuarantineEntryTests {
                                                     .put("field 4 " + number + " property", "value property 4 value 1 " + number)
                                                     .build());
 
-        Map<String, Map<String, Object>> entity = new HashMap<>();
+        Map<String, Multimap<String, Object>> entity = new HashMap<>();
         entity.put("dunno", entityWrapper);
 
         return new QuarantineEntry()

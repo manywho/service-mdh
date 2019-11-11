@@ -6,7 +6,9 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.*;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
@@ -216,7 +218,7 @@ public class DatabaseLoadGoldenRecordTests {
     }
 
     private static GoldenRecord createGoldenRecord(int number) {
-        Map<String, Object> fieldsWrapper = new HashMap<String, Object>();
+        Multimap<String, Object> fieldsWrapper = ArrayListMultimap.create();
         fieldsWrapper.put("field 1 " + number, "field 1 value " + number);
         fieldsWrapper.put("field 2 " + number, "field 2 value " + number);
         fieldsWrapper.put("field 3 " + number, "field 3 value " + number);
@@ -224,7 +226,7 @@ public class DatabaseLoadGoldenRecordTests {
                                                     .put("field 4 " + number + " property", "value property 4 value 1 " + number)
                                                     .build());
 
-        Map<String, Map<String, Object>> fields = new HashMap<>();
+        Multimap<String, Object> fields = ArrayListMultimap.create();
         fields.put("universe-name", fieldsWrapper);
 
         List<GoldenRecord.Link> links = new ArrayList<>();

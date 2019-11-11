@@ -7,6 +7,8 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.io.Resources;
 import org.junit.Test;
 import org.xmlunit.builder.Input;
@@ -19,6 +21,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -180,19 +183,25 @@ public class XmlMapperTests {
         assertThat(actual.getRecords().get(0).getCreatedDate(), equalTo(OffsetDateTime.parse("2013-09-23T14:07:31Z")));
         assertThat(actual.getRecords().get(0).getUpdatedDate(), equalTo(OffsetDateTime.parse("2014-02-04T15:59:21Z")));
         assertThat(actual.getRecords().get(0).getFields(), not(nullValue()));
+
+        Multimap account0 = (Multimap) actual.getRecords().get(0).getFields().get("account").iterator().next();
         assertThat(actual.getRecords().get(0).getFields().get("account"), not(nullValue()));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("name"), equalTo("Dell Boomi"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("description"), equalTo("Cloud based data management"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("account_number"), equalTo("1234561234"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("phone_number"), equalTo("(610) 111-1111"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("fax"), equalTo("(610) 111-4444"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("billing_address"), instanceOf(Map.class));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_address"), equalTo("801 Cassat Rd."));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_city"), equalTo("Berwyn"));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_state"), equalTo("PA"));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_postal_code"), equalTo("19312"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("website"), equalTo("http://boomi.com"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("number_of_employees"), equalTo("200"));
+        assertThat(account0.get("name").iterator().next(), equalTo("Dell Boomi"));
+        assertThat(account0.get("description").iterator().next(), equalTo("Cloud based data management"));
+        assertThat(account0.get("account_number").iterator().next(), equalTo("1234561234"));
+        assertThat(account0.get("phone_number").iterator().next(), equalTo("(610) 111-1111"));
+        assertThat(account0.get("fax").iterator().next(), equalTo("(610) 111-4444"));
+
+        Multimap billingAddress0 = (Multimap) ((Multimap) actual.getRecords().get(0).getFields().get("account").iterator().next()).get("billing_address").iterator().next();
+
+        assertThat(billingAddress0, instanceOf(ArrayListMultimap.class));
+        assertThat(billingAddress0.get("billing_address").iterator().next(), equalTo("801 Cassat Rd."));
+        assertThat(billingAddress0.get("billing_city").iterator().next(), equalTo("Berwyn"));
+        assertThat(billingAddress0.get("billing_state").iterator().next(), equalTo("PA"));
+        assertThat(billingAddress0.get("billing_postal_code").iterator().next(), equalTo("19312"));
+
+        assertThat(((Multimap) actual.getRecords().get(0).getFields().get("account").iterator().next()).get("website").iterator().next(), equalTo("http://boomi.com"));
+        assertThat(((Multimap) actual.getRecords().get(0).getFields().get("account").iterator().next()).get("number_of_employees").iterator().next(), equalTo("200"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getEntityId(), equalTo("d39bc927-e005-4157-b73c-4956bfa2acb1"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getSource(), equalTo("flow1"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate().toString(), equalTo("2019-08-08T10:56:41Z"));
@@ -314,45 +323,65 @@ public class XmlMapperTests {
 
         assertThat( actual.getMatchResults().get(0).getMatchRule(), equalTo("Incoming name is similar to (Jaro-Winkler) Existing name"));
         assertThat( actual.getMatchResults().get(0).getStatus(), equalTo("SUCCESS"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("id"), equalTo("1"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("name"), equalTo("bobby"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("city"), equalTo("berwyn"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("email"), equalTo("bob@gmail.com"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("spouse"), equalTo("1001"));
-        //assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("phones"), notNull); // not working properly need to be fixed for child elements
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("id"), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("name"), equalTo("bob"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("city"), equalTo("berwyn"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("email"), equalTo("bob@gmail.com"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("spouse"), equalTo("1001"));
+        Multimap contact0 = ((Multimap) actual.getMatchResults().get(0).getEntity().get("contact").iterator().next());
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("field"), equalTo("name"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("first"), equalTo("BOBBY"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("second"), equalTo("BOB"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("method"), equalTo("jarowinkler"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("matchStrength"), equalTo("0.90666664"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("threshold"), equalTo("0.85"));
+        assertThat( contact0.get("id").iterator().next(), equalTo("1"));
+        assertThat( contact0.get("name").iterator().next(), equalTo("bobby"));
+        assertThat( contact0.get("city").iterator().next(), equalTo("berwyn"));
+        assertThat( contact0.get("email").iterator().next(), equalTo("bob@gmail.com"));
+        assertThat( contact0.get("spouse").iterator().next(), equalTo("1001"));
+        assertThat( contact0.get("phones").iterator().next(), notNullValue()); //Todo: not working properly need to be fixed for child elements
+        assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("number").iterator().next(), equalTo("311 555-1234"));
+        assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("type").iterator().next(), equalTo("home"));
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("id"), equalTo("fc8cd5be-ac26-4e9a-9d0c-6b397a124172"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("name"), equalTo("bob"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("city"), equalTo("berwyn"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("email"), equalTo("bob@gmail.com"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("spouse"), equalTo("1001"));
+        assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("number").iterator().next(), equalTo("311 555-1234"));
+        assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("type").iterator().next(), equalTo("home"));
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("field"), equalTo("name"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("first"), equalTo("BOBBY"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("second"), equalTo("BOB"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("method"), equalTo("jarowinkler"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("matchStrength"), equalTo("0.90666664"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("threshold"), equalTo("0.85"));
+        Multimap matchContact0 = ((Multimap) actual.getMatchResults().get(0).getMatch().get("contact").iterator().next());
+
+        assertThat(matchContact0.get("id").iterator().next(), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
+        assertThat(matchContact0.get("name").iterator().next(), equalTo("bob"));
+        assertThat(matchContact0.get("city").iterator().next(), equalTo("berwyn"));
+        assertThat(matchContact0.get("email").iterator().next(), equalTo("bob@gmail.com"));
+        assertThat(matchContact0.get("spouse").iterator().next(), equalTo("1001"));
+
+        Multimap match0FuzzyMatchDetails = ((Multimap) actual.getMatchResults().get(0).getMatch().get("fuzzyMatchDetails").iterator().next());
+
+        assertThat(match0FuzzyMatchDetails.get("field").iterator().next(), equalTo("name"));
+        assertThat(match0FuzzyMatchDetails.get("first").iterator().next(), equalTo("BOBBY"));
+        assertThat(match0FuzzyMatchDetails.get("second").iterator().next(), equalTo("BOB"));
+        assertThat(match0FuzzyMatchDetails.get("method").iterator().next(), equalTo("jarowinkler"));
+        assertThat(match0FuzzyMatchDetails.get("matchStrength").iterator().next(), equalTo("0.90666664"));
+        assertThat(match0FuzzyMatchDetails.get("threshold").iterator().next(), equalTo("0.85"));
+
+        Multimap duplicatedContact0 = ((Multimap) actual.getMatchResults().get(0).getDuplicate().get("contact").iterator().next());
+
+        assertThat(duplicatedContact0.get("id").iterator().next(), equalTo("fc8cd5be-ac26-4e9a-9d0c-6b397a124172"));
+        assertThat(duplicatedContact0.get("name").iterator().next(), equalTo("bob"));
+        assertThat(duplicatedContact0.get("city").iterator().next(), equalTo("berwyn"));
+        assertThat(duplicatedContact0.get("email").iterator().next(), equalTo("bob@gmail.com"));
+        assertThat(duplicatedContact0.get("spouse").iterator().next(), equalTo("1001"));
+
+        Multimap duplicate0FuzzyMatchDetails = ((Multimap) actual.getMatchResults().get(0).getMatch().get("fuzzyMatchDetails").iterator().next());
+
+
+        assertThat(duplicate0FuzzyMatchDetails.get("field").iterator().next(), equalTo("name"));
+        assertThat(duplicate0FuzzyMatchDetails.get("first").iterator().next(), equalTo("BOBBY"));
+        assertThat(duplicate0FuzzyMatchDetails.get("second").iterator().next(), equalTo("BOB"));
+        assertThat(duplicate0FuzzyMatchDetails.get("method").iterator().next(), equalTo("jarowinkler"));
+        assertThat(duplicate0FuzzyMatchDetails.get("matchStrength").iterator().next(), equalTo("0.90666664"));
+        assertThat(duplicate0FuzzyMatchDetails.get("threshold").iterator().next(), equalTo("0.85"));
+
+        Multimap matchContact1 = ((Multimap) actual.getMatchResults().get(1).getEntity().get("contact").iterator().next());
 
         assertThat( actual.getMatchResults().get(1).getMatchRule(), nullValue());
         assertThat( actual.getMatchResults().get(1).getStatus(), equalTo("ALREADY_LINKED"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("id"), equalTo("2"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("name"), equalTo("mike"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("city"), equalTo("chesterbrook"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("email"), equalTo("mike@gmail.com"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("spouse"), equalTo("1002"));
+
+        assertThat( matchContact1.get("id").iterator().next(), equalTo("2"));
+        assertThat( matchContact1.get("name").iterator().next(), equalTo("mike"));
+        assertThat( matchContact1.get("city").iterator().next(), equalTo("chesterbrook"));
+        assertThat( matchContact1.get("email").iterator().next(), equalTo("mike@gmail.com"));
+        assertThat( matchContact1.get("spouse").iterator().next(), equalTo("1002"));
     }
 }

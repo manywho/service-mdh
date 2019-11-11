@@ -1,6 +1,8 @@
 package com.boomi.flow.services.boomi.mdh.match;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,9 +30,9 @@ public class MatchEntityResponse {
         private String status;
         private String matchRule;
         private String idResource;
-        private Map<String, Map<String, Object>> entity = new HashMap<>();
-        private List<Map<String, Object>> match = new ArrayList<>();
-        private List<Map<String, Object>> duplicate = new ArrayList<>();
+        private Multimap<String, Object> entity = ArrayListMultimap.create();
+        private Multimap<String, Object> match = ArrayListMultimap.create();
+        private Multimap<String, Object> duplicate = ArrayListMultimap.create();
 
         @XmlAttribute
         public String getStatus() {
@@ -60,31 +62,31 @@ public class MatchEntityResponse {
 
         @XmlElement(name = "entity")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public Map<String, Map<String, Object>> getEntity() {
+        public Multimap<String, Object> getEntity() {
             return entity;
         }
 
-        public void setEntity(Map<String, Map<String, Object>> entity) {
+        public void setEntity(Multimap<String, Object> entity) {
             this.entity = entity;
         }
 
         @XmlElement(name = "match")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public List<Map<String, Object>> getMatch() {
+        public Multimap<String, Object> getMatch() {
             return match;
         }
 
-        public void setMatch(List<Map<String, Object>> match) {
+        public void setMatch(Multimap<String, Object> match) {
             this.match = match;
         }
 
         @XmlElement(name = "duplicate")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public List<Map<String, Object>> getDuplicate() {
+        public Multimap<String, Object> getDuplicate() {
             return duplicate;
         }
 
-        public void setDuplicate(List<Map<String, Object>> duplicate) {
+        public void setDuplicate(Multimap<String, Object> duplicate) {
             this.duplicate = duplicate;
         }
     }
