@@ -11,7 +11,6 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
@@ -232,9 +231,9 @@ public class DatabaseLoadQuarantineEntryTests {
         entityWrapper.put("field 1 " + number, "field 1 value " + number);
         entityWrapper.put("field 2 " + number, "field 2 value " + number);
         entityWrapper.put("field 3 " + number, "field 3 value " + number);
-        entityWrapper.put("field 4 " + number, ImmutableMap.<String, Object>builder()
-                                                    .put("field 4 " + number + " property", "value property 4 value 1 " + number)
-                                                    .build());
+        Multimap<String, Object> field4 = ArrayListMultimap.create();
+        field4.put("field 4 " + number + " property", "value property 4 value 1 " + number);
+        entityWrapper.put("field 4 " + number, field4);
 
         Map<String, Multimap<String, Object>> entity = new HashMap<>();
         entity.put("dunno", entityWrapper);

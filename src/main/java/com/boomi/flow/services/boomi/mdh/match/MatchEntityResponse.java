@@ -31,8 +31,8 @@ public class MatchEntityResponse {
         private String matchRule;
         private String idResource;
         private Multimap<String, Object> entity = ArrayListMultimap.create();
-        private Multimap<String, Object> match = ArrayListMultimap.create();
-        private Multimap<String, Object> duplicate = ArrayListMultimap.create();
+        private List<Multimap<String, Object>> match = new ArrayList<>();
+        private List<Multimap<String, Object>> duplicate = new ArrayList<>();
 
         @XmlAttribute
         public String getStatus() {
@@ -72,21 +72,21 @@ public class MatchEntityResponse {
 
         @XmlElement(name = "match")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public Multimap<String, Object> getMatch() {
+        public List<Multimap<String, Object>> getMatch() {
             return match;
         }
 
-        public void setMatch(Multimap<String, Object> match) {
+        public void setMatch(List<Multimap<String, Object>> match) {
             this.match = match;
         }
 
         @XmlElement(name = "duplicate")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public Multimap<String, Object> getDuplicate() {
+        public List<Multimap<String, Object>> getDuplicate() {
             return duplicate;
         }
 
-        public void setDuplicate(Multimap<String, Object> duplicate) {
+        public void setDuplicate(List<Multimap<String, Object>> duplicate) {
             this.duplicate = duplicate;
         }
     }

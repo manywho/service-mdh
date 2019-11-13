@@ -21,9 +21,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -338,7 +336,7 @@ public class XmlMapperTests {
         assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("number").iterator().next(), equalTo("311 555-1234"));
         assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("type").iterator().next(), equalTo("home"));
 
-        Multimap matchContact0 = ((Multimap) actual.getMatchResults().get(0).getMatch().get("contact").iterator().next());
+        Multimap matchContact0 = ((Multimap) actual.getMatchResults().get(0).getMatch().get(0).get("contact").iterator().next());
 
         assertThat(matchContact0.get("id").iterator().next(), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
         assertThat(matchContact0.get("name").iterator().next(), equalTo("bob"));
@@ -346,7 +344,7 @@ public class XmlMapperTests {
         assertThat(matchContact0.get("email").iterator().next(), equalTo("bob@gmail.com"));
         assertThat(matchContact0.get("spouse").iterator().next(), equalTo("1001"));
 
-        Multimap match0FuzzyMatchDetails = ((Multimap) actual.getMatchResults().get(0).getMatch().get("fuzzyMatchDetails").iterator().next());
+        Multimap match0FuzzyMatchDetails = ((Multimap) actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails").iterator().next());
 
         assertThat(match0FuzzyMatchDetails.get("field").iterator().next(), equalTo("name"));
         assertThat(match0FuzzyMatchDetails.get("first").iterator().next(), equalTo("BOBBY"));
@@ -355,7 +353,7 @@ public class XmlMapperTests {
         assertThat(match0FuzzyMatchDetails.get("matchStrength").iterator().next(), equalTo("0.90666664"));
         assertThat(match0FuzzyMatchDetails.get("threshold").iterator().next(), equalTo("0.85"));
 
-        Multimap duplicatedContact0 = ((Multimap) actual.getMatchResults().get(0).getDuplicate().get("contact").iterator().next());
+        Multimap duplicatedContact0 = ((Multimap) actual.getMatchResults().get(0).getDuplicate().get(0).get("contact").iterator().next());
 
         assertThat(duplicatedContact0.get("id").iterator().next(), equalTo("fc8cd5be-ac26-4e9a-9d0c-6b397a124172"));
         assertThat(duplicatedContact0.get("name").iterator().next(), equalTo("bob"));
@@ -363,7 +361,7 @@ public class XmlMapperTests {
         assertThat(duplicatedContact0.get("email").iterator().next(), equalTo("bob@gmail.com"));
         assertThat(duplicatedContact0.get("spouse").iterator().next(), equalTo("1001"));
 
-        Multimap duplicate0FuzzyMatchDetails = ((Multimap) actual.getMatchResults().get(0).getMatch().get("fuzzyMatchDetails").iterator().next());
+        Multimap duplicate0FuzzyMatchDetails = ((Multimap) actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails").iterator().next());
 
 
         assertThat(duplicate0FuzzyMatchDetails.get("field").iterator().next(), equalTo("name"));

@@ -8,6 +8,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 public class Entities {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
-    public static MObject createGoldenRecordMObject(String universeId, String id, Multimap<String, Object> entity, List<GoldenRecord.Link> links) {
-        if (entity == null || entity.isEmpty()) {
+    public static MObject createGoldenRecordMObject(String universeId, String id, Multimap<String, Object> entityWrapper, List<GoldenRecord.Link> links) {
+        if (entityWrapper == null || entityWrapper.isEmpty()) {
             return null;
         }
+        String key = entityWrapper.keys().iterator().next();
+        Multimap<String, Object> entity = (Multimap<String, Object>) entityWrapper.get(key).iterator().next();
 
         List<Property> properties = createPropertiesModel(entity, links);
         properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
@@ -75,35 +78,35 @@ public class Entities {
     }
 
     public static MObject createMatchMObject(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
-        String externalId = ((HashMap) result.getEntity().get(universe.getName()).iterator().next()).get(universe.getIdField()).toString();
+        Multimap<String, Object> entity = ((Multimap) result.getEntity().get(universe.getName()).iterator().next());
+        String externalId = entity.get(universe.getIdField())
+                .iterator()
+                .next()
+                .toString();
 
         Property propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>());
         Property propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>());
         Property propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
 
         if ("SUCCESS".equals(result.getStatus())) {
-            List<MObject> matches = result.getMatch().entries().stream()
-                    .map(match -> createMatchesToProperty(universe, (Multimap<String, Object>) match, universe.getIdField(), true))
+            List<MObject> matches = result.getMatch().stream()
+                    .map(match -> createMatchesToProperty(universe, match, universe.getIdField(), false))
                     .collect(Collectors.toList());
 
             propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, matches);
 
-            List<MObject> duplicates = result.getDuplicate().entries().stream()
-                    .map(duplicate -> createMatchesToProperty(universe, (Multimap<String, Object>) duplicate, universe.getIdField(), true))
+            List<MObject> duplicates = result.getDuplicate().stream()
+                    .map(duplicate -> createMatchesToProperty(universe, duplicate, universe.getIdField(), true))
                     .collect(Collectors.toList());
 
             propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, duplicates);
 
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
-            //Multimap<String, Object> entityLinked = result.getEntity().get(universe.getName()).iterator().next();
             Multimap<String, Object> entityLinked = result.getEntity();
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, createAlreadyLinked(universe, entityLinked, universe.getIdField()));
         }
 
-        List<Property> properties = result.getEntity().entries().stream()
-                .filter(entry -> entry.getValue() instanceof String)
-                .map(entry -> new Property(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        List<Property> properties =  createPropertiesModel((Multimap<String, Object>) result.getEntity().get(universe.getName()).iterator().next(), null);
 
         properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
         properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
@@ -119,34 +122,33 @@ public class Entities {
     }
 
     private static MObject createAlreadyLinked(Universe universe, Multimap<String, Object> entity, String idField){
-        List<Property> properties = createPropertiesModel(entity, null);
+        List<Property> properties = createPropertiesModel((Multimap<String, Object>) entity.get(universe.getName()).iterator().next(), null);
 
         return new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(),
                 properties);
     }
 
-    private static MObject createMatchesToProperty(Universe universe, Multimap<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
-        Multimap<String, Object> entity = (Multimap<String, Object>) matchResults.get(universe.getName());
+    private static MObject createMatchesToProperty(Universe universe, Multimap<String, Object> entityWrapper, String idField, boolean duplicated){
+        Multimap<String, Object> entity = (Multimap<String, Object>)entityWrapper.get(universe.getName()).iterator().next();
+
         List<Property> properties = createPropertiesModel(entity, null);
+        Multimap<String, Object> fuzzyMatchDetails =  (Multimap<String, Object>)entityWrapper.get("fuzzyMatchDetails").iterator().next();
 
-        if (addFuzzyMatchDetails) {
-            Map<String, Object> result = (Map<String, Object>) matchResults.get("fuzzyMatchDetails");
+        List<Property> propertiesFuzzy = new ArrayList<>();
+        if (fuzzyMatchDetails != null) {
+            propertiesFuzzy.add(new Property("Field", fuzzyMatchDetails.get("field").iterator().next()));
+            propertiesFuzzy.add(new Property("First", fuzzyMatchDetails.get("first").iterator().next()));
+            propertiesFuzzy.add(new Property("Second", fuzzyMatchDetails.get("second").iterator().next()));
+            propertiesFuzzy.add(new Property("Method", fuzzyMatchDetails.get("method").iterator().next()));
+            propertiesFuzzy.add(new Property("Match Strength", fuzzyMatchDetails.get("matchStrength").iterator().next()));
+            propertiesFuzzy.add(new Property("Threshold", fuzzyMatchDetails.get("threshold").iterator().next()));
 
-            List<Property> propertiesFuzzy = new ArrayList<Property>();
-            if (result != null) {
-                propertiesFuzzy.add(new Property("Field", result.get("field")));
-                propertiesFuzzy.add(new Property("First", result.get("first")));
-                propertiesFuzzy.add(new Property("Second", result.get("second")));
-                propertiesFuzzy.add(new Property("Method", result.get("method")));
-                propertiesFuzzy.add(new Property("Match Strength", result.get("matchStrength")));
-                propertiesFuzzy.add(new Property("Threshold", result.get("threshold")));
-
-                MObject fuzzyMatchDetails = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
-                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetails));
-            } else {
-                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, new ArrayList<>()));
-            }
+            MObject fuzzyMatchDetailsObj = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
+            properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObj));
+        } else {
+            properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, new ArrayList<>()));
         }
+
 
         MObject object = new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(), properties);
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
@@ -158,7 +160,7 @@ public class Entities {
         ArrayList<Property> properties = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry:map.entries()) {
-            if (entry.getValue() instanceof Map) {
+            if (entry.getValue() instanceof Multimap) {
                 MObject object = new MObject(entry.getKey() + "-child", createPropertiesModel((Multimap<String, Object>) entry.getValue(), null));
                 object.setTypeElementBindingDeveloperName(entry.getKey() + "-child");
                 object.setExternalId(UUID.randomUUID().toString());
