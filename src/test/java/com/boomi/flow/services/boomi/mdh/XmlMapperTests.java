@@ -329,7 +329,7 @@ public class XmlMapperTests {
         assertThat( contact0.get("city").iterator().next(), equalTo("berwyn"));
         assertThat( contact0.get("email").iterator().next(), equalTo("bob@gmail.com"));
         assertThat( contact0.get("spouse").iterator().next(), equalTo("1001"));
-        assertThat( contact0.get("phones").iterator().next(), notNullValue()); //Todo: not working properly need to be fixed for child elements
+        assertThat( contact0.get("phones").iterator().next(), notNullValue());
         assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("number").iterator().next(), equalTo("311 555-1234"));
         assertThat( ((Multimap)((Multimap)contact0.get("phones").iterator().next()).get("phone").iterator().next()).get("type").iterator().next(), equalTo("home"));
 
