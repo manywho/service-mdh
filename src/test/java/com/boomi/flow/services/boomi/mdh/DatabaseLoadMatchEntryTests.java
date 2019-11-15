@@ -75,15 +75,15 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(result.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2"));
         assertThat(result.get(0).getProperties().get(1).getContentValue(), equalTo("some value 2"));
 
-        assertThat(result.get(0).getProperties().get(2).getDeveloperName(), equalTo("id"));
-        assertThat(result.get(0).getProperties().get(2).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
+        assertThat(result.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(result.get(0).getProperties().get(2).getContentValue(), nullValue());
+        assertThat(result.get(0).getProperties().get(2).getObjectData(), notNullValue());
+        assertThat(result.get(0).getProperties().get(2).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
+        assertThat(result.get(0).getProperties().get(2).getObjectData().get(0).getProperties(), hasSize(1));
+        assertThat(result.get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 3 1 property"));
 
-        assertThat(result.get(0).getProperties().get(3).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(result.get(0).getProperties().get(3).getContentValue(), nullValue());
-        assertThat(result.get(0).getProperties().get(3).getObjectData(), notNullValue());
-        assertThat(result.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
-        assertThat(result.get(0).getProperties().get(3).getObjectData().get(0).getProperties(), hasSize(1));
-        assertThat(result.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 3 1 property"));
+        assertThat(result.get(0).getProperties().get(3).getDeveloperName(), equalTo("id"));
+        assertThat(result.get(0).getProperties().get(3).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
 
         assertThat(result.get(0).getProperties().get(4).getDeveloperName(), equalTo("___sourceId"));
         assertThat(result.get(0).getProperties().get(4).getContentValue(), equalTo("TESTING"));
@@ -109,13 +109,13 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2"));
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("some value 2"));
 
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("id"));
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(2).getContentValue(), nullValue());
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 3 value 1 1"));
 
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("field 3 1"));
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getContentValue(), nullValue());
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
-        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 3 value 1 1"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("id"));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
 
         Property fuzzyMatchMatchedEntity = matchedEntityProperty.getObjectData().get(0).getProperties().get(4);
         assertThat(fuzzyMatchMatchedEntity.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));
@@ -151,8 +151,13 @@ public class DatabaseLoadMatchEntryTests {
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2"));
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("some value 2"));
 
-        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("id"));
-        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getContentValue(), nullValue());
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getDeveloperName(), equalTo("field 3 1-child"));
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 3 value 1 1"));
+
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("id"));
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
 
         Property fuzzyMatchDuplicatedEntity = duplicatedEntityProperty.getObjectData().get(0).getProperties().get(4);
         assertThat(fuzzyMatchDuplicatedEntity.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS));

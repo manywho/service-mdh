@@ -22,6 +22,7 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -200,9 +201,32 @@ public class XmlMapperTests {
 
         assertThat(((Multimap) actual.getRecords().get(0).getFields().get("account").iterator().next()).get("website").iterator().next(), equalTo("http://boomi.com"));
         assertThat(((Multimap) actual.getRecords().get(0).getFields().get("account").iterator().next()).get("number_of_employees").iterator().next(), equalTo("200"));
+
         assertThat(actual.getRecords().get(0).getLinks().get(0).getEntityId(), equalTo("d39bc927-e005-4157-b73c-4956bfa2acb1"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getSource(), equalTo("flow1"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate().toString(), equalTo("2019-08-08T10:56:41Z"));
+    }
+
+
+    @Test
+    public void testXmlMapperDeserializesGoldenRecordQueryResponsesRepeatableFields() {
+        URL data1 = Resources.getResource("testXmlMapperDeserializesGoldenRecordQueryResponses2.xml");
+
+        GoldenRecordQueryResponse actual1 = JAXB.unmarshal(data1, GoldenRecordQueryResponse.class);
+
+        Iterator billingAddressIterator = ((Multimap)actual1.getRecords().get(0).getFields().get("account").iterator().next()).get("billing_address").iterator();
+
+        assertThat(((Multimap)billingAddressIterator.next()).get("billing_address_street").iterator().next(), equalTo("801 Cassat Rd."));
+        assertThat(((Multimap)billingAddressIterator.next()).get("billing_address_street").iterator().next(), equalTo("802 Cassat Rd."));
+
+
+        URL data2 = Resources.getResource("testXmlMapperDeserializesGoldenRecordQueryResponses3.xml");
+
+        GoldenRecordQueryResponse actual2 = JAXB.unmarshal(data2, GoldenRecordQueryResponse.class);
+        Iterator billingAddressStreetIterator = ((Multimap)((Multimap)actual2.getRecords().get(0).getFields().get("account").iterator().next()).get("billing_address").iterator().next()).get("billing_address_street").iterator();
+
+        assertThat(billingAddressStreetIterator.next(), equalTo("801 Cassat Rd."));
+        assertThat(billingAddressStreetIterator.next(), equalTo("802 Cassat Rd."));
     }
 
     @Test
