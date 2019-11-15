@@ -78,7 +78,7 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("Entity ID"));
         assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("source entity 1"));
         assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("Established Date"));
-        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("2016-03-04T23:45:10.000Z"));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("2016-03-04T23:45:10Z"));
         assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___recordId"));
         assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("record ID 1"));
     }

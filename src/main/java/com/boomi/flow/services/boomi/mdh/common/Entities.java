@@ -12,13 +12,10 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
-
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Entities {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
     public static MObject createGoldenRecordMObject(String universeId, String id, Multimap<String, Object> entityWrapper, List<GoldenRecord.Link> links) {
         if (entityWrapper == null || entityWrapper.isEmpty()) {
@@ -187,7 +184,7 @@ public class Entities {
 
         linkProperties.add(new Property("Source", link.getSource()));
         linkProperties.add(new Property("Entity ID", link.getEntityId()));
-        linkProperties.add(new Property("Established Date", link.getEstablishedDate().format(formatter)));
+        linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
 
         return new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
     }
