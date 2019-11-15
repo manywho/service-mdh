@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RecordQueryResponse resultCount="2" totalCount="2">
+    <Record recordId="02a8284d-0ef3-4091-acef-85f23d80cf0d" createdDate="2013-09-23T14:07:31Z" updatedDate="2014-02-04T15:59:21Z" recordTitle="Dell Boomi">
+        <Fields>
+            <account>
+                <billing_address>
+                    <billing_address_street>801 Cassat Rd.</billing_address_street>
+                    <billing_address_street>802 Cassat Rd.</billing_address_street>
+                </billing_address>
+            </account>
+        </Fields>
+        <links>
+            <link source="flow1" entityId="d39bc927-e005-4157-b73c-4956bfa2acb1" establishedDate="2019-08-08T10:56:41Z"/>
+        </links>
+    </Record>
+</RecordQueryResponse>
