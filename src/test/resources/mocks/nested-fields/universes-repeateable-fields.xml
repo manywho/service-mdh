@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universes>
+    <universe>
+        <id>d438f991-f063-4889-94bb-53d5fd57225f</id>
+        <version>ecb021b2-d0b8-405b-b6d0-75dce8964093</version>
+        <name>accountnest2</name>
+        <stats activeRecords="0" enddatedRecords="0" quarantinedRecords="0" asOf="2019-11-18T14:06:08.099Z"/>
+        <layoutid>d438f991-f063-4889-94bb-53d5fd57225f</layoutid>
+        <layout idXPath="/accountnest2/id">
+            <model name="accountnest2">
+                <element uniqueId="BILLING_ADDRESS" name="billing_address" prettyName="billing_address" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="true" collectionMatchType="KEY" collectionMatchKeys="" collectionPrettyName="billing_address" collectionTag="billing_address" collectionUniqueId="BILLING_ADDRESS_1">
+                    <element uniqueId="BILLING_ADDRESS_STREET" name="billing_address_street" prettyName="billing_address_street" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/></element>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot;
+                xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;accountnest2&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element maxOccurs=&quot;unbounded&quot; minOccurs=&quot;0&quot; name=&quot;billing_address&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_street&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+            </xsd>
+            <field xpath="/accountnest2/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="BILLING_ADDRESS_1" xpath="/accountnest2/billing_address" type="COLLECTION" prettyName="billing_address" collectionMatchType="KEY"/>
+            <field uniqueId="BILLING_ADDRESS_STREET" xpath="/accountnest2/billing_address/billing_address/billing_address_street" type="STRING" prettyName="billing_address_street" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100" collectionId="BILLING_ADDRESS_1"/>
+        </layout>
+        <matchid>d438f991-f063-4889-94bb-53d5fd57225f</matchid>
+        <matchconfig>
+            <round>
+                <matchrule
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="EXISTING"/>
+                    </nestedExpression>
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+    <universe>
+        <id>30461d6b-55d4-4ff4-9c01-93e014415227</id>
+        <version>45dfc027-6aac-417f-bb9c-0f2ebc05eb44</version>
+        <name>accountnest3</name>
+        <stats activeRecords="0" enddatedRecords="0" quarantinedRecords="0" asOf="2019-11-18T14:06:08.144Z"/>
+        <layoutid>30461d6b-55d4-4ff4-9c01-93e014415227</layoutid>
+        <layout idXPath="/accountnest3/id">
+            <model name="accountnest3">
+                <element uniqueId="BILLING_ADDRESS" name="billing_address" prettyName="billing_Address" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                    <element uniqueId="BILLING_ADDRESS_STREET" name="billing_address_street" prettyName="billing_address_street" type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" truncateLength="255" repeatable="true" collectionMatchType="KEY" collectionMatchKeys="" collectionPrettyName="billing_address_street" collectionTag="billing_address_street" collectionUniqueId="BILLING_ADDRESS_STREET_3">
+                        <element uniqueId="NAME" name="name" prettyName="name" type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/></element>
+                </element>
+            </model>
+            <deletedElements/>
+            <xsd>&lt;xs:schema version=&quot;1.0&quot;
+                xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element name=&quot;accountnest3&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_street&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element maxOccurs=&quot;unbounded&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_street&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+            </xsd>
+            <field xpath="/accountnest3/id" type="STRING" prettyName="Id"/>
+            <field uniqueId="BILLING_ADDRESS_STREET_3" xpath="/accountnest3/billing_address/billing_address_street" type="COLLECTION" prettyName="billing_address_street" collectionMatchType="KEY"/>
+            <field uniqueId="NAME" xpath="/accountnest3/billing_address/billing_address_street/billing_address_street/name" type="STRING" prettyName="name" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100" collectionId="BILLING_ADDRESS_STREET_3"/>
+        </layout>
+        <matchid>30461d6b-55d4-4ff4-9c01-93e014415227</matchid>
+        <matchconfig>
+            <round>
+                <matchrule
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                    </nestedExpression>
+                    <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                        <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                    </nestedExpression>
+                </matchrule>
+            </round>
+        </matchconfig>
+        <dataquality/>
+    </universe>
+</universes>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RecordQueryResponse resultCount="1" totalCount="1">
+    <Record recordId="3197bfac-9b54-41a2-bf93-034e0bd89027" createdDate="2019-11-18T14:37:43Z" updatedDate="2019-11-18T14:37:43Z">
+        <Fields>
+            <accountnest3>
+                <billing_address>
+                    <billing_address_street>
+                        <billing_address_street>
+                            <name>street 1</name>
+                        </billing_address_street>
+                        <billing_address_street>
+                            <name>street 2</name>
+                        </billing_address_street>
+                    </billing_address_street>
+                </billing_address>
+            </accountnest3>
+        </Fields>
+        <links>
+            <link source="flow" entityId="1" establishedDate="2019-11-18T14:37:43Z"/>
+        </links>
+    </Record>
+</RecordQueryResponse>

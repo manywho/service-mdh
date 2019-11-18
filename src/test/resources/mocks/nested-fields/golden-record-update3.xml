@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<batch src="flow">
+    <accountnest3>
+        <id>1</id>
+        <billing_address>
+            <billing_address_street>
+                <billing_address_street>
+                    <name>street 1</name>
+                </billing_address_street>
+                <billing_address_street>
+                    <name>street 2</name>
+                </billing_address_street>
+            </billing_address_street>
+        </billing_address>
+    </accountnest3>
+</batch>
