@@ -18,6 +18,9 @@
                 <number_of_employees>200</number_of_employees>
             </account>
         </Fields>
+        <links>
+            <link source="flow1" entityId="d39bc927-e005-4157-b73c-4956bfa2acb1" establishedDate="2019-08-08T10:56:41Z"/>
+        </links>
     </Record>
     <Record recordId="22012642-e599-4011-9309-40841abfbff2" createdDate="2013-09-23T14:07:31Z" updatedDate="2013-12-16T21:34:37Z" recordTitle="Hollywood Inc.">
         <Fields>
@@ -35,5 +38,8 @@
                 <industry>Entertainment</industry>
             </account>
         </Fields>
+        <links>
+            <link source="flow2" entityId="d39bc927-e005-4157-b73c-4956bfa2acb2" establishedDate="2019-08-08T10:56:42Z"/>
+        </links>
     </Record>
 </RecordQueryResponse>

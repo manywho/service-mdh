@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(5));
+        assertThat(objects.get(0).getProperties(), hasSize(6));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
@@ -69,8 +68,18 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 4 1-child"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 4 1 property"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 value 1 1"));
-        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___recordId"));
-        assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("record ID 1"));
+        assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo(GoldenRecordConstants.LINKS_FIELD));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getDeveloperName(), equalTo(GoldenRecordConstants.LINK));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getExternalId(), notNullValue());
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties(), hasSize(3));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("Source"));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("source link 1"));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("Entity ID"));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("source entity 1"));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("Established Date"));
+        assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("2016-03-04T23:45:10Z"));
+        assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___recordId"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("record ID 1"));
     }
 
     @Test
@@ -218,9 +227,17 @@ public class DatabaseLoadGoldenRecordTests {
         Map<String, Map<String, Object>> fields = new HashMap<>();
         fields.put("universe-name", fieldsWrapper);
 
+        List<GoldenRecord.Link> links = new ArrayList<>();
+        GoldenRecord.Link link = new GoldenRecord.Link();
+        link.setSource("source link " + number);
+        link.setEntityId("source entity " + number);
+        link.setEstablishedDate(OffsetDateTime.parse("2016-03-04T23:45:10Z"));
+        links.add(link);
+
         return new GoldenRecord()
                 .setCreatedDate(OffsetDateTime.parse("2015-01-02T12:34:56Z"))
                 .setFields(fields)
+                .setLinks(links)
                 .setRecordId("record ID " + number)
                 .setUpdatedDate(OffsetDateTime.parse("2017-03-04T23:45:10Z"));
     }
