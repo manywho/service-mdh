@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universe>
+    <id>ad7820f3-92a7-4919-9647-db934bda0065</id>
+    <version>62c9a62d-4d7a-4051-91ed-531039ace1c3</version>
+    <name>artist</name>
+    <stats activeRecords="11" enddatedRecords="1" quarantinedRecords="8" asOf="2019-11-15T17:15:52.798Z">
+        <sourceStats sourceCode="flow" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0"
+                     undeliverableChannelDeliveries="0"/>
+    </stats>
+    <sources>
+        <source code="flow" componentId="69f3b17a-8295-4db2-a4c0-ba77c4e289a2" state="STRAPPING" allowContribute="true">
+            <channel id="818eed30-d708-438b-a2f4-e9ce2f7cef2f" updateType="FULL" state="CREATED" primary="true"/>
+        </source>
+    </sources>
+    <layoutid>ad7820f3-92a7-4919-9647-db934bda0065</layoutid>
+    <layout idXPath="/artist/id">
+        <model name="artist">
+            <element uniqueId="NAME" name="name" prettyName="name" type="STRING" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100"
+                     repeatable="false"/>
+            <element uniqueId="SURNAME" name="surname" prettyName="surname" type="STRING" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100"
+                     repeatable="false"/>
+        </model>
+        <deletedElements/>
+        <xsd>&lt;xs:schema version=&quot;1.0&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element
+            name=&quot;artist&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;surname&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute
+            name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+        </xsd>
+        <field xpath="/artist/id" type="STRING" prettyName="Id"/>
+        <field uniqueId="NAME" xpath="/artist/name" type="STRING" prettyName="name" required="false"
+               enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100"
+               truncateLength="100"/>
+        <field uniqueId="SURNAME" xpath="/artist/surname" type="STRING" prettyName="surname" required="false"
+               enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100"
+               truncateLength="100"/>
+    </layout>
+    <matchid>ad7820f3-92a7-4919-9647-db934bda0065</matchid>
+    <matchconfig>
+        <round>
+            <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                </nestedExpression>
+                <nestedExpression xsi:type="ExpressionRule" operator="FUZZY_MATCH" additionalConfig="jarowinkler:0.85">
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="SURNAME" type="INCOMING"/>
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="SURNAME" type="EXISTING"/>
+                </nestedExpression>
+            </matchrule>
+        </round>
+    </matchconfig>
+    <dataquality/>
+</universe>

@@ -5,6 +5,8 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
+import com.boomi.flow.services.boomi.mdh.universes.UniversesResponse;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
@@ -23,12 +25,14 @@ public class GoldenRecordRepository {
 
     private final MdhClient client;
     private final ElementIdFinder elementIdFinder;
+    private final UniverseRepository universeRepository;
 
     @Inject
-    public GoldenRecordRepository(MdhClient client, ElementIdFinder elementIdFinder)
+    public GoldenRecordRepository(MdhClient client, ElementIdFinder elementIdFinder, UniverseRepository universeRepository)
     {
         this.client = client;
         this.elementIdFinder = elementIdFinder;
+        this.universeRepository = universeRepository;
     }
 
     public void delete(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
@@ -149,7 +153,7 @@ public class GoldenRecordRepository {
                 request.setFilter(queryFilter);
             }
         }
-
+        Universe universesResponse = universeRepository.find(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe);
         GoldenRecordQueryResponse result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
         if (result == null || result.getRecords() == null || result.getResultCount() == 0) {
             return new ArrayList<>();

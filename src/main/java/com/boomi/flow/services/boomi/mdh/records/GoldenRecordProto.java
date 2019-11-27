@@ -1,10 +1,10 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapterProto;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
+import org.w3c.dom.Element;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -17,7 +17,7 @@ public class GoldenRecordProto {
     private OffsetDateTime createdDate;
     private OffsetDateTime updatedDate;
     private String recordId;
-    private Multimap<String, Object> fields = ArrayListMultimap.create();
+    private List<JAXBElement<String>> fields = new ArrayList<>();
     private List<Link> links = new ArrayList<>();
 
     @XmlAttribute
@@ -54,24 +54,38 @@ public class GoldenRecordProto {
 
     @XmlElement(name = "Fields")
     @XmlJavaTypeAdapter(XmlMapAdapterProto.class)
-    public Multimap<String, Object> getFields() {
+    public List<JAXBElement<String>> getFields() {
         return fields;
     }
 
-    public GoldenRecordProto setFields(Multimap<String, Object> fields) {
+    public GoldenRecordProto setFields(List<JAXBElement<String>> fields) {
         this.fields = fields;
         return this;
     }
 
     @XmlElementWrapper
     @XmlElement(name = "link")
-    public List<Link> getLinks() {
+    public List<GoldenRecordProto.Link> getLinks() {
         return links;
     }
 
     public GoldenRecordProto setLinks(List<Link> links) {
         this.links = links;
         return this;
+    }
+
+    public Element getEntityElement() {
+        if(fields.size() == 1) {
+            Object fieldsObject = fields.get(0);
+            if (fieldsObject instanceof Element) {
+
+                return (Element) fieldsObject;
+            } else {
+                throw new RuntimeException("Fields is not an Element Instance");
+            }
+        } else {
+            throw new RuntimeException("Fields should have one entity");
+        }
     }
 
     public static class Link {

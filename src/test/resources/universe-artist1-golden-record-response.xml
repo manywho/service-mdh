@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RecordQueryResponse resultCount="11" totalCount="11">
+    <Record recordId="af225be0-efd3-451b-97c5-7e131587ea25" createdDate="2019-08-08T10:56:42Z"
+            updatedDate="2019-08-08T10:56:42Z">
+        <Fields>
+            <artist>
+                <name>Pablo</name>
+                <surname>Picasso</surname>
+            </artist>
+        </Fields>
+        <links>
+            <link source="flow" entityId="d39bc927-e005-4157-b73c-4956bfa2acb2" establishedDate="2019-08-08T10:56:42Z"/>
+        </links>
+    </Record>
+</RecordQueryResponse>

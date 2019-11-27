@@ -4,11 +4,11 @@
         <Fields>
             <accountnest3>
                 <billing_address>
-                    <billing_address_street>
+                    <billing_address_street_collection>
                         <billing_address_street>
                             <name>street 1</name>
                         </billing_address_street>
-                    </billing_address_street>
+                    </billing_address_street_collection>
                 </billing_address>
             </accountnest3>
         </Fields>
