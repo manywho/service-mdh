@@ -52,4 +52,6 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Multimap<String, Mu
 
         return childMap;
     }
+
+
 }

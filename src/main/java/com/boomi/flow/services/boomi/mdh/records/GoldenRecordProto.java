@@ -1,6 +1,7 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapterProto;
+import com.manywho.sdk.api.run.elements.type.MObject;
 import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 import org.w3c.dom.Element;
 
@@ -17,7 +18,7 @@ public class GoldenRecordProto {
     private OffsetDateTime createdDate;
     private OffsetDateTime updatedDate;
     private String recordId;
-    private List<JAXBElement<String>> fields = new ArrayList<>();
+    private MObject fields;
     private List<Link> links = new ArrayList<>();
 
     @XmlAttribute
@@ -54,11 +55,11 @@ public class GoldenRecordProto {
 
     @XmlElement(name = "Fields")
     @XmlJavaTypeAdapter(XmlMapAdapterProto.class)
-    public List<JAXBElement<String>> getFields() {
+    public MObject getMObject() {
         return fields;
     }
 
-    public GoldenRecordProto setFields(List<JAXBElement<String>> fields) {
+    public GoldenRecordProto setMObject(MObject fields) {
         this.fields = fields;
         return this;
     }
@@ -72,20 +73,6 @@ public class GoldenRecordProto {
     public GoldenRecordProto setLinks(List<Link> links) {
         this.links = links;
         return this;
-    }
-
-    public Element getEntityElement() {
-        if(fields.size() == 1) {
-            Object fieldsObject = fields.get(0);
-            if (fieldsObject instanceof Element) {
-
-                return (Element) fieldsObject;
-            } else {
-                throw new RuntimeException("Fields is not an Element Instance");
-            }
-        } else {
-            throw new RuntimeException("Fields should have one entity");
-        }
     }
 
     public static class Link {

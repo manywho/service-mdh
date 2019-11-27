@@ -3,7 +3,7 @@
     <Record recordId="3197bfac-9b54-41a2-bf93-034e0bd89027" createdDate="2019-11-18T14:37:43Z" updatedDate="2019-11-18T14:37:43Z">
         <Fields>
             <accountnest3>
-                <billing_address>
+                <billing_address_container>
                     <billing_address_street>
                         <billing_address_street>
                             <name>street 1</name>
@@ -12,7 +12,10 @@
                             <name>street 2</name>
                         </billing_address_street>
                     </billing_address_street>
-                </billing_address>
+                </billing_address_container>
+                <single_element>
+                    street 1
+                </single_element>
             </accountnest3>
         </Fields>
         <links>

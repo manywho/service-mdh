@@ -1,6 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
-public class GoldenRecordConstants {
+public interface GoldenRecordConstants {
     public static final String CREATED_DATE = "Golden Record (Filter): Created Date";
     public static final String CREATED_DATE_FIELD = "___filterCreatedDate";
     public static final String SOURCE_ID = "Golden Record: Source ID";

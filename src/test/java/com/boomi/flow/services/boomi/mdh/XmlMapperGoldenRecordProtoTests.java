@@ -19,17 +19,13 @@ public class XmlMapperGoldenRecordProtoTests {
     public void testXMLPure() {
         URL dataUniverse = Resources.getResource("universe-artist1.xml");
         Universe universe = JAXB.unmarshal(dataUniverse, Universe.class);
-        URL goldenRecords = Resources.getResource("mocks/nested-fields/golden-record-response3-1.xml");
+        URL goldenRecords = Resources.getResource("mocks/nested-fields/golden-record-response3.xml");
         // URL goldenRecords = Resources.getResource("universe-artist1-golden-record-response.xml");
 
         GoldenRecordQueryResponseProto goldenRecordQueryResponse = JAXB.unmarshal(goldenRecords, GoldenRecordQueryResponseProto.class);
         GoldenRecordProto goldenRecordProto = goldenRecordQueryResponse.getRecords().get(0);
 
-        MObject artistObject = EntitiesProto.createGoldenRecordMObject(universe.getId().toString(), goldenRecordProto.getRecordId(), goldenRecordProto.getEntityElement(), goldenRecordProto.getLinks());
-
-        MObject object2 = artistObject;
-
-
+        MObject object2 = goldenRecordProto.getMObject();
     }
 
 
