@@ -2,6 +2,7 @@ package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.common.EntitiesProto;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordProto;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponseProto;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -34,13 +35,16 @@ public class XmlMapperGoldenRecordProtoTests {
         assertThat(object2.getProperties().get(0).getDeveloperName(), equalTo("single_value"));
         assertThat(object2.getProperties().get(0).getContentValue(), equalTo("single value 2-1"));
 
-        assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_rename-child"));
-        assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
-
-
+//        assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_collection_name-child"));
+//        assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
+//        assertThat(object2.getProperties().get(1).getObjectData(), notNullValue());
 
         assertThat(object2.getProperties().get(2).getDeveloperName(), equalTo("other_single_value"));
         assertThat(object2.getProperties().get(2).getContentValue(), equalTo("other single value 2"));
+
+        assertThat(object2.getProperties().get(3).getDeveloperName(), equalTo("nest2contact"));
+        assertThat(object2.getProperties().get(3).getContentValue(), nullValue());
+        assertThat(object2.getProperties().get(3).getObjectData(), notNullValue());
     }
 
 
