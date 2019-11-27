@@ -25,7 +25,6 @@ public class XmlMapperGoldenRecordProtoTests {
         URL dataUniverse = Resources.getResource("universe-artist1.xml");
         Universe universe = JAXB.unmarshal(dataUniverse, Universe.class);
         URL goldenRecords = Resources.getResource("mocks/nested-fields/golden-record-response3-1.xml");
-        // URL goldenRecords = Resources.getResource("universe-artist1-golden-record-response.xml");
 
         GoldenRecordQueryResponseProto goldenRecordQueryResponse = JAXB.unmarshal(goldenRecords, GoldenRecordQueryResponseProto.class);
         GoldenRecordProto goldenRecordProto = goldenRecordQueryResponse.getRecords().get(0);
@@ -35,9 +34,9 @@ public class XmlMapperGoldenRecordProtoTests {
         assertThat(object2.getProperties().get(0).getDeveloperName(), equalTo("single_value"));
         assertThat(object2.getProperties().get(0).getContentValue(), equalTo("single value 2-1"));
 
-//        assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_collection_name-child"));
-//        assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
-//        assertThat(object2.getProperties().get(1).getObjectData(), notNullValue());
+        assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_collection_name"));
+        assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
+        assertThat(object2.getProperties().get(1).getObjectData(), notNullValue());
 
         assertThat(object2.getProperties().get(2).getDeveloperName(), equalTo("other_single_value"));
         assertThat(object2.getProperties().get(2).getContentValue(), equalTo("other single value 2"));
@@ -45,6 +44,9 @@ public class XmlMapperGoldenRecordProtoTests {
         assertThat(object2.getProperties().get(3).getDeveloperName(), equalTo("nest2contact"));
         assertThat(object2.getProperties().get(3).getContentValue(), nullValue());
         assertThat(object2.getProperties().get(3).getObjectData(), notNullValue());
+
+        assertThat(object2.getProperties().get(4).getDeveloperName(), equalTo(GoldenRecordConstants.RECORD_ID_FIELD));
+        assertThat(object2.getProperties().get(4).getContentValue(), notNullValue());
     }
 
 
