@@ -7,11 +7,15 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponseProto;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.io.Resources;
 import com.manywho.sdk.api.run.elements.type.MObject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Element;
 import javax.xml.bind.JAXB;
 import java.net.URL;
 import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class XmlMapperGoldenRecordProtoTests {
 
@@ -19,13 +23,24 @@ public class XmlMapperGoldenRecordProtoTests {
     public void testXMLPure() {
         URL dataUniverse = Resources.getResource("universe-artist1.xml");
         Universe universe = JAXB.unmarshal(dataUniverse, Universe.class);
-        URL goldenRecords = Resources.getResource("mocks/nested-fields/golden-record-response3.xml");
+        URL goldenRecords = Resources.getResource("mocks/nested-fields/golden-record-response3-1.xml");
         // URL goldenRecords = Resources.getResource("universe-artist1-golden-record-response.xml");
 
         GoldenRecordQueryResponseProto goldenRecordQueryResponse = JAXB.unmarshal(goldenRecords, GoldenRecordQueryResponseProto.class);
         GoldenRecordProto goldenRecordProto = goldenRecordQueryResponse.getRecords().get(0);
 
         MObject object2 = goldenRecordProto.getMObject();
+        assertThat(object2.getProperties(), hasSize(5));
+        assertThat(object2.getProperties().get(0).getDeveloperName(), equalTo("single_value"));
+        assertThat(object2.getProperties().get(0).getContentValue(), equalTo("single value 2-1"));
+
+        assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_rename-child"));
+        assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
+
+
+
+        assertThat(object2.getProperties().get(2).getDeveloperName(), equalTo("other_single_value"));
+        assertThat(object2.getProperties().get(2).getContentValue(), equalTo("other single value 2"));
     }
 
 

@@ -1,16 +1,67 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<batch src="flow">
-    <accountnest3>
-        <id>1</id>
-        <billing_address>
-            <billing_address_street>
-                <billing_address_street>
-                    <name>street 1</name>
-                </billing_address_street>
-                <billing_address_street>
-                    <name>street 2</name>
-                </billing_address_street>
-            </billing_address_street>
-        </billing_address>
-    </accountnest3>
-</batch>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RecordQueryResponse resultCount="2" totalCount="2">
+    <Record recordId="52154580-6b23-4ef6-a02e-c086630f7ccb" createdDate="2019-11-27T16:01:12Z"
+            updatedDate="2019-11-27T16:01:12Z">
+        <Fields>
+            <accountnest2>
+                <single_value>
+                    single value 1
+                </single_value>
+                <billing_address_collection_name>
+                    <billing_address_rename>
+                        <billing_address_street>
+                            street 1
+                        </billing_address_street>
+                    </billing_address_rename>
+                    <billing_address_rename>
+                        <billing_address_street>
+                            street 2
+                        </billing_address_street>
+                    </billing_address_rename>
+                </billing_address_collection_name>
+                <other_single_value>
+                    other single value
+                </other_single_value>
+            </accountnest2>
+        </Fields>
+        <links>
+            <link source="flow" entityId="1" establishedDate="2019-11-27T16:01:12Z"/>
+        </links>
+    </Record>
+    <Record recordId="9799d1e7-e3da-4c90-9853-68be3cdfdca4" createdDate="2019-11-27T16:01:38Z"
+            updatedDate="2019-11-27T16:06:30Z">
+        <Fields>
+            <accountnest2>
+                <single_value>
+                    single value 2-1
+                </single_value>
+                <billing_address_collection_name>
+                    <billing_address_rename>
+                        <billing_address_street>
+                            street 2-1
+                        </billing_address_street>
+                    </billing_address_rename>
+                    <billing_address_rename>
+                        <billing_address_street>
+                            street 2-2
+                        </billing_address_street>
+                    </billing_address_rename>
+                </billing_address_collection_name>
+                <other_single_value>
+                    other single value 2
+                </other_single_value>
+                <nest2contact>
+                    <nest2_contact_name>
+                        contatc name 2
+                    </nest2_contact_name>
+                    <nest2_contact_phone>
+                        contact phone 2
+                    </nest2_contact_phone>
+                </nest2contact>
+            </accountnest2>
+        </Fields>
+        <links>
+            <link source="flow" entityId="2" establishedDate="2019-11-27T16:01:38Z"/>
+        </links>
+    </Record>
+</RecordQueryResponse>

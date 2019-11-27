@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<RecordQueryResponse resultCount="1" totalCount="1">
-    <Record recordId="3197bfac-9b54-41a2-bf93-034e0bd89027" createdDate="2019-11-18T14:37:43Z" updatedDate="2019-11-18T14:37:43Z">
+<RecordQueryResponse resultCount="2" totalCount="2">
+    <Record recordId="9799d1e7-e3da-4c90-9853-68be3cdfdca4" createdDate="2019-11-27T16:01:38Z" updatedDate="2019-11-27T16:06:30Z">
         <Fields>
-            <accountnest3>
-                <billing_address>
-                    <billing_address_street_collection>
-                        <billing_address_street>
-                            <name>street 1</name>
-                        </billing_address_street>
-                    </billing_address_street_collection>
-                </billing_address>
-            </accountnest3>
+            <accountnest2>
+                <single_value>single value 2-1</single_value>
+                <billing_address_collection_name>
+                    <billing_address_rename>
+                        <billing_address_street>street 2-1</billing_address_street>
+                    </billing_address_rename>
+                    <billing_address_rename>
+                        <billing_address_street>street 2-2</billing_address_street>
+                    </billing_address_rename>
+                </billing_address_collection_name>
+                <other_single_value>other single value 2</other_single_value>
+                <nest2contact>
+                    <nest2_contact_name>contatc name 2</nest2_contact_name>
+                    <nest2_contact_phone>contact phone 2</nest2_contact_phone>
+                </nest2contact>
+            </accountnest2>
         </Fields>
         <links>
-            <link source="flow" entityId="1" establishedDate="2019-11-18T14:37:43Z"/>
+            <link source="flow" entityId="2" establishedDate="2019-11-27T16:01:38Z"/>
         </links>
     </Record>
 </RecordQueryResponse>
