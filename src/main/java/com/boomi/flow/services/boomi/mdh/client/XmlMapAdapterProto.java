@@ -50,11 +50,19 @@ public class XmlMapAdapterProto extends XmlAdapter<XmlMapWrapper, MObject> {
                 } else if (childNode.getChildNodes().getLength() > 0 &&
                         childNode.getFirstChild().getNodeType() == Node.ELEMENT_NODE) {
 
-                    // this is a node of nodes
-                    MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
-                    object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
-                    object.setExternalId(UUID.randomUUID().toString());
-                    properties.add(new Property(childNode.getNodeName(), Collections.singletonList(object)));
+                    if (childNode.getFirstChild().getFirstChild() != null && childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
+                        // a list of types
+                        MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
+                        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
+                        object.setExternalId(UUID.randomUUID().toString());
+                        properties.add(new Property(childNode.getNodeName(), Collections.singletonList(object)));
+                    } else {
+                        // a type
+                        MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
+                        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
+                        object.setExternalId(UUID.randomUUID().toString());
+                        properties.add(new Property(childNode.getNodeName(), Collections.singletonList(object)));
+                    }
                 }
             }
         }

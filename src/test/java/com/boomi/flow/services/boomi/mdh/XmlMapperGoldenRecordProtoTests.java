@@ -37,6 +37,7 @@ public class XmlMapperGoldenRecordProtoTests {
         assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_collection_name"));
         assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
         assertThat(object2.getProperties().get(1).getObjectData(), notNullValue());
+        assertThat(object2.getProperties().get(1).getObjectData().get(0).getDeveloperName(), equalTo("billing_address_rename-child"));
 
         assertThat(object2.getProperties().get(2).getDeveloperName(), equalTo("other_single_value"));
         assertThat(object2.getProperties().get(2).getContentValue(), equalTo("other single value 2"));
