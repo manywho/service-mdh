@@ -1,8 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.client;
 
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.w3c.dom.Element;
@@ -10,7 +8,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import static org.w3c.dom.Node.ELEMENT_NODE;
@@ -50,24 +47,43 @@ public class XmlMapAdapterProto extends XmlAdapter<XmlMapWrapper, MObject> {
                 } else if (childNode.getChildNodes().getLength() > 0 &&
                         childNode.getFirstChild().getNodeType() == Node.ELEMENT_NODE) {
 
-                    if (childNode.getFirstChild().getFirstChild() != null && childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
-                        // a list of types
-                        MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
-                        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
-                        object.setExternalId(UUID.randomUUID().toString());
-                        properties.add(new Property(childNode.getNodeName(), Collections.singletonList(object)));
+                    if (childNode.getFirstChild().getFirstChild() != null &&
+                            childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
+
+                        // this is a collection of repeatable field groups
+                        properties.add(new Property(childNode.getNodeName(), createListMobject(childNode.getChildNodes())));
                     } else {
-                        // a type
-                        MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
-                        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
-                        object.setExternalId(UUID.randomUUID().toString());
-                        properties.add(new Property(childNode.getNodeName(), Collections.singletonList(object)));
+                        // this is a field group
+                        properties.add(new Property(childNode.getNodeName(), createMobject(childNode)));
                     }
                 }
             }
         }
 
+        if(properties.isEmpty()) {
+            return  null;
+        }
+
         return properties;
+    }
+
+    private static List<MObject> createListMobject(NodeList nodes) {
+        List<MObject> objects = new ArrayList<>();
+        for(int i = 0; i < nodes.getLength(); i++) {
+            if (nodes.item(i).getNodeType() == ELEMENT_NODE) {
+                objects.add(createMobject(nodes.item(i)));
+            }
+        }
+
+        return objects;
+    }
+
+    private static MObject createMobject(Node childNode) {
+        MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
+        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
+        object.setExternalId(UUID.randomUUID().toString());
+
+        return object;
     }
 
     private Element getElementFromWrapper(XmlMapWrapper wrapper) {
