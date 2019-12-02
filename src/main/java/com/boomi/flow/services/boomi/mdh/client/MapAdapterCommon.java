@@ -33,7 +33,7 @@ public class MapAdapterCommon {
                             childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
 
                         // this is a collection of repeatable field groups
-                        properties.add(new Property(childNode.getNodeName(), createListMobject(childNode.getChildNodes())));
+                        properties.add(new Property(childNode.getFirstChild().getNodeName(), createListMobject(childNode.getChildNodes())));
                     } else {
                         // this is a field group
                         properties.add(new Property(childNode.getNodeName(), createMobject(childNode)));

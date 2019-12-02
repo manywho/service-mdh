@@ -347,7 +347,7 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(2).getDeveloperName(), equalTo("city"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(2).getContentValue(), equalTo("berwyn"));
 
-        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phones"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phone"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getContentValue(), nullValue());
 
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
@@ -380,7 +380,7 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(2).getDeveloperName(), equalTo("city"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(2).getContentValue(), equalTo("berwyn"));
 
-        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getDeveloperName(), equalTo("phones"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getDeveloperName(), equalTo("phone"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getContentValue(), nullValue());
 
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
@@ -436,7 +436,7 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(2).getDeveloperName(), equalTo("city"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(2).getContentValue(), equalTo("chesterbrook"));
 
-        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phones"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phone"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getContentValue(), nullValue());
 
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
