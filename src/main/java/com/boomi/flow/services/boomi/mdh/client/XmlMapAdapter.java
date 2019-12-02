@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 

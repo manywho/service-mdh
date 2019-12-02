@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
@@ -60,7 +61,7 @@ public class MapAdapterCommon {
     }
 
     private static MObject createMobject(Node childNode) {
-        MObject object = new MObject(childNode.getNodeName() + "-child", createPropertiesModel(childNode.getChildNodes()));
+        MObject object = new MObject(childNode.getNodeName() + "-child", UUID.randomUUID().toString(), createPropertiesModel(childNode.getChildNodes()));
         object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
 
         return object;
