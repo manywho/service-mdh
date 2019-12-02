@@ -14,10 +14,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
-import com.manywho.sdk.api.run.elements.type.ListFilter;
-import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
-import com.manywho.sdk.api.run.elements.type.MObject;
-import com.manywho.sdk.api.run.elements.type.ObjectDataType;
+import com.manywho.sdk.api.run.elements.type.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -227,16 +224,15 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
-        Multimap<String, Object> entityWrapper = ArrayListMultimap.create();
-        entityWrapper.put("field 1 " + number, "field 1 value " + number);
-        entityWrapper.put("field 2 " + number, "field 2 value " + number);
-        entityWrapper.put("field 3 " + number, "field 3 value " + number);
-        Multimap<String, Object> field4 = ArrayListMultimap.create();
-        field4.put("field 4 " + number + " property", "value property 4 value 1 " + number);
-        entityWrapper.put("field 4 " + number, field4);
+        List<Property> properties = new ArrayList<>();
+        properties.add(new Property("field 1 " + number, "field 1 value " + number));
+        properties.add(new Property("field 2 " + number, "field 2 value " + number));
+        properties.add(new Property("field 3 " + number, "field 3 value " + number));
+        MObject field4 = new MObject("field 4 " + number + "-child",
+                Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
+        properties.add(new Property("field 4", field4));
 
-        Map<String, Multimap<String, Object>> entity = new HashMap<>();
-        entity.put("dunno", entityWrapper);
+        MObject entity = new MObject("dunno", properties);
 
         return new QuarantineEntry()
                 .setCause("a cause " + number)

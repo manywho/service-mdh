@@ -156,7 +156,7 @@ public class GoldenRecordRepository {
         }
 
         return result.getRecords().stream()
-                .map(record -> Entities.createGoldenRecordMObject(universe, record.getRecordId(), record.getFields(), record.getLinks()))
+                .map(record -> Entities.createGoldenRecordMObject(universe, record.getRecordId(), record.getMObject(), record.getLinks()))
                 .collect(Collectors.toList());
     }
 

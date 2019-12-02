@@ -1,55 +1,64 @@
 package com.boomi.flow.services.boomi.mdh.client;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Multimap<String, Multimap<String, Object>>> {
+import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
+import com.manywho.sdk.api.run.elements.type.MObject;
+import com.manywho.sdk.api.run.elements.type.Property;
+import org.w3c.dom.Element;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
     @Override
-    public Multimap<String, Multimap<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
-        Multimap<String, Multimap<String, Object>> map = ArrayListMultimap.create();
-
+    public MObject unmarshal(XmlMapWrapper wrapper) throws Exception {
         if (wrapper == null || wrapper.elements == null || wrapper.elements.isEmpty()) {
-            return map;
+            return null;
         }
 
-        for (Object object : wrapper.elements) {
-            Element element = (Element) object;
-
-            if (element.hasChildNodes()) {
-                map.put(element.getNodeName(), createChildNodes(element.getChildNodes()));
-            }
-        }
-
-        return map;
+        return new MObject(firstNodeName(wrapper), "", getProperties(wrapper));
     }
 
     @Override
-    public XmlMapWrapper marshal(Multimap<String, Multimap<String, Object>> stringMultimapMap) throws Exception {
+    public XmlMapWrapper marshal(MObject stringMultimapMap) throws Exception {
         throw new RuntimeException("Marshalling maps isn't supported yet");
     }
 
-    private static Multimap<String, Object> createChildNodes(NodeList elements) {
-        Multimap<String, Object> childMap = ArrayListMultimap.create();
+    String firstNodeName(XmlMapWrapper wrapper) {
+        for (Object object : wrapper.elements) {
+            Element element = (Element) object;
+            return element.getNodeName();
+        }
 
-        for (int i = 0; i < elements.getLength(); i++) {
-            Node childNode = elements.item(i);
+        return "";
+    }
 
-            if (childNode.hasChildNodes() == false) {
-                continue;
-            }
+    private List<Property> getProperties(XmlMapWrapper wrapper) {
+        List<Property> properties = new ArrayList<>();
 
-            if (childNode.getFirstChild().getNodeType() != 1) {
-                childMap.put(childNode.getNodeName(), childNode.getFirstChild().getNodeValue());
-            } else {
-                // it is a list
-                childMap.put(childNode.getNodeName(), createChildNodes(childNode.getChildNodes()));
+        if(wrapper.elements.size() > 0) {
+            Object fieldsEntity = wrapper.elements.get(0);
+            if (fieldsEntity instanceof Element) {
+                properties =  MapAdapterCommon.createPropertiesModel(((Element) fieldsEntity).getChildNodes());
             }
         }
 
-        return childMap;
+        if (wrapper.elements.size() == 2 && properties != null) {
+            // specific for FuzzyMatchDetails
+            Object fieldsFuzzyDetails = wrapper.elements.get(1);
+            if (fieldsFuzzyDetails instanceof Element) {
+                List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(((Element) fieldsFuzzyDetails).getChildNodes());
+
+                if (fuzzyProperties != null && fuzzyProperties.size() ==  6) {
+                    MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
+                    properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
+                } else {
+                    throw new RuntimeException("fuzzyMatchDetails is a reserved name");
+                }
+            }
+        }
+
+        return properties;
     }
 }

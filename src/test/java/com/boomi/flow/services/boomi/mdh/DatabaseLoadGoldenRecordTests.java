@@ -6,14 +6,9 @@ import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.*;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
-import com.manywho.sdk.api.run.elements.type.ListFilter;
-import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
-import com.manywho.sdk.api.run.elements.type.MObject;
-import com.manywho.sdk.api.run.elements.type.ObjectDataType;
+import com.manywho.sdk.api.run.elements.type.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -217,16 +212,14 @@ public class DatabaseLoadGoldenRecordTests {
     }
 
     private static GoldenRecord createGoldenRecord(int number) {
-        Multimap<String, Object> fieldsWrapper = ArrayListMultimap.create();
-        fieldsWrapper.put("field 1 " + number, "field 1 value " + number);
-        fieldsWrapper.put("field 2 " + number, "field 2 value " + number);
-        fieldsWrapper.put("field 3 " + number, "field 3 value " + number);
-        Multimap<String, Object> field4 = ArrayListMultimap.create();
-        field4.put("field 4 " + number + " property", "value property 4 value 1 " + number);
-        fieldsWrapper.put("field 4 " + number, field4);
+        List<Property> mObjectProperties = new ArrayList<>();
+        mObjectProperties.add(new Property("field 1 " + number, "field 1 value " + number));
+        mObjectProperties.add(new Property("field 2 " + number, "field 2 value " + number));
+        mObjectProperties.add(new Property("field 3 " + number, "field 3 value " + number));
 
-        Multimap<String, Object> fields = ArrayListMultimap.create();
-        fields.put("universe-name", fieldsWrapper);
+        MObject mObjectField4 = new MObject("field 4 1-child", Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
+        mObjectProperties.add(new Property("field 4 " + number, mObjectField4));
+        MObject mObject = new MObject("universe-name", mObjectProperties);
 
         List<GoldenRecord.Link> links = new ArrayList<>();
         GoldenRecord.Link link = new GoldenRecord.Link();
@@ -237,7 +230,7 @@ public class DatabaseLoadGoldenRecordTests {
 
         return new GoldenRecord()
                 .setCreatedDate(OffsetDateTime.parse("2015-01-02T12:34:56Z"))
-                .setFields(fields)
+                .setMObject(mObject)
                 .setLinks(links)
                 .setRecordId("record ID " + number)
                 .setUpdatedDate(OffsetDateTime.parse("2017-03-04T23:45:10Z"));
