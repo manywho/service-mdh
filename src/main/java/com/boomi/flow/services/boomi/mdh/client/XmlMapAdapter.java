@@ -4,11 +4,9 @@ import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.w3c.dom.Element;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 

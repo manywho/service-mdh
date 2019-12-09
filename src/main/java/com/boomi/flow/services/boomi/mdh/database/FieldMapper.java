@@ -4,7 +4,6 @@ import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
-import com.google.common.base.Strings;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.draw.elements.type.TypeElement;
 import com.manywho.sdk.api.draw.elements.type.TypeElementBinding;
@@ -14,7 +13,6 @@ import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -109,34 +107,87 @@ public class FieldMapper {
         return types;
     }
 
-    public static Map<String, Object> createMapFromMobject(MObject mObject) {
+    public static Map<String, Object> createMapFromModelMobject(MObject mObject, Universe universe) {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
             if (property.getDeveloperName().startsWith("___")) {
                 continue;
-            }
-            if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
-                // Ignore datetime with empty values
-                continue;
-            }
+            } else {
+                Object mapEntry = createMapEntry(property, universe.getLayout().getModel().getElements());
 
-            if (property.getContentValue() != null) {
-                if (property.getContentType() == ContentType.DateTime) {
-                    String dateFormatted = OffsetDateTime
-                            .parse(property.getContentValue())
-                            .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
-
-                    mapObject.put(property.getDeveloperName(), dateFormatted);
-                } else {
-                    mapObject.put(property.getDeveloperName(), property.getContentValue());
+                if (mapEntry != null) {
+                    mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), mapEntry);
                 }
-            } else if (property.getObjectData() != null && property.getObjectData().size() > 0) {
-                mapObject.put(property.getDeveloperName(), createMapFromMobject(property.getObjectData().get(0)));
             }
         }
 
-        return mapObject;
+        Map<String, Object> wrapperObject = new HashMap<>();
+        wrapperObject.put(universe.getName(), mapObject);
+
+        return wrapperObject;
+    }
+
+    private static String getEntryName(Property property, List<Universe.Layout.Model.Element> elements) {
+        if (property.getContentValue() != null) {
+            return property.getDeveloperName();
+        }
+        Universe.Layout.Model.Element foundElement = elements.stream()
+                .filter(element -> element.getName().equals(property.getDeveloperName()))
+                . findFirst()
+                .orElseGet(Universe.Layout.Model.Element::new);
+
+        if (foundElement.isRepeatable()) {
+            return foundElement.getCollectionUniqueId();
+        } else if (foundElement.getType().equals("CONTAINER") && property.getDeveloperName().length() > 6){
+            return property.getDeveloperName().substring(0, property.getDeveloperName().length()-6);
+        } else {
+            return property.getDeveloperName();
+        }
+    }
+
+    static Object createMapEntry(Property property, List<Universe.Layout.Model.Element> elements) {
+        if (property.getContentValue() != null) {
+            if (property.getContentType() == ContentType.DateTime) {
+                return OffsetDateTime
+                        .parse(property.getContentValue())
+                        .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
+            } else {
+                return property.getContentValue();
+            }
+        } else if (property.getObjectData() != null) {
+            List<Map<String, Object>> listOfObjects = new ArrayList<>();
+
+            for (MObject mobjectItem: property.getObjectData()) {
+                listOfObjects.add(createMapFromMobject(mobjectItem, elements));
+            }
+
+            return listOfObjects;
+        }
+        return null;
+    }
+
+    public static Map<String, Object> createMapFromMobject(MObject mObject, List<Universe.Layout.Model.Element> elements) {
+        Map<String, Object> mapObject = new HashMap<>();
+
+        for (Property property: mObject.getProperties()) {
+            mapObject.put(property.getDeveloperName(), createMapEntry(property, elements));
+        }
+
+        Map<String, Object> wrapperObject = new HashMap<>();
+        wrapperObject.put(mObject.getDeveloperName(), mapObject);
+
+        return wrapperObject;
+    }
+
+    private static String wrapperName(String propertyName, List<Universe.Layout.Model.Element> elements) {
+        for (Universe.Layout.Model.Element element:elements) {
+            if (element.getName().equals(propertyName) && element.isRepeatable()) {
+                return element.getCollectionUniqueId();
+            }
+        }
+
+        return null;
     }
 
     private static List<Universe.Layout.Model.Element> extractOneLevelChildTypeElements(List<Universe.Layout.Model.Element> elements) {
@@ -218,7 +269,7 @@ public class FieldMapper {
         bindings.add(new TypeElementBinding(groupFieldElement.getPrettyName() + " Child Type Default",
                 developerSummaryChildProperty, groupFieldElement.getName() + "-child", propertyBindings));
 
-        types.add(new TypeElement(groupFieldElement.getName(), properties, bindings));
+        types.add(new TypeElement(groupFieldElement.getName(), "", properties, bindings));
 
         return types;
     }

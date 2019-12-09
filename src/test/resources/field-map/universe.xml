@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universe>
+    <id>d438f991-f063-4889-94bb-53d5fd57225f</id>
+    <version>4d20b197-dec8-4481-9cbd-79035b9a6e56</version>
+    <name>accountnest2</name>
+    <stats activeRecords="2" enddatedRecords="0" quarantinedRecords="44" asOf="2019-12-06T12:28:48.499Z">
+        <sourceStats sourceCode="flow" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0" undeliverableChannelDeliveries="0"/>
+    </stats>
+    <sources>
+        <source code="flow" componentId="f734d64b-20ca-493f-b6ad-158f4ebcf147" state="STRAPPING" allowContribute="true">
+            <channel id="52d511d6-c99c-4d38-ab63-19e553b488b4" updateType="FULL" state="CREATED" primary="true"/>
+        </source>
+    </sources>
+    <layoutid>d438f991-f063-4889-94bb-53d5fd57225f</layoutid>
+    <layout idXPath="/accountnest2/id">
+        <model name="accountnest2">
+            <element uniqueId="SINGLE_VALUE" name="single_value" prettyName="single value" type="STRING"
+                     required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100"
+                     truncateLength="100" repeatable="false"/>
+            <element uniqueId="BILLING_ADDRESS" name="billing_address_rename" prettyName="billing_address_rename"
+                     type="CONTAINER" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+                     truncateLength="255" repeatable="true" collectionMatchType="KEY" collectionMatchKeys=""
+                     collectionPrettyName="billing_address_collection_name"
+                     collectionTag="billing_address_collection_name"
+                     collectionUniqueId="BILLING_ADDRESS_COLLECTION_NAME">
+                <element uniqueId="BILLING_ADDRESS_STREET" name="billing_address_street"
+                         prettyName="billing_address_street" type="STRING" required="false" enforceIntegrity="false"
+                         incomingReferenceIntegrity="false" maxLength="100" truncateLength="100" repeatable="false"/>
+            </element>
+            <element uniqueId="OTHER_SINGLE_VALUE" name="other_single_value" prettyName="other single value"
+                     type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+                     maxLength="100" truncateLength="100" repeatable="false"/>
+            <element uniqueId="NEST2CONTACT" name="nest2contact" prettyName="nest2contact" type="CONTAINER"
+                     required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                <element uniqueId="NEST2_CONTACT_NAME" name="nest2_contact_name" prettyName="nest2 contact name"
+                         type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+                         maxLength="100" truncateLength="100" repeatable="false"/>
+                <element uniqueId="NEST2_CONTACT_PHONE" name="nest2_contact_phone" prettyName="nest2 contact phone"
+                         type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+                         maxLength="100" truncateLength="100" repeatable="false"/>
+            </element>
+        </model>
+        <deletedElements/>
+        <xsd>&lt;xs:schema version=&quot;1.0&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element
+            name=&quot;accountnest2&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;single_value&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_collection_name&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element
+            maxOccurs=&quot;unbounded&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_rename&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_street&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;other_single_value&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;nest2contact&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;nest2_contact_name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;nest2_contact_phone&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute
+            name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+        </xsd>
+        <field xpath="/accountnest2/id" type="STRING" prettyName="Id"/>
+        <field uniqueId="SINGLE_VALUE" xpath="/accountnest2/single_value" type="STRING" prettyName="single value"
+               required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"
+               maxLength="100" truncateLength="100"/>
+        <field uniqueId="BILLING_ADDRESS_COLLECTION_NAME" xpath="/accountnest2/billing_address_collection_name"
+               type="COLLECTION" prettyName="billing_address_collection_name" collectionMatchType="KEY"/>
+        <field uniqueId="BILLING_ADDRESS_STREET"
+               xpath="/accountnest2/billing_address_collection_name/billing_address_rename/billing_address_street"
+               type="STRING" prettyName="billing_address_street" required="false" enforceIntegrity="false"
+               incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"
+               collectionId="BILLING_ADDRESS_COLLECTION_NAME"/>
+        <field uniqueId="OTHER_SINGLE_VALUE" xpath="/accountnest2/other_single_value" type="STRING"
+               prettyName="other single value" required="false" enforceIntegrity="false"
+               incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+        <field uniqueId="NEST2_CONTACT_NAME" xpath="/accountnest2/nest2contact/nest2_contact_name" type="STRING"
+               prettyName="nest2 contact name" required="false" enforceIntegrity="false"
+               incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+        <field uniqueId="NEST2_CONTACT_PHONE" xpath="/accountnest2/nest2contact/nest2_contact_phone" type="STRING"
+               prettyName="nest2 contact phone" required="false" enforceIntegrity="false"
+               incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+    </layout>
+    <matchid>d438f991-f063-4889-94bb-53d5fd57225f</matchid>
+    <matchconfig>
+        <round>
+            <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="INCOMING"/>
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="EXISTING"/>
+                </nestedExpression>
+                <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="INCOMING"/>
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="BILLING_ADDRESS_STREET" type="EXISTING"/>
+                </nestedExpression>
+            </matchrule>
+        </round>
+    </matchconfig>
+    <dataquality/>
+</universe>
