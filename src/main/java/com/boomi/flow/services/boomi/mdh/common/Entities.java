@@ -10,6 +10,7 @@ import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,6 @@ public class Entities {
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
     }
 
-
     public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField) {
         if (Strings.isNullOrEmpty(object.getExternalId()) == false) {
             return object;
@@ -79,8 +79,8 @@ public class Entities {
         Property propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
 
         if ("SUCCESS".equals(result.getStatus())) {
-            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, result.getMatch());
-            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, result.getDuplicate());
+            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, setExternalIdForeachObject(result.getMatch(), universe));
+            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, setExternalIdForeachObject(result.getDuplicate(), universe));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
             MObject alreadyLinkedObject = new MObject(result.getEntity().getDeveloperName(), result.getEntity().getExternalId(), result.getEntity().getProperties());
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
@@ -95,10 +95,36 @@ public class Entities {
         properties.add(propertiesDuplicated);
         properties.add(propertiesAlreadyLinked);
 
-        MObject object = new MObject(universeId + "-match", result.getEntity().getExternalId(), properties);
+        String externalId = result.getEntity().getProperties().stream()
+                .filter(p -> p.getDeveloperName().equals(universe.getIdField()))
+                .map(Property::getContentValue)
+                .findFirst()
+                .orElse(UUID.randomUUID().toString());
+
+
+        MObject object = new MObject(universeId + "-match", externalId, properties);
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         return object;
+    }
+
+    private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
+        return objects
+                .stream()
+                .peek(object -> setExternalIdForObject(object, universe.getIdField()))
+                .collect(Collectors.toList());
+    }
+
+    private static void setExternalIdForObject(MObject object, String fieldId) {
+        if (Strings.isNullOrEmpty(object.getExternalId())) {
+            Property property = object.getProperties()
+                    .stream()
+                    .filter(property1 -> fieldId.equals(property1.getDeveloperName()))
+                    .findFirst()
+                    .orElse(new Property("", UUID.randomUUID().toString()));
+
+            object.setExternalId(property.getContentValue());
+        }
     }
 
     private static MObject createMObjectForLink(GoldenRecord.Link link) {
