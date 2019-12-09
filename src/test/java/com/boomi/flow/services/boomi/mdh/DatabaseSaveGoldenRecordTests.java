@@ -9,7 +9,6 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
-import com.google.common.collect.ImmutableMap;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -19,10 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -62,30 +58,30 @@ public class DatabaseSaveGoldenRecordTests {
         object.getProperties().add(new Property("field 2 1", "", ContentType.DateTime));
         object.getProperties().add(new Property("field 3 1", "2019-09-10T15:45:00+01:00", ContentType.DateTime));
 
-        MObject objectField4 = new MObject("object field 4");
+        MObject objectField4 = new MObject("object field 4-child");
         objectField4.setExternalId("123");
         objectField4.setProperties(Arrays.asList(new Property("property 4 1", "value property 4 1")));
 
-        object.getProperties().add(new Property("field 4", objectField4));
+        object.getProperties().add(new Property("object field 4", objectField4, ContentType.Object));
 
         // Update using the incoming object
         MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting
+        Map<String, Object> expectedFieldsRequest = new HashMap<>();
+        expectedFieldsRequest.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c");
+        expectedFieldsRequest.put("field 1 1", "some value 1");
+        expectedFieldsRequest.put("field 3 1", "2019-09-10T14:45:00Z");
+        Map<String, Object> field41 = new HashMap<>();
+        field41.put("property 4 1", "value property 4 1");
+        expectedFieldsRequest.put("object field 4", field41);
+
         BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
                 .setEntities(Arrays.asList(
                         new BatchUpdateRequest.Entity()
                                 .setName("testing")
-                                .setFields(ImmutableMap.<String, Object>builder()
-                                                .put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c")
-                                                .put("field 1 1", "some value 1")
-                                                .put("field 3 1", "2019-09-10T14:45:00Z")
-                                                .put("field 4", ImmutableMap.<String, Object>builder()
-                                                                    .put("property 4 1", "value property 4 1")
-                                                                    .build())
-                                                .build()
-                                )
+                                .setFields(expectedFieldsRequest)
                                 .setOp(null)
                 ))
                 .setSource("TESTING");
@@ -114,8 +110,8 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getProperties().get(4).getDeveloperName(), equalTo("field 3 1"));
         assertThat(result.getProperties().get(4).getContentValue(), equalTo("2019-09-10T15:45:00+01:00"));
         assertThat(result.getProperties().get(5).getContentValue(), nullValue());
-        assertThat(result.getProperties().get(5).getDeveloperName(), equalTo("field 4"));
-        assertThat(result.getProperties().get(5).getObjectData().get(0).getDeveloperName(), equalTo("object field 4"));
+        assertThat(result.getProperties().get(5).getDeveloperName(), equalTo("object field 4"));
+        assertThat(result.getProperties().get(5).getObjectData().get(0).getDeveloperName(), equalTo("object field 4-child"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("property 4 1"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 1"));
     }
