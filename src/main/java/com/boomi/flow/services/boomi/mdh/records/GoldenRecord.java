@@ -2,40 +2,39 @@ package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
 import com.manywho.sdk.api.run.elements.type.MObject;
-import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.boomi.flow.services.boomi.mdh.client.XmlFullDateAdapter;
 
 public class GoldenRecord {
-    private OffsetDateTime createdDate;
-    private OffsetDateTime updatedDate;
+    private String createdDate;
+    private String updatedDate;
     private String recordId;
     private MObject mObject;
     private List<Link> links = new ArrayList<>();
 
     @XmlAttribute
-    @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
-    public OffsetDateTime getCreatedDate() {
+    @XmlJavaTypeAdapter(XmlFullDateAdapter.class)
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public GoldenRecord setCreatedDate(OffsetDateTime createdDate) {
+    public GoldenRecord setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
         return this;
     }
 
     @XmlAttribute
-    @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
-    public OffsetDateTime getUpdatedDate() {
+    @XmlJavaTypeAdapter(XmlFullDateAdapter.class)
+    public String getUpdatedDate() {
         return updatedDate;
     }
 
-    public GoldenRecord setUpdatedDate(OffsetDateTime updatedDate) {
+    public GoldenRecord setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
         return this;
     }
@@ -75,11 +74,11 @@ public class GoldenRecord {
     public static class Link {
         private String source;
         private String entityId;
-        private OffsetDateTime establishedDate;
+        private String establishedDate;
 
         @XmlAttribute(name = "establishedDate")
-        @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
-        public OffsetDateTime getEstablishedDate() {
+        @XmlJavaTypeAdapter(XmlFullDateAdapter.class)
+        public String getEstablishedDate() {
             return establishedDate;
         }
 
@@ -103,7 +102,7 @@ public class GoldenRecord {
             return this;
         }
 
-        public Link setEstablishedDate(OffsetDateTime establishedDate) {
+        public Link setEstablishedDate(String establishedDate) {
             this.establishedDate = establishedDate;
             return this;
         }

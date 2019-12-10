@@ -213,8 +213,8 @@ public class DatabaseLoadQuarantineEntryTests {
 
         return new QuarantineEntry()
                 .setCause("a cause " + number)
-                .setCreatedDate(OffsetDateTime.parse("2018-02-04T12:34Z"))
-                .setEndDate(OffsetDateTime.parse("2018-02-05T13:57Z"))
+                .setCreatedDate("2018-02-04T12:34Z")
+                .setEndDate("2018-02-05T13:57Z")
                 .setEntity(null)
                 .setReason("a reason " + number)
                 .setResolution("a resolution " + number)
@@ -236,8 +236,8 @@ public class DatabaseLoadQuarantineEntryTests {
 
         return new QuarantineEntry()
                 .setCause("a cause " + number)
-                .setCreatedDate(OffsetDateTime.parse("2018-02-04T12:34Z"))
-                .setEndDate(OffsetDateTime.parse("2018-02-05T13:57Z"))
+                .setCreatedDate("2018-02-04T12:34Z")
+                .setEndDate("2018-02-05T13:57Z")
                 .setEntity(entity)
                 .setReason("a reason " + number)
                 .setResolution("a resolution " + number)
