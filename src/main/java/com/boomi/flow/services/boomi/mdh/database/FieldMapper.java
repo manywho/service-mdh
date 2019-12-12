@@ -31,7 +31,7 @@ public class FieldMapper {
         // create child types
         List<TypeElement> types = extractOneLevelChildTypeElements(universe.getLayout().getModel().getElements())
                 .stream()
-                .map(FieldMapper::createChildTypesFromElement)
+                .map(element -> createChildTypesFromElement(element, modelBasicName))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
@@ -115,7 +115,7 @@ public class FieldMapper {
             if (property.getDeveloperName().startsWith("___")) {
                 continue;
             } else {
-                Object object = createMapEntry(property, universe.getLayout().getModel().getElements());
+                Object object = createMapEntry(property, universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
 
                 if (object != null) {
                     if (property.getContentType() != ContentType.Object && property.getContentType() != ContentType.List) {
@@ -149,7 +149,7 @@ public class FieldMapper {
         }
     }
 
-    static Object createMapEntry(Property property, List<Universe.Layout.Model.Element> elements) {
+    static Object createMapEntry(Property property, String modelName, List<Universe.Layout.Model.Element> elements) {
         if (property.getContentValue() != null) {
             if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
                 // Ignore datetime with empty values
@@ -167,7 +167,7 @@ public class FieldMapper {
             List<Map<String, Object>> listOfObjects = new ArrayList<>();
 
             for (MObject mobjectItem: property.getObjectData()) {
-                listOfObjects.add(createMapFromMobject(mobjectItem, elements));
+                listOfObjects.add(createMapFromMobject(mobjectItem, modelName, elements));
             }
 
             return listOfObjects;
@@ -175,15 +175,18 @@ public class FieldMapper {
         return null;
     }
 
-    public static Map<String, Object> createMapFromMobject(MObject mObject, List<Universe.Layout.Model.Element> elements) {
+    public static Map<String, Object> createMapFromMobject(MObject mObject, String modelName, List<Universe.Layout.Model.Element> elements) {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
-            mapObject.put(property.getDeveloperName(), createMapEntry(property, elements));
+            mapObject.put(property.getDeveloperName(), createMapEntry(property, modelName, elements));
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();
-        wrapperObject.put(mObject.getDeveloperName().substring(0, mObject.getDeveloperName().length()-6), mapObject);
+
+        int removePrefix = (modelName + "-").length();
+
+        wrapperObject.put(mObject.getDeveloperName().substring(removePrefix), mapObject);
 
         return wrapperObject;
     }
@@ -250,11 +253,11 @@ public class FieldMapper {
         return new TypeElementPropertyBinding(element.getPrettyName(), element.getName(), typeElementDeveloperName);
     }
 
-    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement) {
+    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement, String modelBasicName) {
         // create child types
         List<TypeElement> types = extractOneLevelChildTypeElements(groupFieldElement.getElements())
                 .stream()
-                .map(FieldMapper::createChildTypesFromElement)
+                .map(groupFieldElement1 -> createChildTypesFromElement(groupFieldElement1, modelBasicName))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
@@ -262,12 +265,12 @@ public class FieldMapper {
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
-        String developerSummaryChildProperty = "The structure of a Child Type " + groupFieldElement.getPrettyName();
+        String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelBasicName;
 
-        bindings.add(new TypeElementBinding(groupFieldElement.getPrettyName() + " Child Type Default",
-                developerSummaryChildProperty, groupFieldElement.getName() + "-child", propertyBindings));
+        bindings.add(new TypeElementBinding( modelBasicName + " - " + groupFieldElement.getName(),
+                developerSummaryChildProperty, modelBasicName + " - " + groupFieldElement.getName(), propertyBindings));
 
-        types.add(new TypeElement(groupFieldElement.getName(), "", properties, bindings));
+        types.add(new TypeElement(modelBasicName + " - " +groupFieldElement.getName(), "", properties, bindings));
 
         return types;
     }
