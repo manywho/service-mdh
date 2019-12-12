@@ -833,7 +833,7 @@ public class DescribeTests {
                 .body("install.typeElements[5].properties[1].contentType", equalTo("ContentObject"))
                 .body("install.typeElements[5].properties[1].developerName", equalTo("Region"))
                 .body("install.typeElements[5].properties[1].id", nullValue())
-                .body("install.typeElements[5].properties[1].typeElementDeveloperName", equalTo("region"))
+                .body("install.typeElements[5].properties[1].typeElementDeveloperName", equalTo("country - region"))
                 .body("install.typeElements[5].properties[1].typeElementId", nullValue())
                 .body("install.typeElements[5].serviceElementId", nullValue())
                 .body("install.typeElements[5].updateByName", equalTo(false));
@@ -1010,14 +1010,14 @@ public class DescribeTests {
                 .body("install.typeElements[4].properties[1].contentType", equalTo("ContentObject"))
                 .body("install.typeElements[4].properties[1].developerName", equalTo("Capital"))
                 .body("install.typeElements[4].properties[1].id", nullValue())
-                .body("install.typeElements[4].properties[1].typeElementDeveloperName", equalTo("capital"))
+                .body("install.typeElements[4].properties[1].typeElementDeveloperName", equalTo("country - capital"))
                 .body("install.typeElements[4].properties[1].typeElementId", nullValue())
 
                 .body("install.typeElements[4].properties[2].contentFormat", nullValue())
                 .body("install.typeElements[4].properties[2].contentType", equalTo("ContentList"))
                 .body("install.typeElements[4].properties[2].developerName", equalTo("cities"))
                 .body("install.typeElements[4].properties[2].id", nullValue())
-                .body("install.typeElements[4].properties[2].typeElementDeveloperName", equalTo("cities"))
+                .body("install.typeElements[4].properties[2].typeElementDeveloperName", equalTo("country - cities"))
                 .body("install.typeElements[4].properties[2].typeElementId", nullValue())
 
                 .body("install.typeElements[4].properties[3].contentFormat", nullValue())

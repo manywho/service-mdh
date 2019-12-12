@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
+import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
@@ -36,7 +37,7 @@ public class FieldMapper {
                 .collect(Collectors.toList());
 
         // create properties and bindings
-        List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getElements());
+        List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(universe.getLayout().getModel().getElements());
 
         // adding the default properties and bindings for each model type
@@ -184,9 +185,7 @@ public class FieldMapper {
 
         Map<String, Object> wrapperObject = new HashMap<>();
 
-        int removePrefix = (modelName + "-").length();
-
-        wrapperObject.put(mObject.getDeveloperName().substring(removePrefix), mapObject);
+        wrapperObject.put(Entities.removeModelPrefix(mObject.getDeveloperName(), modelName), mapObject);
 
         return wrapperObject;
     }
@@ -205,14 +204,14 @@ public class FieldMapper {
         return childTypeElement;
     }
 
-    private static List<TypeElementProperty> extractProperties(List<Universe.Layout.Model.Element> elements) {
+    private static List<TypeElementProperty> extractProperties(String modelName, List<Universe.Layout.Model.Element> elements) {
         List<TypeElementProperty> properties = new ArrayList<>();
 
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType != null) {
-                properties.add(createProperty(element, contentType));
+                properties.add(createProperty(element, modelName, contentType));
             }
         }
 
@@ -233,11 +232,11 @@ public class FieldMapper {
         return propertyBindings;
     }
 
-    private static TypeElementProperty createProperty(Universe.Layout.Model.Element element, ContentType contentType) {
+    private static TypeElementProperty createProperty(Universe.Layout.Model.Element element, String modelName, ContentType contentType) {
         String typeElementDeveloperName = null;
 
         if (contentType == ContentType.Object || contentType == ContentType.List) {
-            typeElementDeveloperName = element.getName();
+            typeElementDeveloperName = Entities.addingModelPrefix(modelName, element.getName());
         }
 
         return new TypeElementProperty(element.getPrettyName(), contentType, typeElementDeveloperName);
@@ -261,20 +260,19 @@ public class FieldMapper {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        List<TypeElementProperty> properties = extractProperties(groupFieldElement.getElements());
+        List<TypeElementProperty> properties = extractProperties(modelBasicName, groupFieldElement.getElements());
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
         String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelBasicName;
 
-        bindings.add(new TypeElementBinding( modelBasicName + " - " + groupFieldElement.getName(),
-                developerSummaryChildProperty, modelBasicName + " - " + groupFieldElement.getName(), propertyBindings));
+        bindings.add(new TypeElementBinding( Entities.addingModelPrefix(modelBasicName, groupFieldElement.getName()),
+                developerSummaryChildProperty, Entities.addingModelPrefix(modelBasicName, groupFieldElement.getName()), propertyBindings));
 
-        types.add(new TypeElement(modelBasicName + " - " +groupFieldElement.getName(), "", properties, bindings));
+        types.add(new TypeElement(Entities.addingModelPrefix(modelBasicName, groupFieldElement.getName()), "", properties, bindings));
 
         return types;
     }
-
 
     private static ContentType fieldTypeToContentType(String type, boolean repeatable) {
         if (repeatable && "CONTAINER".equals(type)) {
