@@ -25,14 +25,14 @@ public class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
     static List<TypeElement> createModelTypes(Universe universe) {
-        String modelBasicName = universe.getName();
+        String modelName = universe.getName();
         String universeName = TypeNameGenerator.createModelName(universe.getName());
         String universeId = universe.getId().toString();
 
         // create child types
         List<TypeElement> types = extractOneLevelChildTypeElements(universe.getLayout().getModel().getElements())
                 .stream()
-                .map(element -> createChildTypesFromElement(element, modelBasicName))
+                .map(element -> createChildTypesFromElement(element, modelName))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
@@ -63,9 +63,9 @@ public class FieldMapper {
 
         // adding properties for match entities
         properties.add(new TypeElementProperty("Fuzzy Match Details", ContentType.Object, "Fuzzy Match Details"));
-        properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelBasicName));
-        properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelBasicName));
-        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelBasicName));
+        properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelName));
+        properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelName));
+        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelName));
 
         // adding bindings for Golden Records
         List<TypeElementBinding> bindings = new ArrayList<>();
@@ -77,10 +77,10 @@ public class FieldMapper {
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.RECORD_ID, GoldenRecordConstants.RECORD_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.ENTITY_ID, GoldenRecordConstants.ENTITY_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.LINKS, GoldenRecordConstants.LINKS_FIELD));
-        bindings.add(new TypeElementBinding(modelBasicName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
+        bindings.add(new TypeElementBinding(modelName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
 
         // adding bindings for Quarantine
-        String developerSummaryQuarantine = "The structure of a Quarantine " + modelBasicName + " for the " + universeName + " universe";
+        String developerSummaryQuarantine = "The structure of a Quarantine " + modelName + " for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsQuarantine = new ArrayList<>(propertyBindings);
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.STATUS, QuarantineEntryConstants.STATUS_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ID, QuarantineEntryConstants.SOURCE_ID_FIELD));
@@ -91,7 +91,7 @@ public class FieldMapper {
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CAUSE, QuarantineEntryConstants.CAUSE_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.REASON, QuarantineEntryConstants.REASON_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.RESOLUTION, QuarantineEntryConstants.RESOLUTION_FIELD));
-        bindings.add(new TypeElementBinding(modelBasicName + " Quarantine", developerSummaryQuarantine, universeId + "-quarantine", propertyBindingsQuarantine));
+        bindings.add(new TypeElementBinding(modelName + " Quarantine", developerSummaryQuarantine, universeId + "-quarantine", propertyBindingsQuarantine));
 
         // adding bindings for Matches
         String developerSummaryMatches = "The structure of matches for the " + universeName + " universe";
@@ -101,10 +101,10 @@ public class FieldMapper {
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.DUPLICATE, FuzzyMatchDetailsConstants.DUPLICATE));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.ALREADY_LINKED, FuzzyMatchDetailsConstants.ALREADY_LINKED));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
-        bindings.add(new TypeElementBinding(modelBasicName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
+        bindings.add(new TypeElementBinding(modelName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
 
         // add model root type
-        types.add(new TypeElement(modelBasicName, properties, bindings));
+        types.add(new TypeElement(modelName, properties, bindings));
 
         return types;
     }
@@ -252,24 +252,24 @@ public class FieldMapper {
         return new TypeElementPropertyBinding(element.getPrettyName(), element.getName(), typeElementDeveloperName);
     }
 
-    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement, String modelBasicName) {
+    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement, String modelName) {
         // create child types
         List<TypeElement> types = extractOneLevelChildTypeElements(groupFieldElement.getElements())
                 .stream()
-                .map(groupFieldElement1 -> createChildTypesFromElement(groupFieldElement1, modelBasicName))
+                .map(groupFieldElement1 -> createChildTypesFromElement(groupFieldElement1, modelName))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        List<TypeElementProperty> properties = extractProperties(modelBasicName, groupFieldElement.getElements());
+        List<TypeElementProperty> properties = extractProperties(modelName, groupFieldElement.getElements());
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
-        String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelBasicName;
+        String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelName;
 
-        bindings.add(new TypeElementBinding( Entities.addingModelPrefix(modelBasicName, groupFieldElement.getName()),
-                developerSummaryChildProperty, Entities.addingModelPrefix(modelBasicName, groupFieldElement.getName()), propertyBindings));
+        bindings.add(new TypeElementBinding( Entities.addingModelPrefix(modelName, groupFieldElement.getName()),
+                developerSummaryChildProperty, Entities.addingModelPrefix(modelName, groupFieldElement.getName()), propertyBindings));
 
-        types.add(new TypeElement(Entities.addingModelPrefix(modelBasicName, groupFieldElement.getName()), "", properties, bindings));
+        types.add(new TypeElement(Entities.addingModelPrefix(modelName, groupFieldElement.getName()), "", properties, bindings));
 
         return types;
     }
