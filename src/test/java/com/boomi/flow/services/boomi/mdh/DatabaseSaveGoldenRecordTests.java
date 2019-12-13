@@ -4,10 +4,10 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
-import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRequestBuilder;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
@@ -65,7 +65,7 @@ public class DatabaseSaveGoldenRecordTests {
         object.getProperties().add(new Property("object field 4", objectField4, ContentType.Object));
 
         // Update using the incoming object
-        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new GoldenRecordRequestBuilder(null)), new MatchEntityRepository(client))
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting

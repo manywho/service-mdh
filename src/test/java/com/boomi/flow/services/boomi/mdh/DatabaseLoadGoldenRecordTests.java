@@ -46,7 +46,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new GoldenRecordRequestBuilder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
@@ -86,7 +86,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new GoldenRecordRequestBuilder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
@@ -156,8 +156,7 @@ public class DatabaseLoadGoldenRecordTests {
                                                 .setValue("greater than or equal to something"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
                                                 .setFieldId("FIELD 2")
-                                                .setOperator("IS_NULL")
-                                                .setValue("is empty"),
+                                                .setOperator("IS_NULL"),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
                                                 .setFieldId("FIELD 1")
                                                 .setOperator("LESS_THAN")
@@ -197,8 +196,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(elementIdFinder.findIdFromNameOfElement(any(), any(), eq("field 1"))).thenReturn("FIELD 1");
         when(elementIdFinder.findIdFromNameOfElement(any(), any(), eq("field 2"))).thenReturn("FIELD 2");
 
-
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, elementIdFinder), new MatchEntityRepository(client))
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new GoldenRecordRequestBuilder(elementIdFinder)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)

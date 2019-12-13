@@ -37,13 +37,14 @@ public class ElementIdFinder {
         }
     }
 
-    private HashMap<String, String> getNameAndId(List<Universe.Layout.Model.Element> elements) {
-        HashMap<String, String> map = new HashMap<>();
+    private Map<String, String> getNameAndId(List<Universe.Layout.Model.Element> elements) {
+        Map<String, String> map = new HashMap<>();
         for (Universe.Layout.Model.Element element: elements) {
-            if (element.getElements() != null) {
+            if (element.getElements() != null && element.getElements().isEmpty() == false) {
                 map.putAll(getNameAndId(element.getElements()));
+            } else {
+                map.put(element.getName(), element.getUniqueId());
             }
-            map.put(element.getName(), element.getUniqueId());
         }
 
         return map;

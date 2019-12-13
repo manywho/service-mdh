@@ -9,6 +9,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRequestBuilder;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
@@ -49,7 +50,7 @@ public class DatabaseLoadMatchEntryTests {
                 .thenReturn(createMatchEntityResponse());
 
         // Update using the incoming object
-        List<MObject> result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)),
+        List<MObject> result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new GoldenRecordRequestBuilder(null)),
                 new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, Arrays.asList(createObjectToLoad1(), createObjectToLoad2()));
 

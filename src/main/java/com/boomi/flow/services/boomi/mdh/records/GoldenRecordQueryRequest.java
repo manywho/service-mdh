@@ -1,10 +1,7 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
