@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.database;
 
+import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntryConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
@@ -24,19 +25,19 @@ public class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
     static List<TypeElement> createModelTypes(Universe universe) {
-        String modelBasicName = universe.getName();
+        String modelName = universe.getName();
         String universeName = TypeNameGenerator.createModelName(universe.getName());
         String universeId = universe.getId().toString();
 
         // create child types
         List<TypeElement> types = extractOneLevelChildTypeElements(universe.getLayout().getModel().getElements())
                 .stream()
-                .map(FieldMapper::createChildTypesFromElement)
+                .map(element -> createChildTypesFromElement(element, modelName))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
         // create properties and bindings
-        List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getElements());
+        List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(universe.getLayout().getModel().getElements());
 
         // adding the default properties and bindings for each model type
@@ -62,9 +63,9 @@ public class FieldMapper {
 
         // adding properties for match entities
         properties.add(new TypeElementProperty("Fuzzy Match Details", ContentType.Object, "Fuzzy Match Details"));
-        properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelBasicName));
-        properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelBasicName));
-        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelBasicName));
+        properties.add(new TypeElementProperty("Duplicate Entities", ContentType.List, modelName));
+        properties.add(new TypeElementProperty("Matching Entities", ContentType.List, modelName));
+        properties.add(new TypeElementProperty("Already Linked Entities", ContentType.List, modelName));
 
         // adding bindings for Golden Records
         List<TypeElementBinding> bindings = new ArrayList<>();
@@ -76,10 +77,10 @@ public class FieldMapper {
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.RECORD_ID, GoldenRecordConstants.RECORD_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.ENTITY_ID, GoldenRecordConstants.ENTITY_ID_FIELD));
         propertyBindingsGoldenRecord.add(new TypeElementPropertyBinding(GoldenRecordConstants.LINKS, GoldenRecordConstants.LINKS_FIELD));
-        bindings.add(new TypeElementBinding(modelBasicName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
+        bindings.add(new TypeElementBinding(modelName + " Golden Record", developerSummaryGoldenRecords, universeId + "-golden-record", propertyBindingsGoldenRecord));
 
         // adding bindings for Quarantine
-        String developerSummaryQuarantine = "The structure of a Quarantine " + modelBasicName + " for the " + universeName + " universe";
+        String developerSummaryQuarantine = "The structure of a Quarantine " + modelName + " for the " + universeName + " universe";
         List<TypeElementPropertyBinding> propertyBindingsQuarantine = new ArrayList<>(propertyBindings);
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.STATUS, QuarantineEntryConstants.STATUS_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.SOURCE_ID, QuarantineEntryConstants.SOURCE_ID_FIELD));
@@ -90,7 +91,7 @@ public class FieldMapper {
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.CAUSE, QuarantineEntryConstants.CAUSE_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.REASON, QuarantineEntryConstants.REASON_FIELD));
         propertyBindingsQuarantine.add(new TypeElementPropertyBinding(QuarantineEntryConstants.RESOLUTION, QuarantineEntryConstants.RESOLUTION_FIELD));
-        bindings.add(new TypeElementBinding(modelBasicName + " Quarantine", developerSummaryQuarantine, universeId + "-quarantine", propertyBindingsQuarantine));
+        bindings.add(new TypeElementBinding(modelName + " Quarantine", developerSummaryQuarantine, universeId + "-quarantine", propertyBindingsQuarantine));
 
         // adding bindings for Matches
         String developerSummaryMatches = "The structure of matches for the " + universeName + " universe";
@@ -100,10 +101,10 @@ public class FieldMapper {
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.DUPLICATE, FuzzyMatchDetailsConstants.DUPLICATE));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(FuzzyMatchDetailsConstants.ALREADY_LINKED, FuzzyMatchDetailsConstants.ALREADY_LINKED));
         propertyBindingsForMatches.add(new TypeElementPropertyBinding(GoldenRecordConstants.SOURCE_ID, GoldenRecordConstants.SOURCE_ID_FIELD));
-        bindings.add(new TypeElementBinding(modelBasicName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
+        bindings.add(new TypeElementBinding(modelName + " Match", developerSummaryMatches, universeId + "-match", propertyBindingsForMatches));
 
         // add model root type
-        types.add(new TypeElement(modelBasicName, properties, bindings));
+        types.add(new TypeElement(modelName, properties, bindings));
 
         return types;
     }
@@ -115,7 +116,8 @@ public class FieldMapper {
             if (property.getDeveloperName().startsWith("___")) {
                 continue;
             } else {
-                Object object = createMapEntry(property, universe.getLayout().getModel().getElements());
+                Object object = createMapEntry(property, universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
+
                 if (object == null) {
                     continue;
                 }
@@ -149,7 +151,7 @@ public class FieldMapper {
         }
     }
 
-    static Object createMapEntry(Property property, List<Universe.Layout.Model.Element> elements) {
+    static Object createMapEntry(Property property, String modelName, List<Universe.Layout.Model.Element> elements) {
         if (property.getContentValue() != null) {
             if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
                 // Ignore datetime with empty values
@@ -167,7 +169,7 @@ public class FieldMapper {
             List<Map<String, Object>> listOfObjects = new ArrayList<>();
 
             for (MObject mobjectItem: property.getObjectData()) {
-                listOfObjects.add(createMapFromMobject(mobjectItem, elements));
+                listOfObjects.add(createMapFromMobject(mobjectItem, modelName, elements));
             }
 
             return listOfObjects;
@@ -175,15 +177,16 @@ public class FieldMapper {
         return null;
     }
 
-    public static Map<String, Object> createMapFromMobject(MObject mObject, List<Universe.Layout.Model.Element> elements) {
+    public static Map<String, Object> createMapFromMobject(MObject mObject, String modelName, List<Universe.Layout.Model.Element> elements) {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
-            mapObject.put(property.getDeveloperName(), createMapEntry(property, elements));
+            mapObject.put(property.getDeveloperName(), createMapEntry(property, modelName, elements));
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();
-        wrapperObject.put(mObject.getDeveloperName().substring(0, mObject.getDeveloperName().length()-6), mapObject);
+
+        wrapperObject.put(Entities.removeModelPrefix(mObject.getDeveloperName(), modelName), mapObject);
 
         return wrapperObject;
     }
@@ -202,14 +205,14 @@ public class FieldMapper {
         return childTypeElement;
     }
 
-    private static List<TypeElementProperty> extractProperties(List<Universe.Layout.Model.Element> elements) {
+    private static List<TypeElementProperty> extractProperties(String modelName, List<Universe.Layout.Model.Element> elements) {
         List<TypeElementProperty> properties = new ArrayList<>();
 
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType != null) {
-                properties.add(createProperty(element, contentType));
+                properties.add(createProperty(element, modelName, contentType));
             }
         }
 
@@ -230,11 +233,11 @@ public class FieldMapper {
         return propertyBindings;
     }
 
-    private static TypeElementProperty createProperty(Universe.Layout.Model.Element element, ContentType contentType) {
+    private static TypeElementProperty createProperty(Universe.Layout.Model.Element element, String modelName, ContentType contentType) {
         String typeElementDeveloperName = null;
 
         if (contentType == ContentType.Object || contentType == ContentType.List) {
-            typeElementDeveloperName = element.getName();
+            typeElementDeveloperName = Entities.addingModelPrefix(modelName, element.getName());
         }
 
         return new TypeElementProperty(element.getPrettyName(), contentType, typeElementDeveloperName);
@@ -250,28 +253,27 @@ public class FieldMapper {
         return new TypeElementPropertyBinding(element.getPrettyName(), element.getName(), typeElementDeveloperName);
     }
 
-    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement) {
+    private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement, String modelName) {
         // create child types
         List<TypeElement> types = extractOneLevelChildTypeElements(groupFieldElement.getElements())
                 .stream()
-                .map(FieldMapper::createChildTypesFromElement)
+                .map(groupFieldElement1 -> createChildTypesFromElement(groupFieldElement1, modelName))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        List<TypeElementProperty> properties = extractProperties(groupFieldElement.getElements());
+        List<TypeElementProperty> properties = extractProperties(modelName, groupFieldElement.getElements());
         List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
-        String developerSummaryChildProperty = "The structure of a Child Type " + groupFieldElement.getPrettyName();
+        String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelName;
 
-        bindings.add(new TypeElementBinding(groupFieldElement.getPrettyName() + " Child Type Default",
-                developerSummaryChildProperty, groupFieldElement.getName() + "-child", propertyBindings));
+        bindings.add(new TypeElementBinding( Entities.addingModelPrefix(modelName, groupFieldElement.getName()),
+                developerSummaryChildProperty, Entities.addingModelPrefix(modelName, groupFieldElement.getName()), propertyBindings));
 
-        types.add(new TypeElement(groupFieldElement.getName(), "", properties, bindings));
+        types.add(new TypeElement(Entities.addingModelPrefix(modelName, groupFieldElement.getName()), "", properties, bindings));
 
         return types;
     }
-
 
     private static ContentType fieldTypeToContentType(String type, boolean repeatable) {
         if (repeatable && "CONTAINER".equals(type)) {

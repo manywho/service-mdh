@@ -137,4 +137,14 @@ public class Entities {
 
         return new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
     }
+
+    public static String addingModelPrefix(String modelName, String fieldGroupName) {
+        return modelName + " - " + fieldGroupName;
+    }
+
+    public static String removeModelPrefix(String fullChildTypeName, String modelName) {
+        int removeUntilIndex = (modelName + " - ").length();
+
+        return fullChildTypeName.substring(removeUntilIndex);
+    }
 }

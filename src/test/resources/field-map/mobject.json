@@ -21,7 +21,7 @@
       "developerName": "billing_address_rename",
       "objectData": [
         {
-          "developerName": "billing_address_rename-child",
+          "developerName": "accountnest2 - billing_address_rename",
           "externalId": "65352307-d01f-467a-9a53-e9ed286e08c6",
           "internalId": "12797b67-5ec8-40de-a4ef-c821d7956bca",
           "isSelected": false,
@@ -41,7 +41,7 @@
           "typeElementId": "10b7feb4-54a3-4f09-9997-fe1eea8143b1"
         },
         {
-          "developerName": "billing_address_rename-child",
+          "developerName": "accountnest2 - billing_address_rename",
           "externalId": "efc0f41e-b5d9-4af8-87ba-cbcb8214548b",
           "internalId": "b457fc68-47fc-4c5f-a173-7acf4fa71951",
           "isSelected": false,
@@ -80,7 +80,7 @@
       "developerName": "nest2contact",
       "objectData": [
         {
-          "developerName": "nest2contact-child",
+          "developerName": "accountnest2 - nest2contact",
           "externalId": "9bbc9edd-b919-4b45-b069-21b9b4ae3180",
           "internalId": "2d0f6bbe-8832-42d5-be9a-f9b2d69efdaa",
           "isSelected": false,

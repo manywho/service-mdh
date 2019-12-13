@@ -37,8 +37,6 @@ public class FieldMapperTests {
         StringWriter bodyContent = new StringWriter();
         JAXB.marshal(updateRequest, bodyContent);
 
-        String a = bodyContent.toString();
-
         String expected = Resources.toString(Resources.getResource("field-map/record-update-request-deserialized.xml"), Charsets.UTF_8);
 
         Assert.assertEquals(expected, bodyContent.toString());
