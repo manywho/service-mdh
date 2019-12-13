@@ -175,8 +175,8 @@ public class XmlMapperTests {
         assertThat(actual.getTotalCount(), equalTo(2));
         assertThat(actual.getRecords(), hasSize(2));
         assertThat(actual.getRecords().get(0).getRecordId(), equalTo("02a8284d-0ef3-4091-acef-85f23d80cf0d"));
-        assertThat(actual.getRecords().get(0).getCreatedDate(), equalTo("2013-09-23T14:07:31+0000"));
-        assertThat(actual.getRecords().get(0).getUpdatedDate(), equalTo("2014-02-04T15:59:21+0000"));
+        assertThat(actual.getRecords().get(0).getCreatedDate(), equalTo(OffsetDateTime.parse("2013-09-23T00:00Z")));
+        assertThat(actual.getRecords().get(0).getUpdatedDate(), equalTo(OffsetDateTime.parse("2014-02-04T15:59:21Z")));
         assertThat(actual.getRecords().get(0).getMObject(), not(nullValue()));
 
         MObject account0 = actual.getRecords().get(0).getMObject();
@@ -215,7 +215,7 @@ public class XmlMapperTests {
 
         assertThat(actual.getRecords().get(0).getLinks().get(0).getEntityId(), equalTo("d39bc927-e005-4157-b73c-4956bfa2acb1"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getSource(), equalTo("flow1"));
-        assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate().toString(), equalTo("2019-08-08T10:56:41+0000"));
+        assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate(), equalTo(OffsetDateTime.parse("2019-08-08T10:56:41Z")));
     }
 
 

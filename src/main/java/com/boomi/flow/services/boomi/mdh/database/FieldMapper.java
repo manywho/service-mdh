@@ -116,19 +116,19 @@ public class FieldMapper {
                 continue;
             } else {
                 Object object = createMapEntry(property, universe.getLayout().getModel().getElements());
+                if (object == null) {
+                    continue;
+                }
 
-                if (object != null) {
-                    if (property.getContentType() != ContentType.Object && property.getContentType() != ContentType.List) {
-                        // is not a field group
-                        mapObject.put(property.getDeveloperName(), object);
-                    } else if (property.getContentType() == ContentType.List) {
-                        mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
-                    } else if (property.getContentType() == ContentType.Object && object instanceof List) {
-
-                        // this is not really a list in hub, we need to do some modifications
-                        Map<String, Object> container = (Map<String, Object>) ((List) object).get(0);
-                        mapObject.put(property.getDeveloperName(), container.get(property.getDeveloperName()));
-                    }
+                if (property.getContentType() == ContentType.List) {
+                    mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
+                } else if (property.getContentType() == ContentType.Object && object instanceof List) {
+                    // this is not really a list in hub, we need to do some modifications
+                    Map<String, Object> container = (Map<String, Object>) ((List) object).get(0);
+                    mapObject.put(property.getDeveloperName(), container.get(property.getDeveloperName()));
+                } else {
+                    // is not a field group
+                    mapObject.put(property.getDeveloperName(), object);
                 }
             }
         }

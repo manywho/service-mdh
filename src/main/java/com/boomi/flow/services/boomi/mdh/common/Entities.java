@@ -41,8 +41,8 @@ public class Entities {
         }
 
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
-        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
-        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
+        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, EngineCompatibleDates.parse(entry.getCreatedDate())));
+        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, EngineCompatibleDates.parse(entry.getEndDate())));
         properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
         properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
         properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
@@ -117,13 +117,14 @@ public class Entities {
 
     private static void setExternalIdForObject(MObject object, String fieldId) {
         if (Strings.isNullOrEmpty(object.getExternalId())) {
-            Property property = object.getProperties()
+            String externalId = object.getProperties()
                     .stream()
-                    .filter(property1 -> fieldId.equals(property1.getDeveloperName()))
+                    .filter(p -> fieldId.equals(p.getDeveloperName()))
+                    .map(Property::getContentValue)
                     .findFirst()
-                    .orElse(new Property("", UUID.randomUUID().toString()));
+                    .orElse(UUID.randomUUID().toString());
 
-            object.setExternalId(property.getContentValue());
+            object.setExternalId(externalId);
         }
     }
 

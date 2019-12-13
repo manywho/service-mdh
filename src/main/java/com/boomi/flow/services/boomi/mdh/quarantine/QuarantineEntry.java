@@ -1,14 +1,15 @@
 package com.boomi.flow.services.boomi.mdh.quarantine;
 
-import com.boomi.flow.services.boomi.mdh.client.XmlFullDateAdapter;
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
+import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.OffsetDateTime;
 
 public class QuarantineEntry {
-    private String createdDate;
-    private String endDate;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime endDate;
     private String sourceId;
     private String sourceEntityId;
     private String transactionId;
@@ -18,23 +19,23 @@ public class QuarantineEntry {
     private MObject entity;
 
     @XmlAttribute
-    @XmlJavaTypeAdapter(XmlFullDateAdapter.class)
-    public String getCreatedDate() {
+    @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
+    public OffsetDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public QuarantineEntry setCreatedDate(String createdDate) {
+    public QuarantineEntry setCreatedDate(OffsetDateTime createdDate) {
         this.createdDate = createdDate;
         return this;
     }
 
     @XmlAttribute
-    @XmlJavaTypeAdapter(XmlFullDateAdapter.class)
-    public String getEndDate() {
+    @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
+    public OffsetDateTime getEndDate() {
         return endDate;
     }
 
-    public QuarantineEntry setEndDate(String endDate) {
+    public QuarantineEntry setEndDate(OffsetDateTime endDate) {
         this.endDate = endDate;
         return this;
     }

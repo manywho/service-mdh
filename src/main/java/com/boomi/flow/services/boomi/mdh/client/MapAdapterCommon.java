@@ -19,17 +19,17 @@ public class MapAdapterCommon {
         for (int i = 0; i < map.getLength(); i++) {
             Node childNode = map.item(i);
 
-            if (childNode.getNodeType() == ELEMENT_NODE && childNode.getChildNodes() != null) {
+            if (childNode.getNodeType() == ELEMENT_NODE && childNode.hasChildNodes()) {
                 if (childNode.getChildNodes().getLength() == 1 &&
                         childNode.getFirstChild().getNodeType() == TEXT_NODE ) {
 
-                    //this is a leave with element text information
+                    //this is a leaf with element text information
                     properties.add(new Property(childNode.getNodeName(), childNode.getFirstChild().getNodeValue()));
 
                 } else if (childNode.getChildNodes().getLength() > 0 &&
                         childNode.getFirstChild().getNodeType() == Node.ELEMENT_NODE) {
 
-                    if (childNode.getFirstChild().getFirstChild() != null &&
+                    if (childNode.getFirstChild().hasChildNodes() &&
                             childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
 
                         // this is a collection of repeatable field groups
@@ -40,10 +40,6 @@ public class MapAdapterCommon {
                     }
                 }
             }
-        }
-
-        if(properties.isEmpty()) {
-            return  null;
         }
 
         return properties;
