@@ -24,9 +24,8 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
         throw new RuntimeException("Marshalling maps isn't supported yet");
     }
 
-    String firstNodeName(XmlMapWrapper wrapper) {
-        for (Object object : wrapper.elements) {
-            Element element = (Element) object;
+    private String firstNodeName(XmlMapWrapper wrapper) {
+        for (Element element : wrapper.elements) {
             return element.getNodeName();
         }
 
@@ -37,24 +36,23 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
         List<Property> properties = new ArrayList<>();
 
         if(wrapper.elements.size() > 0) {
-            Object fieldsEntity = wrapper.elements.get(0);
-            if (fieldsEntity instanceof Element) {
-                properties =  MapAdapterCommon.createPropertiesModel(((Element) fieldsEntity).getChildNodes());
-            }
+            Element fieldsEntity = wrapper.elements.get(0);
+            properties =  MapAdapterCommon.createPropertiesModel(fieldsEntity.getChildNodes());
         }
 
-        if (wrapper.elements.size() == 2 && properties != null) {
+        if (wrapper.elements.size() == 2) {
             // specific for FuzzyMatchDetails
-            Object fieldsFuzzyDetails = wrapper.elements.get(1);
-            if (fieldsFuzzyDetails instanceof Element) {
-                List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(((Element) fieldsFuzzyDetails).getChildNodes());
+            Element fieldsFuzzyDetails = wrapper.elements.get(1);
+            List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(fieldsFuzzyDetails.getChildNodes());
 
-                if (fuzzyProperties != null && fuzzyProperties.size() ==  6) {
-                    MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
-                    properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
-                } else {
-                    throw new RuntimeException("fuzzyMatchDetails is a reserved name");
-                }
+            if (fuzzyProperties.size() ==  6) {
+                MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
+                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
+            } else {
+                Element element = wrapper.elements.get(0);
+                String modelName = element.getNodeName();
+
+                throw new RuntimeException("The model " + modelName + " in your MDH repository cannot have a property called fuzzyMatchDetails, as it is a reserved property name");
             }
         }
 

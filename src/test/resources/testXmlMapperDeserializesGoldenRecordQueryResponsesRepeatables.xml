@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <RecordQueryResponse resultCount="2" totalCount="2">
-    <Record recordId="9799d1e7-e3da-4c90-9853-68be3cdfdca4" createdDate="2019-11-27T16:01:38Z" updatedDate="2019-11-27T16:06:30Z">
+    <Record recordId="9799d1e7-e3da-4c90-9853-68be3cdfdca4" createdDate="2019-11-27T00:00:00Z" updatedDate="2019-11-27T16:06:30Z">
         <Fields>
             <accountnest2>
                 <single_value>single value 2-1</single_value>

@@ -225,15 +225,15 @@ public class DatabaseLoadGoldenRecordTests {
         GoldenRecord.Link link = new GoldenRecord.Link();
         link.setSource("source link " + number);
         link.setEntityId("source entity " + number);
-        link.setEstablishedDate("2016-03-04T23:45:10Z");
+        link.setEstablishedDate(OffsetDateTime.parse("2016-03-04T23:45:10Z"));
         links.add(link);
 
         return new GoldenRecord()
-                .setCreatedDate("2015-01-02T12:34:56Z")
+                .setCreatedDate(OffsetDateTime.parse("2015-01-02T12:34:56Z"))
                 .setMObject(mObject)
                 .setLinks(links)
                 .setRecordId("record ID " + number)
-                .setUpdatedDate("2017-03-04T23:45:10Z");
+                .setUpdatedDate(OffsetDateTime.parse("2017-03-04T23:45:10Z"));
     }
 
     private static ListFilterWhere createWhere(String columnName, CriteriaType criteriaType, String value) {

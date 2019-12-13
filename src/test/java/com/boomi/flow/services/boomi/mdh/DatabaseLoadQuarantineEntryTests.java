@@ -74,9 +74,9 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___cause"));
         assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a cause 1"));
         assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___createdDate"));
-        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-04T12:34:00Z"));
         assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___endDate"));
-        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("2018-02-05T13:57:00Z"));
         assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___reason"));
         assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a reason 1"));
         assertThat(objects.get(0).getProperties().get(8).getDeveloperName(), equalTo("___resolution"));
@@ -113,9 +113,9 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("___cause"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("___createdDate"));
-        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34:00Z"));
         assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("___endDate"));
-        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57:00Z"));
         assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("___reason"));
         assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a reason 1"));
         assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___resolution"));
@@ -213,8 +213,8 @@ public class DatabaseLoadQuarantineEntryTests {
 
         return new QuarantineEntry()
                 .setCause("a cause " + number)
-                .setCreatedDate("2018-02-04T12:34Z")
-                .setEndDate("2018-02-05T13:57Z")
+                .setCreatedDate(OffsetDateTime.parse("2018-02-04T12:34Z"))
+                .setEndDate(OffsetDateTime.parse("2018-02-05T13:57Z"))
                 .setEntity(null)
                 .setReason("a reason " + number)
                 .setResolution("a resolution " + number)
@@ -236,8 +236,8 @@ public class DatabaseLoadQuarantineEntryTests {
 
         return new QuarantineEntry()
                 .setCause("a cause " + number)
-                .setCreatedDate("2018-02-04T12:34Z")
-                .setEndDate("2018-02-05T13:57Z")
+                .setCreatedDate(OffsetDateTime.parse("2018-02-04T12:34Z"))
+                .setEndDate(OffsetDateTime.parse("2018-02-05T13:57Z"))
                 .setEntity(entity)
                 .setReason("a reason " + number)
                 .setResolution("a resolution " + number)
