@@ -10,13 +10,11 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
-import com.manywho.sdk.api.run.elements.type.ListFilter;
-import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
-import com.manywho.sdk.api.run.elements.type.MObject;
-import com.manywho.sdk.api.run.elements.type.ObjectDataType;
+import com.manywho.sdk.api.run.elements.type.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -76,9 +74,9 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___cause"));
         assertThat(objects.get(0).getProperties().get(4).getContentValue(), equalTo("a cause 1"));
         assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___createdDate"));
-        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("2018-02-04T12:34:00Z"));
         assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___endDate"));
-        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("2018-02-05T13:57:00Z"));
         assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___reason"));
         assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("a reason 1"));
         assertThat(objects.get(0).getProperties().get(8).getDeveloperName(), equalTo("___resolution"));
@@ -115,9 +113,9 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("___cause"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("a cause 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("___createdDate"));
-        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34Z"));
+        assertThat(objects.get(0).getProperties().get(1).getContentValue(), equalTo("2018-02-04T12:34:00Z"));
         assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("___endDate"));
-        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57Z"));
+        assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("2018-02-05T13:57:00Z"));
         assertThat(objects.get(0).getProperties().get(3).getDeveloperName(), equalTo("___reason"));
         assertThat(objects.get(0).getProperties().get(3).getContentValue(), equalTo("a reason 1"));
         assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo("___resolution"));
@@ -226,16 +224,15 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
-        Map<String, Object> entityWrapper = new  HashMap<String, Object>();
-        entityWrapper.put("field 1 " + number, "field 1 value " + number);
-        entityWrapper.put("field 2 " + number, "field 2 value " + number);
-        entityWrapper.put("field 3 " + number, "field 3 value " + number);
-        entityWrapper.put("field 4 " + number, ImmutableMap.<String, Object>builder()
-                                                    .put("field 4 " + number + " property", "value property 4 value 1 " + number)
-                                                    .build());
+        List<Property> properties = new ArrayList<>();
+        properties.add(new Property("field 1 " + number, "field 1 value " + number));
+        properties.add(new Property("field 2 " + number, "field 2 value " + number));
+        properties.add(new Property("field 3 " + number, "field 3 value " + number));
+        MObject field4 = new MObject("field 4 " + number + "-child",
+                Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
+        properties.add(new Property("field 4", field4));
 
-        Map<String, Map<String, Object>> entity = new HashMap<>();
-        entity.put("dunno", entityWrapper);
+        MObject entity = new MObject("dunno", properties);
 
         return new QuarantineEntry()
                 .setCause("a cause " + number)

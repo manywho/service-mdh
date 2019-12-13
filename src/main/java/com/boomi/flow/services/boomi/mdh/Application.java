@@ -8,7 +8,7 @@ import javax.ws.rs.ApplicationPath;
 
 @ApplicationPath("/")
 public class Application extends Servlet3Server {
-    public Application(){
+    public Application() {
         this.addModule(new ApplicationModule());
         this.setApplication(Application.class);
         this.start();

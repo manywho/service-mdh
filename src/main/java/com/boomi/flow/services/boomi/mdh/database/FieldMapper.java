@@ -14,7 +14,6 @@ import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -109,34 +108,84 @@ public class FieldMapper {
         return types;
     }
 
-    public static Map<String, Object> createMapFromMobject(MObject mObject) {
+    public static Map<String, Object> createMapFromModelMobject(MObject mObject, Universe universe) {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
             if (property.getDeveloperName().startsWith("___")) {
                 continue;
-            }
-            if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
-                // Ignore datetime with empty values
-                continue;
-            }
-
-            if (property.getContentValue() != null) {
-                if (property.getContentType() == ContentType.DateTime) {
-                    String dateFormatted = OffsetDateTime
-                            .parse(property.getContentValue())
-                            .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
-
-                    mapObject.put(property.getDeveloperName(), dateFormatted);
-                } else {
-                    mapObject.put(property.getDeveloperName(), property.getContentValue());
+            } else {
+                Object object = createMapEntry(property, universe.getLayout().getModel().getElements());
+                if (object == null) {
+                    continue;
                 }
-            } else if (property.getObjectData() != null && property.getObjectData().size() > 0) {
-                mapObject.put(property.getDeveloperName(), createMapFromMobject(property.getObjectData().get(0)));
+
+                if (property.getContentType() == ContentType.List) {
+                    mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
+                } else if (property.getContentType() == ContentType.Object && object instanceof List) {
+                    // this is not really a list in hub, we need to do some modifications
+                    Map<String, Object> container = (Map<String, Object>) ((List) object).get(0);
+                    mapObject.put(property.getDeveloperName(), container.get(property.getDeveloperName()));
+                } else {
+                    // is not a field group
+                    mapObject.put(property.getDeveloperName(), object);
+                }
             }
         }
 
         return mapObject;
+    }
+
+    private static String getEntryName(Property property, List<Universe.Layout.Model.Element> elements) {
+        Universe.Layout.Model.Element foundElement = elements.stream()
+                .filter(element -> element.getName().equals(property.getDeveloperName()))
+                . findFirst()
+                .orElseGet(Universe.Layout.Model.Element::new);
+
+        if (foundElement.isRepeatable()) {
+            return foundElement.getCollectionUniqueId().toLowerCase();
+        } else {
+            return property.getDeveloperName();
+        }
+    }
+
+    static Object createMapEntry(Property property, List<Universe.Layout.Model.Element> elements) {
+        if (property.getContentValue() != null) {
+            if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
+                // Ignore datetime with empty values
+                return null;
+            }
+
+            if (property.getContentType() == ContentType.DateTime) {
+                return OffsetDateTime
+                        .parse(property.getContentValue())
+                        .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
+            } else {
+                return property.getContentValue();
+            }
+        } else if (property.getObjectData() != null) {
+            List<Map<String, Object>> listOfObjects = new ArrayList<>();
+
+            for (MObject mobjectItem: property.getObjectData()) {
+                listOfObjects.add(createMapFromMobject(mobjectItem, elements));
+            }
+
+            return listOfObjects;
+        }
+        return null;
+    }
+
+    public static Map<String, Object> createMapFromMobject(MObject mObject, List<Universe.Layout.Model.Element> elements) {
+        Map<String, Object> mapObject = new HashMap<>();
+
+        for (Property property: mObject.getProperties()) {
+            mapObject.put(property.getDeveloperName(), createMapEntry(property, elements));
+        }
+
+        Map<String, Object> wrapperObject = new HashMap<>();
+        wrapperObject.put(mObject.getDeveloperName().substring(0, mObject.getDeveloperName().length()-6), mapObject);
+
+        return wrapperObject;
     }
 
     private static List<Universe.Layout.Model.Element> extractOneLevelChildTypeElements(List<Universe.Layout.Model.Element> elements) {
@@ -145,7 +194,7 @@ public class FieldMapper {
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
-            if (contentType == ContentType.Object) {
+            if (contentType == ContentType.Object || contentType == ContentType.List) {
                 childTypeElement.add(element);
             }
         }
@@ -159,7 +208,7 @@ public class FieldMapper {
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
-            if (contentType != null && contentType != ContentType.List) {
+            if (contentType != null) {
                 properties.add(createProperty(element, contentType));
             }
         }
@@ -173,7 +222,7 @@ public class FieldMapper {
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
-            if (contentType != null && contentType != ContentType.List) {
+            if (contentType != null) {
                 propertyBindings.add(creteTypeElementPropertyBinding(element, contentType));
             }
         }
@@ -218,7 +267,7 @@ public class FieldMapper {
         bindings.add(new TypeElementBinding(groupFieldElement.getPrettyName() + " Child Type Default",
                 developerSummaryChildProperty, groupFieldElement.getName() + "-child", propertyBindings));
 
-        types.add(new TypeElement(groupFieldElement.getName(), properties, bindings));
+        types.add(new TypeElement(groupFieldElement.getName(), "", properties, bindings));
 
         return types;
     }

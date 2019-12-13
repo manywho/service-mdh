@@ -10,29 +10,39 @@ import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Entities {
 
-    public static MObject createGoldenRecordMObject(String universeId, String id, Map<String, Map<String, Object>> entity, List<GoldenRecord.Link> links) {
-        if (entity == null || entity.isEmpty()) {
+    public static MObject createGoldenRecordMObject(String universeId, String id, MObject mObject, List<GoldenRecord.Link> links) {
+        if (mObject == null) {
             return null;
         }
 
-        Map.Entry<String, Map<String, Object>> entry = entity.entrySet().iterator().next();
-        List<Property> properties = createPropertiesModel(entry.getValue(), links);
+        List<Property> properties = mObject.getProperties();
+
+        // this part is only for Golden Records
+        List<MObject> mObjectLinks = links.stream()
+                .map(Entities::createMObjectForLink)
+                .collect(Collectors.toList());
+
+        properties.add(new Property(GoldenRecordConstants.LINKS_FIELD, mObjectLinks));
         properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
 
         return new MObject(universeId + "-golden-record", id, properties);
     }
 
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
-        List<Property> properties = getPropertiesFromEntity(entry.getEntity());
+        List<Property> properties = new ArrayList<>();
+        if (entry.getEntity() != null) {
+            properties = entry.getEntity().getProperties();
+        }
 
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
-        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, entry.getCreatedDate()));
-        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, entry.getEndDate()));
+        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, EngineCompatibleDates.format(entry.getCreatedDate())));
+        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, EngineCompatibleDates.format(entry.getEndDate())));
         properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
         properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
         properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
@@ -40,15 +50,6 @@ public class Entities {
         properties.add(new Property(QuarantineEntryConstants.SOURCE_ID_FIELD, entry.getSourceId()));
 
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
-    }
-
-    private static List<Property> getPropertiesFromEntity(Map<String, Map<String, Object>> entity) {
-        if (entity == null || entity.isEmpty()) {
-            return new ArrayList<>();
-        } else {
-            Map.Entry<String, Map<String, Object>> entityEntry = entity.entrySet().iterator().next();
-            return createPropertiesModel(entityEntry.getValue(), null);
-        }
     }
 
     public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField) {
@@ -72,34 +73,20 @@ public class Entities {
     }
 
     public static MObject createMatchMObject(String universeId, Universe universe, MatchEntityResponse.MatchResult result) {
-        String externalId = result.getEntity().get(universe.getName()).get(universe.getIdField()).toString();
 
         Property propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>());
         Property propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>());
         Property propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
 
         if ("SUCCESS".equals(result.getStatus())) {
-            List<MObject> matches = result.getMatch().stream()
-                    .map(match -> createMatchesToProperty(universe, match, universe.getIdField(), true))
-                    .collect(Collectors.toList());
-
-            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, matches);
-
-            List<MObject> duplicates = result.getDuplicate().stream()
-                    .map(duplicate -> createMatchesToProperty(universe, duplicate, universe.getIdField(), true))
-                    .collect(Collectors.toList());
-
-            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, duplicates);
-
+            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, setExternalIdForeachObject(result.getMatch(), universe));
+            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, setExternalIdForeachObject(result.getDuplicate(), universe));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
-            Map<String, Object> entityLinked = result.getEntity().get(universe.getName());
-            propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, createAlreadyLinked(universe, entityLinked, universe.getIdField()));
+            MObject alreadyLinkedObject = new MObject(result.getEntity().getDeveloperName(), result.getEntity().getExternalId(), result.getEntity().getProperties());
+            propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
         }
 
-        List<Property> properties = result.getEntity().get(universe.getName()).entrySet().stream()
-                .filter(entry -> entry.getValue() instanceof String)
-                .map(entry -> new Property(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        List<Property> properties = result.getEntity().getProperties();
 
         properties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, result.getIdResource()));
         properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
@@ -108,74 +95,37 @@ public class Entities {
         properties.add(propertiesDuplicated);
         properties.add(propertiesAlreadyLinked);
 
+        String externalId = result.getEntity().getProperties().stream()
+                .filter(p -> p.getDeveloperName().equals(universe.getIdField()))
+                .map(Property::getContentValue)
+                .findFirst()
+                .orElse(UUID.randomUUID().toString());
+
+
         MObject object = new MObject(universeId + "-match", externalId, properties);
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         return object;
     }
 
-    private static MObject createAlreadyLinked(Universe universe, Map<String, Object> entity, String idField){
-        List<Property> properties = createPropertiesModel(entity, null);
-
-        return new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(),
-                properties);
-    }
-
-    private static MObject createMatchesToProperty(Universe universe, Map<String, Object> matchResults, String idField, boolean addFuzzyMatchDetails){
-        Map<String, Object> entity = (Map<String, Object>) matchResults.get(universe.getName());
-        List<Property> properties = createPropertiesModel(entity, null);
-
-        if (addFuzzyMatchDetails) {
-            Map<String, Object> result = (Map<String, Object>) matchResults.get("fuzzyMatchDetails");
-
-            List<Property> propertiesFuzzy = new ArrayList<Property>();
-            if (result != null) {
-                propertiesFuzzy.add(new Property("Field", result.get("field")));
-                propertiesFuzzy.add(new Property("First", result.get("first")));
-                propertiesFuzzy.add(new Property("Second", result.get("second")));
-                propertiesFuzzy.add(new Property("Method", result.get("method")));
-                propertiesFuzzy.add(new Property("Match Strength", result.get("matchStrength")));
-                propertiesFuzzy.add(new Property("Threshold", result.get("threshold")));
-
-                MObject fuzzyMatchDetails = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, UUID.randomUUID().toString(), propertiesFuzzy);
-                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetails));
-            } else {
-                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, new ArrayList<>()));
-            }
-
-        }
-
-        MObject object = new MObject(universe.getId().toString() + "-match", entity.get(idField).toString(), properties);
-
-        object.setTypeElementBindingDeveloperName(object.getDeveloperName());
-
-        return object;
-    }
-
-    private static List<Property> createPropertiesModel(Map<String, Object> map, List<GoldenRecord.Link> links) {
-        ArrayList<Property> properties = new ArrayList<>();
-
-        for (Map.Entry<String, Object> entry:map.entrySet()) {
-            if (entry.getValue() instanceof Map) {
-                MObject object = new MObject(entry.getKey() + "-child", createPropertiesModel((Map<String, Object>) entry.getValue(), null));
-                object.setTypeElementBindingDeveloperName(entry.getKey() + "-child");
-                object.setExternalId(UUID.randomUUID().toString());
-                properties.add(new Property(entry.getKey(), Collections.singletonList(object)));
-            } else {
-                properties.add(new Property(entry.getKey(), entry.getValue()));
-            }
-        }
-
-        if (links == null) {
-            return  properties;
-        }
-        // this part is only for Golden Records
-        List<MObject> mObjectLinks = links.stream()
-                .map(Entities::createMObjectForLink)
+    private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
+        return objects
+                .stream()
+                .peek(object -> setExternalIdForObject(object, universe.getIdField()))
                 .collect(Collectors.toList());
+    }
 
-        properties.add(new Property(GoldenRecordConstants.LINKS_FIELD, mObjectLinks));
-        return properties;
+    private static void setExternalIdForObject(MObject object, String fieldId) {
+        if (Strings.isNullOrEmpty(object.getExternalId())) {
+            String externalId = object.getProperties()
+                    .stream()
+                    .filter(p -> fieldId.equals(p.getDeveloperName()))
+                    .map(Property::getContentValue)
+                    .findFirst()
+                    .orElse(UUID.randomUUID().toString());
+
+            object.setExternalId(externalId);
+        }
     }
 
     private static MObject createMObjectForLink(GoldenRecord.Link link) {

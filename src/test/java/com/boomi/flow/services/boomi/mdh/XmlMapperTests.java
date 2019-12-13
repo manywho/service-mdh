@@ -8,11 +8,11 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordQueryResponse;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.google.common.io.Resources;
+import com.manywho.sdk.api.run.elements.type.MObject;
 import org.junit.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
-
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -20,8 +20,6 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -177,26 +175,49 @@ public class XmlMapperTests {
         assertThat(actual.getTotalCount(), equalTo(2));
         assertThat(actual.getRecords(), hasSize(2));
         assertThat(actual.getRecords().get(0).getRecordId(), equalTo("02a8284d-0ef3-4091-acef-85f23d80cf0d"));
-        assertThat(actual.getRecords().get(0).getCreatedDate(), equalTo(OffsetDateTime.parse("2013-09-23T14:07:31Z")));
+        assertThat(actual.getRecords().get(0).getCreatedDate(), equalTo(OffsetDateTime.parse("2013-09-23T00:00Z")));
         assertThat(actual.getRecords().get(0).getUpdatedDate(), equalTo(OffsetDateTime.parse("2014-02-04T15:59:21Z")));
-        assertThat(actual.getRecords().get(0).getFields(), not(nullValue()));
-        assertThat(actual.getRecords().get(0).getFields().get("account"), not(nullValue()));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("name"), equalTo("Dell Boomi"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("description"), equalTo("Cloud based data management"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("account_number"), equalTo("1234561234"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("phone_number"), equalTo("(610) 111-1111"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("fax"), equalTo("(610) 111-4444"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("billing_address"), instanceOf(Map.class));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_address"), equalTo("801 Cassat Rd."));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_city"), equalTo("Berwyn"));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_state"), equalTo("PA"));
-        assertThat(((Map<String, Object>) actual.getRecords().get(0).getFields().get("account").get("billing_address")).get("billing_postal_code"), equalTo("19312"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("website"), equalTo("http://boomi.com"));
-        assertThat(actual.getRecords().get(0).getFields().get("account").get("number_of_employees"), equalTo("200"));
+        assertThat(actual.getRecords().get(0).getMObject(), not(nullValue()));
+
+        MObject account0 = actual.getRecords().get(0).getMObject();
+        assertThat(actual.getRecords().get(0).getMObject().getDeveloperName(), equalTo("account"));
+
+        assertThat(account0.getProperties().get(0).getDeveloperName(), equalTo("name"));
+        assertThat(account0.getProperties().get(0).getContentValue(), equalTo("Dell Boomi"));
+
+        assertThat(account0.getProperties().get(1).getDeveloperName(), equalTo("description"));
+        assertThat(account0.getProperties().get(1).getContentValue(), equalTo("Cloud based data management"));
+
+        assertThat(account0.getProperties().get(2).getDeveloperName(), equalTo("account_number"));
+        assertThat(account0.getProperties().get(2).getContentValue(), equalTo("1234561234"));
+
+        assertThat(account0.getProperties().get(3).getDeveloperName(), equalTo("phone_number"));
+        assertThat(account0.getProperties().get(3).getContentValue(), equalTo("(610) 111-1111"));
+
+        assertThat(account0.getProperties().get(4).getDeveloperName(), equalTo("fax"));
+        assertThat(account0.getProperties().get(4).getContentValue(), equalTo("(610) 111-4444"));
+
+        MObject billingAddress0 = actual.getRecords().get(0).getMObject().getProperties().get(5).getObjectData().get(0);
+
+        assertThat(billingAddress0.getProperties().get(0).getDeveloperName(), equalTo("billing_address"));
+        assertThat(billingAddress0.getProperties().get(0).getContentValue(), equalTo("801 Cassat Rd."));
+        assertThat(billingAddress0.getProperties().get(1).getDeveloperName(), equalTo("billing_city"));
+        assertThat(billingAddress0.getProperties().get(1).getContentValue(), equalTo("Berwyn"));
+        assertThat(billingAddress0.getProperties().get(2).getDeveloperName(), equalTo("billing_state"));
+        assertThat(billingAddress0.getProperties().get(2).getContentValue(), equalTo("PA"));
+        assertThat(billingAddress0.getProperties().get(3).getDeveloperName(), equalTo("billing_postal_code"));
+        assertThat(billingAddress0.getProperties().get(3).getContentValue(), equalTo("19312"));
+
+        assertThat(account0.getProperties().get(6).getDeveloperName(), equalTo("website"));
+        assertThat(account0.getProperties().get(6).getContentValue(), equalTo("http://boomi.com"));
+        assertThat(account0.getProperties().get(7).getDeveloperName(), equalTo("number_of_employees"));
+        assertThat(account0.getProperties().get(7).getContentValue(), equalTo("200"));
+
         assertThat(actual.getRecords().get(0).getLinks().get(0).getEntityId(), equalTo("d39bc927-e005-4157-b73c-4956bfa2acb1"));
         assertThat(actual.getRecords().get(0).getLinks().get(0).getSource(), equalTo("flow1"));
-        assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate().toString(), equalTo("2019-08-08T10:56:41Z"));
+        assertThat(actual.getRecords().get(0).getLinks().get(0).getEstablishedDate(), equalTo(OffsetDateTime.parse("2019-08-08T10:56:41Z")));
     }
+
 
     @Test
     public void testXmlMapperDeserializesGoldenRecordHistoryResponse() throws IOException {
@@ -314,45 +335,126 @@ public class XmlMapperTests {
 
         assertThat( actual.getMatchResults().get(0).getMatchRule(), equalTo("Incoming name is similar to (Jaro-Winkler) Existing name"));
         assertThat( actual.getMatchResults().get(0).getStatus(), equalTo("SUCCESS"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("id"), equalTo("1"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("name"), equalTo("bobby"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("city"), equalTo("berwyn"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("email"), equalTo("bob@gmail.com"));
-        assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("spouse"), equalTo("1001"));
-        //assertThat( actual.getMatchResults().get(0).getEntity().get("contact").get("phones"), notNull); // not working properly need to be fixed for child elements
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("id"), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("name"), equalTo("bob"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("city"), equalTo("berwyn"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("email"), equalTo("bob@gmail.com"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("contact")).get("spouse"), equalTo("1001"));
+        assertThat(actual.getMatchResults().get(0).getEntity().getDeveloperName(), equalTo("contact"));
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("field"), equalTo("name"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("first"), equalTo("BOBBY"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("second"), equalTo("BOB"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("method"), equalTo("jarowinkler"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("matchStrength"), equalTo("0.90666664"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getMatch().get(0).get("fuzzyMatchDetails")).get("threshold"), equalTo("0.85"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(0).getContentValue(), equalTo("1"));
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("id"), equalTo("fc8cd5be-ac26-4e9a-9d0c-6b397a124172"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("name"), equalTo("bob"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("city"), equalTo("berwyn"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("email"), equalTo("bob@gmail.com"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("contact")).get("spouse"), equalTo("1001"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(1).getDeveloperName(), equalTo("name"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(1).getContentValue(), equalTo("bobby"));
 
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("field"), equalTo("name"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("first"), equalTo("BOBBY"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("second"), equalTo("BOB"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("method"), equalTo("jarowinkler"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("matchStrength"), equalTo("0.90666664"));
-        assertThat(((HashMap)actual.getMatchResults().get(0).getDuplicate().get(0).get("fuzzyMatchDetails")).get("threshold"), equalTo("0.85"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(2).getDeveloperName(), equalTo("city"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(2).getContentValue(), equalTo("berwyn"));
 
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phone"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getContentValue(), nullValue());
+
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("number"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("311 555-1234"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("type"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("home"));
+
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getDeveloperName(), equalTo("number"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getContentValue(), equalTo("311 555-4321"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(1).getDeveloperName(), equalTo("type"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(1).getContentValue(), equalTo("mobile"));
+
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(4).getDeveloperName(), equalTo("email"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(4).getContentValue(), equalTo("bob@gmail.com"));
+
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(5).getDeveloperName(), equalTo("spouse"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(5).getContentValue(), equalTo("1001"));
+
+        // match entities
+        assertThat(actual.getMatchResults().get(0).getStatus(), equalTo("SUCCESS"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getDeveloperName(), equalTo("contact"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(0).getContentValue(), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(1).getDeveloperName(), equalTo("name"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(1).getContentValue(), equalTo("bob"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(2).getDeveloperName(), equalTo("city"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(2).getContentValue(), equalTo("berwyn"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getDeveloperName(), equalTo("phone"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getContentValue(), nullValue());
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("number"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("311 555-1234"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("type"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("home"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(0).getDeveloperName(), equalTo("number"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(0).getContentValue(), equalTo("311 555-4321"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(1).getDeveloperName(), equalTo("type"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(1).getContentValue(), equalTo("mobile"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(4).getDeveloperName(), equalTo("email"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(4).getContentValue(), equalTo("bob@gmail.com"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(5).getDeveloperName(), equalTo("spouse"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(5).getContentValue(), equalTo("1001"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getDeveloperName(), equalTo("Fuzzy Match Details"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getDeveloperName(), equalTo("Fuzzy Match Details"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("name"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("first"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("BOBBY"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("second"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("BOB"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("method"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("jarowinkler"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo("matchStrength"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(4).getContentValue(), equalTo("0.90666664"));
+
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(5).getDeveloperName(), equalTo("threshold"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(5).getContentValue(), equalTo("0.85"));
+
+        // already linked
         assertThat( actual.getMatchResults().get(1).getMatchRule(), nullValue());
         assertThat( actual.getMatchResults().get(1).getStatus(), equalTo("ALREADY_LINKED"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("id"), equalTo("2"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("name"), equalTo("mike"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("city"), equalTo("chesterbrook"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("email"), equalTo("mike@gmail.com"));
-        assertThat( actual.getMatchResults().get(1).getEntity().get("contact").get("spouse"), equalTo("1002"));
+
+        assertThat(actual.getMatchResults().get(1).getEntity().getDeveloperName(), equalTo("contact"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(0).getContentValue(), equalTo("2"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(1).getDeveloperName(), equalTo("name"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(1).getContentValue(), equalTo("mike"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(2).getDeveloperName(), equalTo("city"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(2).getContentValue(), equalTo("chesterbrook"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phone"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getContentValue(), nullValue());
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("number"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("311 555-2345"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("type"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("home"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getDeveloperName(), equalTo("number"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getContentValue(), equalTo("311 555-5432"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(1).getDeveloperName(), equalTo("type"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(1).getContentValue(), equalTo("mobile"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(4).getDeveloperName(), equalTo("email"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(4).getContentValue(), equalTo("mike@gmail.com"));
+
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(5).getDeveloperName(), equalTo("spouse"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(5).getContentValue(), equalTo("1002"));
     }
 }

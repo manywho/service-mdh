@@ -1,15 +1,13 @@
 package com.boomi.flow.services.boomi.mdh.match;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
-
+import com.manywho.sdk.api.run.elements.type.MObject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @XmlRootElement(name = "MatchEntitiesResponse")
 public class MatchEntityResponse {
@@ -28,9 +26,9 @@ public class MatchEntityResponse {
         private String status;
         private String matchRule;
         private String idResource;
-        private Map<String, Map<String, Object>> entity = new HashMap<>();
-        private List<Map<String, Object>> match = new ArrayList<>();
-        private List<Map<String, Object>> duplicate = new ArrayList<>();
+        private MObject entity;
+        private List<MObject> match = new ArrayList<>();
+        private List<MObject> duplicate = new ArrayList<>();
 
         @XmlAttribute
         public String getStatus() {
@@ -60,31 +58,31 @@ public class MatchEntityResponse {
 
         @XmlElement(name = "entity")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public Map<String, Map<String, Object>> getEntity() {
+        public MObject getEntity() {
             return entity;
         }
 
-        public void setEntity(Map<String, Map<String, Object>> entity) {
+        public void setEntity(MObject entity) {
             this.entity = entity;
         }
 
         @XmlElement(name = "match")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public List<Map<String, Object>> getMatch() {
+        public List<MObject> getMatch() {
             return match;
         }
 
-        public void setMatch(List<Map<String, Object>> match) {
+        public void setMatch(List<MObject> match) {
             this.match = match;
         }
 
         @XmlElement(name = "duplicate")
         @XmlJavaTypeAdapter(XmlMapAdapter.class)
-        public List<Map<String, Object>> getDuplicate() {
+        public List<MObject> getDuplicate() {
             return duplicate;
         }
 
-        public void setDuplicate(List<Map<String, Object>> duplicate) {
+        public void setDuplicate(List<MObject> duplicate) {
             this.duplicate = duplicate;
         }
     }

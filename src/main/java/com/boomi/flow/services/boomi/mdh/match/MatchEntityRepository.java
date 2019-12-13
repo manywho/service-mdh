@@ -52,7 +52,7 @@ public class MatchEntityRepository {
 
         return resultsList.stream()
                 .flatMap(Collection::stream)
-                .filter(result -> result.getEntity() != null && result.getEntity().get(universe.getName()) != null)
+                .filter(result -> result.getEntity() != null)
                 .map(matchResult -> Entities.createMatchMObject(universeId, universe, matchResult))
                 .collect(Collectors.toList());
     }

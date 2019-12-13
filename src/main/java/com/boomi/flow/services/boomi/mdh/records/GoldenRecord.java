@@ -1,23 +1,21 @@
 package com.boomi.flow.services.boomi.mdh.records;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
-import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
-
+import com.manywho.sdk.api.run.elements.type.MObject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
 
 public class GoldenRecord {
     private OffsetDateTime createdDate;
     private OffsetDateTime updatedDate;
     private String recordId;
-    private Map<String, Map<String, Object>> fields = new HashMap<>();
+    private MObject mObject;
     private List<Link> links = new ArrayList<>();
 
     @XmlAttribute
@@ -54,17 +52,18 @@ public class GoldenRecord {
 
     @XmlElement(name = "Fields")
     @XmlJavaTypeAdapter(XmlMapAdapter.class)
-    public Map<String, Map<String, Object>> getFields() {
-        return fields;
+    public MObject getMObject() {
+        return mObject;
     }
 
-    public GoldenRecord setFields(Map<String, Map<String, Object>> fields) {
-        this.fields = fields;
+    public GoldenRecord setMObject(MObject mObject) {
+        this.mObject = mObject;
         return this;
     }
+
     @XmlElementWrapper
     @XmlElement(name = "link")
-    public List<Link> getLinks() {
+    public List<GoldenRecord.Link> getLinks() {
         return links;
     }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<batch src="flow">
+    <accountnest2>
+        <single_value>single value 2-1</single_value>
+        <other_single_value>other single value 2</other_single_value>
+        <nest2contact>
+            <nest2_contact_name>contatc name 2</nest2_contact_name>
+            <nest2_contact_phone>contact phone 2</nest2_contact_phone>
+        </nest2contact>
+        <billing_address_collection_name>
+            <billing_address_rename>
+                <billing_address_street>street 2-1</billing_address_street>
+            </billing_address_rename>
+            <billing_address_rename>
+                <billing_address_street>street 2-2</billing_address_street>
+            </billing_address_rename>
+        </billing_address_collection_name>
+    </accountnest2>
+</batch>

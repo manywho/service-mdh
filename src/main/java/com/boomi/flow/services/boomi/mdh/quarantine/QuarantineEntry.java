@@ -2,11 +2,10 @@ package com.boomi.flow.services.boomi.mdh.quarantine;
 
 import com.boomi.flow.services.boomi.mdh.client.XmlMapAdapter;
 import com.migesok.jaxb.adapter.javatime.OffsetDateTimeXmlAdapter;
-
+import com.manywho.sdk.api.run.elements.type.MObject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 public class QuarantineEntry {
     private OffsetDateTime createdDate;
@@ -17,7 +16,7 @@ public class QuarantineEntry {
     private String cause;
     private String reason;
     private String resolution;
-    private Map<String, Map<String, Object>> entity;
+    private MObject entity;
 
     @XmlAttribute
     @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
@@ -99,11 +98,11 @@ public class QuarantineEntry {
     }
 
     @XmlJavaTypeAdapter(XmlMapAdapter.class)
-    public Map<String, Map<String, Object>> getEntity() {
+    public MObject getEntity() {
         return entity;
     }
 
-    public QuarantineEntry setEntity(Map<String, Map<String, Object>> entity) {
+    public QuarantineEntry setEntity(MObject entity) {
         this.entity = entity;
         return this;
     }

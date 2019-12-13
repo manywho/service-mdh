@@ -1,55 +1,61 @@
 package com.boomi.flow.services.boomi.mdh.client;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.util.HashMap;
-import java.util.Map;
 
-public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, Map<String, Map<String, Object>>> {
+import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
+import com.manywho.sdk.api.run.elements.type.MObject;
+import com.manywho.sdk.api.run.elements.type.Property;
+import org.w3c.dom.Element;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
     @Override
-    public XmlMapWrapper marshal(Map<String, Map<String, Object>> m) throws Exception {
+    public MObject unmarshal(XmlMapWrapper wrapper) throws Exception {
+        if (wrapper == null || wrapper.elements == null || wrapper.elements.isEmpty()) {
+            return null;
+        }
+
+        return new MObject(firstNodeName(wrapper), "", getProperties(wrapper));
+    }
+
+    @Override
+    public XmlMapWrapper marshal(MObject stringMultimapMap) throws Exception {
         throw new RuntimeException("Marshalling maps isn't supported yet");
     }
 
-    @Override
-    public Map<String, Map<String, Object>> unmarshal(XmlMapWrapper wrapper) throws Exception {
-        Map<String, Map<String, Object>> map = new HashMap<>();
-
-        if (wrapper == null || wrapper.elements == null || wrapper.elements.isEmpty()) {
-            return map;
+    private String firstNodeName(XmlMapWrapper wrapper) {
+        for (Element element : wrapper.elements) {
+            return element.getNodeName();
         }
 
-        for (Object object : wrapper.elements) {
-            Element element = (Element) object;
-
-            if (element.hasChildNodes()) {
-                map.put(element.getNodeName(), createChildNodes(element.getChildNodes()));
-            }
-        }
-
-        return map;
+        return "";
     }
 
-    private static Map<String, Object> createChildNodes(NodeList elements) {
-        Map<String, Object> childMap = new HashMap<>();
+    private List<Property> getProperties(XmlMapWrapper wrapper) {
+        List<Property> properties = new ArrayList<>();
 
-        for (int i = 0; i < elements.getLength(); i++) {
-            Node childNode = elements.item(i);
+        if(wrapper.elements.size() > 0) {
+            Element fieldsEntity = wrapper.elements.get(0);
+            properties =  MapAdapterCommon.createPropertiesModel(fieldsEntity.getChildNodes());
+        }
 
-            if (childNode.hasChildNodes() == false) {
-                continue;
-            }
+        if (wrapper.elements.size() == 2) {
+            // specific for FuzzyMatchDetails
+            Element fieldsFuzzyDetails = wrapper.elements.get(1);
+            List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(fieldsFuzzyDetails.getChildNodes());
 
-            if (childNode.getFirstChild().getNodeType() != 1) {
-                childMap.put(childNode.getNodeName(), childNode.getFirstChild().getNodeValue());
+            if (fuzzyProperties.size() ==  6) {
+                MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
+                properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
             } else {
-                // it is a list
-                childMap.put(childNode.getNodeName(), createChildNodes(childNode.getChildNodes()));
+                Element element = wrapper.elements.get(0);
+                String modelName = element.getNodeName();
+
+                throw new RuntimeException("The model " + modelName + " in your MDH repository cannot have a property called fuzzyMatchDetails, as it is a reserved property name");
             }
         }
 
-        return childMap;
+        return properties;
     }
 }
