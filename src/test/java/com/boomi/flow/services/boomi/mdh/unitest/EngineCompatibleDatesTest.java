@@ -17,7 +17,7 @@ public class EngineCompatibleDatesTest {
         Assert.assertNotEquals("2019-11-27T00:00:00Z", property1.getContentValue());
 
         // with compatible parser
-        Property property2 = new Property("", EngineCompatibleDates.parse(offsetDateTime));
+        Property property2 = new Property("", EngineCompatibleDates.format(offsetDateTime));
         Assert.assertEquals("2019-11-27T00:00:00Z", property2.getContentValue());
     }
 }

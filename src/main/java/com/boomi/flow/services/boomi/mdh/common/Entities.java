@@ -41,8 +41,8 @@ public class Entities {
         }
 
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
-        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, EngineCompatibleDates.parse(entry.getCreatedDate())));
-        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, EngineCompatibleDates.parse(entry.getEndDate())));
+        properties.add(new Property(QuarantineEntryConstants.CREATED_DATE_FIELD, EngineCompatibleDates.format(entry.getCreatedDate())));
+        properties.add(new Property(QuarantineEntryConstants.END_DATE_FIELD, EngineCompatibleDates.format(entry.getEndDate())));
         properties.add(new Property(QuarantineEntryConstants.REASON_FIELD, entry.getReason()));
         properties.add(new Property(QuarantineEntryConstants.RESOLUTION_FIELD, entry.getResolution()));
         properties.add(new Property(QuarantineEntryConstants.TRANSACTION_ID_FIELD, entry.getTransactionId()));
