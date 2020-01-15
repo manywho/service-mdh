@@ -124,10 +124,9 @@ public class FieldMapper {
 
                 if (property.getContentType() == ContentType.List) {
                     mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
-                } else if (property.getContentType() == ContentType.Object && object instanceof List) {
+                } else if (property.getContentType() == ContentType.Object && object instanceof HashMap) {
                     // this is not really a list in hub, we need to do some modifications
-                    Map<String, Object> container = (Map<String, Object>) ((List) object).get(0);
-                    mapObject.put(property.getDeveloperName(), container.get(property.getDeveloperName()));
+                    mapObject.put(property.getDeveloperName(), object);
                 } else {
                     // is not a field group
                     mapObject.put(property.getDeveloperName(), object);
@@ -166,6 +165,13 @@ public class FieldMapper {
                 return property.getContentValue();
             }
         } else if (property.getObjectData() != null) {
+            if (property.getContentType() == ContentType.Object) {
+                MObject firstAndUniqueObject = property.getObjectData().get(0);
+                Map<String, Object> objectHashMap = createMapFromMobject(firstAndUniqueObject, modelName, elements);
+                
+                return objectHashMap.get(property.getDeveloperName());
+            }
+
             List<Map<String, Object>> listOfObjects = new ArrayList<>();
 
             for (MObject mobjectItem: property.getObjectData()) {
@@ -174,6 +180,7 @@ public class FieldMapper {
 
             return listOfObjects;
         }
+
         return null;
     }
 
@@ -181,7 +188,8 @@ public class FieldMapper {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
-            mapObject.put(property.getDeveloperName(), createMapEntry(property, modelName, elements));
+            Object childObject = createMapEntry(property, modelName, elements);
+            mapObject.put(property.getDeveloperName(), childObject);
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universe>
+    <id>093a3572-8106-4d12-aa29-7e8dd8bf0fd2</id>
+    <version>09ae0e41-36a9-4bd5-8af0-d52a381083ef</version>
+    <name>account</name>
+    <stats activeRecords="4" enddatedRecords="0" quarantinedRecords="15" asOf="2020-01-15T12:26:43.005Z">
+        <sourceStats sourceCode="flow" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0"
+                     undeliverableChannelDeliveries="0"/>
+    </stats>
+    <sources>
+        <source code="flow" componentId="3f73189e-6ea7-4952-8958-5372873a8775" state="STRAPPING" allowContribute="true">
+            <channel id="f077179b-d942-49fe-a155-4c100f908361" updateType="FULL" state="CREATED" primary="true"/>
+        </source>
+    </sources>
+    <layoutid>093a3572-8106-4d12-aa29-7e8dd8bf0fd2</layoutid>
+    <layout idXPath="/account/id">
+        <model name="account">
+            <element uniqueId="NAME" name="name" prettyName="Name" type="STRING" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100"
+                     repeatable="false"/>
+            <element uniqueId="CONTACT" name="contact" prettyName="Contact" type="CONTAINER" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" truncateLength="255"
+                     repeatable="false">
+                <element uniqueId="NAME_1" name="name" prettyName="Name" type="STRING" required="false"
+                         enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100"
+                         truncateLength="100" repeatable="false"/>
+                <element uniqueId="ADDRESS" name="address" prettyName="address" type="CONTAINER" required="false"
+                         enforceIntegrity="false" incomingReferenceIntegrity="false" truncateLength="255"
+                         repeatable="false">
+                    <element uniqueId="STREET" name="street" prettyName="Street" type="STRING" required="false"
+                             enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100"
+                             truncateLength="100" repeatable="false"/>
+                </element>
+            </element>
+            <element uniqueId="PRODUCTS" name="products" prettyName="products" type="CONTAINER" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" truncateLength="255" repeatable="true"
+                     collectionMatchType="OCCURRENCE" collectionMatchKeys="PRODUCTNAME"
+                     collectionPrettyName="products wrapper" collectionTag="products_wrapper"
+                     collectionUniqueId="PRODUCTS_WRAPPER">
+                <element uniqueId="PRODUCT" name="product" prettyName="product" type="CONTAINER" required="false"
+                         enforceIntegrity="false" incomingReferenceIntegrity="false" truncateLength="255"
+                         repeatable="false">
+                    <element uniqueId="PRODUCTNAME" name="productname" prettyName="productname" type="STRING"
+                             required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+                             maxLength="100" truncateLength="100" repeatable="false"/>
+                </element>
+            </element>
+            <element uniqueId="COLLECTION_ROOT" name="collection_root" prettyName="collection_root" type="CONTAINER"
+                     required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="true"
+                     collectionMatchType="KEY" collectionMatchKeys="" collectionPrettyName="collection_name"
+                     collectionTag="collection_name" collectionUniqueId="COLLECTION_NAME">
+                <element uniqueId="PROPERTYINCOLLECTION" name="propertyincollection" prettyName="propertyincollection"
+                         type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+                         maxLength="100" truncateLength="100" repeatable="false"/>
+            </element>
+            <element uniqueId="A_NUMBER" name="a_number" prettyName="a number" type="INTEGER" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
+        </model>
+        <deletedElements>
+            <element uniqueId="FRIENDLY" name="friendly" prettyName="friendly" type="BOOLEAN" required="false"
+                     repeatable="false"/>
+            <element uniqueId="PUBLIC_ACCESS" name="public_access" prettyName="public access" type="BOOLEAN"
+                     required="false" repeatable="false"/>
+            <element uniqueId="CODE" name="code" prettyName="Code" type="INTEGER" required="false" repeatable="false"/>
+            <element uniqueId="CEO" name="ceo" prettyName="ceo" type="STRING" required="false" repeatable="false"/>
+            <element uniqueId="LAST_PROPERTY" name="last_property" prettyName="last property" type="STRING"
+                     required="false" repeatable="false"/>
+            <element uniqueId="A_STRING" name="a_string" prettyName="a string" type="STRING" required="false"
+                     repeatable="false"/>
+        </deletedElements>
+        <xsd>&lt;xs:schema version=&quot;1.0&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element
+            name=&quot;account&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;contact&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;address&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;street&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;products_wrapper&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element
+            maxOccurs=&quot;unbounded&quot; minOccurs=&quot;0&quot; name=&quot;products&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;product&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;productname&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;collection_name&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element
+            maxOccurs=&quot;unbounded&quot; minOccurs=&quot;0&quot; name=&quot;collection_root&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;propertyincollection&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;a_number&quot; type=&quot;xs:integer&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute
+            name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+        </xsd>
+        <field xpath="/account/id" type="STRING" prettyName="Id"/>
+        <field uniqueId="NAME" xpath="/account/name" type="STRING" prettyName="Name" required="false"
+               enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100"
+               truncateLength="100"/>
+        <field uniqueId="NAME_1" xpath="/account/contact/name" type="STRING" prettyName="Name" required="false"
+               enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100"
+               truncateLength="100"/>
+        <field uniqueId="STREET" xpath="/account/contact/address/street" type="STRING" prettyName="Street"
+               required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"
+               maxLength="100" truncateLength="100"/>
+        <field uniqueId="PRODUCTS_WRAPPER" xpath="/account/products_wrapper" type="COLLECTION"
+               prettyName="products wrapper" collectionMatchType="OCCURRENCE"/>
+        <field uniqueId="PRODUCTNAME" xpath="/account/products_wrapper/products/product/productname" type="STRING"
+               prettyName="productname" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+               titleField="false" maxLength="100" truncateLength="100" collectionId="PRODUCTS_WRAPPER"/>
+        <field uniqueId="COLLECTION_NAME" xpath="/account/collection_name" type="COLLECTION"
+               prettyName="collection_name" collectionMatchType="KEY"/>
+        <field uniqueId="PROPERTYINCOLLECTION" xpath="/account/collection_name/collection_root/propertyincollection"
+               type="STRING" prettyName="propertyincollection" required="false" enforceIntegrity="false"
+               incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"
+               collectionId="COLLECTION_NAME"/>
+        <field uniqueId="A_NUMBER" xpath="/account/a_number" type="INTEGER" prettyName="a number" required="false"
+               enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false"/>
+    </layout>
+    <matchid>093a3572-8106-4d12-aa29-7e8dd8bf0fd2</matchid>
+    <matchconfig>
+        <round>
+            <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="INCOMING"/>
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="NAME" type="EXISTING"/>
+                </nestedExpression>
+            </matchrule>
+        </round>
+    </matchconfig>
+    <dataquality/>
+</universe>
