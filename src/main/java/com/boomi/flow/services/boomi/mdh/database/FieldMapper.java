@@ -124,7 +124,7 @@ public class FieldMapper {
 
                 if (property.getContentType() == ContentType.List) {
                     mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
-                } else if (property.getContentType() == ContentType.Object && object instanceof HashMap) {
+                } else if (property.getContentType() == ContentType.Object && object instanceof Map) {
                     // this is not really a list in hub, we need to do some modifications
                     mapObject.put(property.getDeveloperName(), object);
                 } else {
