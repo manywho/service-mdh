@@ -144,7 +144,7 @@ public class FieldMapper {
                 .orElseGet(Universe.Layout.Model.Element::new);
 
         if (foundElement.isRepeatable()) {
-            return foundElement.getCollectionUniqueId().toLowerCase();
+            return foundElement.getUniqueId().toLowerCase();
         } else {
             return property.getDeveloperName();
         }
