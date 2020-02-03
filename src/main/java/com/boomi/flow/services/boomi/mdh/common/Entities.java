@@ -52,22 +52,28 @@ public class Entities {
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
     }
 
-    public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField) {
-        if (Strings.isNullOrEmpty(object.getExternalId()) == false) {
-            return object;
-        }
+    public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField, boolean model) {
         // We are requesting an object without id
         String id = UUID.randomUUID().toString();
 
         // Set the ID property, so it can be referenced in a Flow
         for (Property property : object.getProperties()) {
-            if (property.getDeveloperName().equals(idField)) {
+            if (property.getDeveloperName().equals(idField) && Strings.isNullOrEmpty(object.getExternalId()) == true && model) {
                 property.setContentValue(id);
+            }
+
+            if (property.getObjectData() != null) {
+                for(MObject propertyObject : property.getObjectData()) {
+                    /// Set the object's external ID in the child objects (field groups), which is only used inside Flow itself
+                    setRandomUniqueIdIfEmpty(propertyObject, null, false);
+                }
             }
         }
 
-        // Set the object's external ID too, which is only used inside Flow itself
-        object.setExternalId(id);
+        if (Strings.isNullOrEmpty(object.getExternalId()) == true) {
+            // Set the object's external ID too, which is only used inside Flow itself
+            object.setExternalId(id);
+        }
 
         return object;
     }

@@ -168,7 +168,7 @@ public class GoldenRecordRepository {
         Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
 
         Map<String, List<MObject>> objectsBySource = objects.stream()
-                .map(object -> Entities.setRandomUniqueIdIfEmpty(object, universe.getIdField()))
+                .map(object -> Entities.setRandomUniqueIdIfEmpty(object, universe.getIdField(), true))
                 .collect(Collectors.groupingBy(object -> object.getProperties()
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
