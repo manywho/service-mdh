@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExternalIdTest {
+public class PopulatedExternalIdTest {
     @Test
     public void setRandomUniqueIdIfExternalIdEmpty() {
         List<Property> propertyList = new ArrayList<>();
