@@ -32,7 +32,6 @@ public class MatchEntityRepository {
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
                         .map(Property::getContentValue)
-//                        .filter(source -> source != null && source.isEmpty() == false)
                         .findFirst()
                         .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
@@ -44,7 +43,7 @@ public class MatchEntityRepository {
                     : sourceGroup.getKey();
 
             List<BatchUpdateRequest.Entity> entities = sourceGroup.getValue().stream()
-                    .map(entity -> createUpdateEntity(universe, entity))
+                    .map(mObject -> createUpdateEntity(universe, mObject))
                     .collect(Collectors.toList());
 
             resultsList.add(getResults(configuration, entities, sourceId, universe));
@@ -80,13 +79,21 @@ public class MatchEntityRepository {
     private BatchUpdateRequest.Entity createUpdateEntity(Universe universe, MObject entity) {
         // Map all the properties to fields, except our "internal" ones
         Map<String, Object> fields = mObjectToMap(entity);
-
-        fields.put(universe.getIdField(), entity.getExternalId());
+        fields.put(universe.getIdField(), extractFieldIdValue(entity));
 
         return new BatchUpdateRequest.Entity()
                 .setOp(null)
                 .setName(universe.getLayout().getModel().getName())
                 .setFields(fields);
+    }
+
+    private String extractFieldIdValue(MObject object) {
+        return object.getProperties()
+                .stream()
+                .filter(p -> GoldenRecordConstants.ENTITY_ID_FIELD.equals(p.getDeveloperName()))
+                .findFirst()
+                .map(Property::getContentValue)
+                .orElse("");
     }
 
     private Map<String, Object> mObjectToMap(MObject mObject) {

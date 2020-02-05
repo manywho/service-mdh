@@ -7,6 +7,7 @@ import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
+import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
@@ -210,22 +211,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(7).getDeveloperName(), equalTo("Already Linked Entities"));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(7).getContentValue(), nullValue());
-        assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(7).getObjectData(), hasSize(1));
-        MObject alreadyLinked = alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(7).getObjectData().get(0);
-
-        assertThat(alreadyLinked.getProperties(), hasSize(8));
-
-        assertThat(alreadyLinked.getProperties().get(0).getDeveloperName(), equalTo("id"));
-        assertThat(alreadyLinked.getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf123456"));
-
-        assertThat(alreadyLinked.getProperties().get(1).getDeveloperName(), equalTo("field 1"));
-        assertThat(alreadyLinked.getProperties().get(1).getContentValue(), equalTo("some value 1"));
-
-        assertThat(alreadyLinked.getProperties().get(2).getDeveloperName(), equalTo("field 2"));
-        assertThat(alreadyLinked.getProperties().get(2).getContentValue(), equalTo("some value 2"));
-
-        assertThat(alreadyLinked.getProperties().get(3).getDeveloperName(), equalTo("___sourceId"));
-        assertThat(alreadyLinked.getProperties().get(3).getContentValue(), equalTo("TESTING"));
+        assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(7).getObjectData(), hasSize(0));
     }
 
     private BatchUpdateRequest createBatchUpdateRequest() {
@@ -329,7 +315,7 @@ public class DatabaseLoadMatchEntryTests {
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1");
-        object.getProperties().add(new Property("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
+        object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1"));
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 11"));
         object.getProperties().add(new Property("field 2", "some value 12"));
@@ -345,7 +331,7 @@ public class DatabaseLoadMatchEntryTests {
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());
         object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2");
-        object.getProperties().add(new Property("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2"));
+        object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb2"));
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 21"));
         object.getProperties().add(new Property("field 2", "some value 22"));

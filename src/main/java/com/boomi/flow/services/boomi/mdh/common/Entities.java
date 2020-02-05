@@ -8,6 +8,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 
@@ -88,7 +89,10 @@ public class Entities {
             propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, setExternalIdForeachObject(result.getMatch(), universe));
             propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, setExternalIdForeachObject(result.getDuplicate(), universe));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
-            MObject alreadyLinkedObject = new MObject(result.getEntity().getDeveloperName(), result.getEntity().getExternalId(), result.getEntity().getProperties());
+            MObject alreadyLinkedObject = createAlreadyLinkedObject(result.getEntity(), result.getIdResource());
+
+            setExternalIdForObject(alreadyLinkedObject, universe.getIdField());
+
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
         }
 
@@ -107,11 +111,34 @@ public class Entities {
                 .findFirst()
                 .orElse(UUID.randomUUID().toString());
 
-
         MObject object = new MObject(universeId + "-match", externalId, properties);
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         return object;
+    }
+
+    private static MObject createAlreadyLinkedObject(MObject object, String idResource) {
+        List<Property> copyOfProperties = object.getProperties()
+                .stream()
+                .map(Entities::copyProperty)
+                .collect(Collectors.toList());
+
+        copyOfProperties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, idResource));
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
+
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>()));
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>()));
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>()));
+
+        return new MObject(object.getDeveloperName(), object.getExternalId(), copyOfProperties);
+    }
+
+    private static Property copyProperty(Property propertyToCopy) {
+        if (propertyToCopy.getContentType() == ContentType.Object || propertyToCopy.getContentType() == ContentType.List) {
+            return new Property(propertyToCopy.getDeveloperName(), propertyToCopy.getObjectData());
+        } else {
+            return new Property(propertyToCopy.getDeveloperName(), propertyToCopy.getContentValue());
+        }
     }
 
     private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
