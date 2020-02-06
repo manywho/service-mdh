@@ -189,7 +189,7 @@ public class GoldenRecordRepository {
             List<BatchUpdateRequest.Entity> entities = sourceGroup.getValue().stream()
                     .map(entity -> {
                         // Map all the properties to fields, except our "internal" ones
-                        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(entity, universe);
+                        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(universe.getName(), entity, universe);
 
                         String randomUuid = UUID.randomUUID().toString();
 

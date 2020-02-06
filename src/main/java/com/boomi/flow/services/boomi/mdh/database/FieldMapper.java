@@ -109,7 +109,7 @@ public class FieldMapper {
         return types;
     }
 
-    public static Map<String, Object> createMapFromModelMobject(MObject mObject, Universe universe) {
+    public static Map<String, Object> createMapFromModelMobject(String modelName, MObject mObject, Universe universe) {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
@@ -123,10 +123,12 @@ public class FieldMapper {
                 }
 
                 if (property.getContentType() == ContentType.List) {
-                    mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
+                    mapObject.put(getEntryName(modelName, property, universe.getLayout().getModel().getElements()), object);
                 } else if (property.getContentType() == ContentType.Object && object instanceof Map) {
+                    String objectName = property.getDeveloperName()
+                            .replace(modelName + " - ", "");
                     // this is not really a list in hub, we need to do some modifications
-                    mapObject.put(property.getDeveloperName(), object);
+                    mapObject.put(objectName, object);
                 } else {
                     // is not a field group
                     mapObject.put(property.getDeveloperName(), object);
@@ -137,14 +139,18 @@ public class FieldMapper {
         return mapObject;
     }
 
-    private static String getEntryName(Property property, List<Universe.Layout.Model.Element> elements) {
+    private static String getEntryName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
+        String fieldName = property.getDeveloperName()
+                .replace(modelName + " - ", "");
+
         Universe.Layout.Model.Element foundElement = elements.stream()
-                .filter(element -> element.getName().equals(property.getDeveloperName()))
-                . findFirst()
+                .filter(element -> element.getName().equals(fieldName))
+                .findFirst()
                 .orElseGet(Universe.Layout.Model.Element::new);
 
         if (foundElement.isRepeatable()) {
-            return foundElement.getCollectionUniqueId().toLowerCase();
+            // return foundElement.getCollectionUniqueId().toLowerCase();
+            return foundElement.getUniqueId().toLowerCase();
         } else {
             return property.getDeveloperName();
         }
