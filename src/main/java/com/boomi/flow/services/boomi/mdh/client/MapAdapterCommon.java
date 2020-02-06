@@ -13,7 +13,7 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
 public class MapAdapterCommon {
-    public static List<Property> createPropertiesModel(NodeList map) {
+    public static List<Property> createPropertiesModel(Node modelNode, NodeList map) {
         ArrayList<Property> properties = new ArrayList<>();
 
         for (int i = 0; i < map.getLength(); i++) {
@@ -33,10 +33,10 @@ public class MapAdapterCommon {
                             childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
 
                         // this is a collection of repeatable field groups
-                        properties.add(new Property(childNode.getFirstChild().getNodeName(), createListMobject(childNode.getChildNodes())));
+                        properties.add(new Property(childNode.getFirstChild().getNodeName(), createListMobject(modelNode, childNode.getChildNodes())));
                     } else {
                         // this is a field group
-                        properties.add(new Property(childNode.getNodeName(), createMobject(childNode)));
+                        properties.add(new Property(modelNode.getNodeName() + " - " + childNode.getNodeName(), createMobject(modelNode, childNode)));
                     }
                 }
             }
@@ -45,20 +45,21 @@ public class MapAdapterCommon {
         return properties;
     }
 
-    private static List<MObject> createListMobject(NodeList nodes) {
+    private static List<MObject> createListMobject(Node modelNode, NodeList nodes) {
         List<MObject> objects = new ArrayList<>();
         for(int i = 0; i < nodes.getLength(); i++) {
             if (nodes.item(i).getNodeType() == ELEMENT_NODE) {
-                objects.add(createMobject(nodes.item(i)));
+                objects.add(createMobject(modelNode, nodes.item(i)));
             }
         }
 
         return objects;
     }
 
-    private static MObject createMobject(Node childNode) {
-        MObject object = new MObject(childNode.getNodeName() + "-child", UUID.randomUUID().toString(), createPropertiesModel(childNode.getChildNodes()));
-        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
+    private static MObject createMobject(Node modelNode, Node childNode) {
+        String developerName = modelNode.getNodeName() + " - " + childNode.getNodeName();
+        MObject object = new MObject(developerName, UUID.randomUUID().toString(), createPropertiesModel(childNode, childNode.getChildNodes()));
+        object.setTypeElementBindingDeveloperName(developerName);
 
         return object;
     }

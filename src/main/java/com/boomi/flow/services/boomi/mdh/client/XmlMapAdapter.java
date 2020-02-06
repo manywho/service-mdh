@@ -37,13 +37,13 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
         if(wrapper.elements.size() > 0) {
             Element fieldsEntity = wrapper.elements.get(0);
-            properties =  MapAdapterCommon.createPropertiesModel(fieldsEntity.getChildNodes());
+            properties =  MapAdapterCommon.createPropertiesModel(fieldsEntity, fieldsEntity.getChildNodes());
         }
 
         if (wrapper.elements.size() == 2) {
             // specific for FuzzyMatchDetails
             Element fieldsFuzzyDetails = wrapper.elements.get(1);
-            List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(fieldsFuzzyDetails.getChildNodes());
+            List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(wrapper.elements.get(1), fieldsFuzzyDetails.getChildNodes());
 
             if (fuzzyProperties.size() ==  6) {
                 MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);

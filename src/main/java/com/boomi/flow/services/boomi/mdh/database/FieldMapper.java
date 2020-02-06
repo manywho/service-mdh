@@ -38,7 +38,7 @@ public class FieldMapper {
 
         // create properties and bindings
         List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
-        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(universe.getLayout().getModel().getElements());
+        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(modelName, universe.getLayout().getModel().getElements());
 
         // adding the default properties and bindings for each model type
 
@@ -227,14 +227,14 @@ public class FieldMapper {
         return properties;
     }
 
-    private static List<TypeElementPropertyBinding> extractPropertyBindings(List<Universe.Layout.Model.Element> elements) {
+    private static List<TypeElementPropertyBinding> extractPropertyBindings(String modelName, List<Universe.Layout.Model.Element> elements) {
         List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
 
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType != null) {
-                propertyBindings.add(creteTypeElementPropertyBinding(element, contentType));
+                propertyBindings.add(creteTypeElementPropertyBinding(modelName, element, contentType));
             }
         }
 
@@ -251,14 +251,16 @@ public class FieldMapper {
         return new TypeElementProperty(element.getPrettyName(), contentType, typeElementDeveloperName);
     }
 
-    private static TypeElementPropertyBinding creteTypeElementPropertyBinding(Universe.Layout.Model.Element element, ContentType contentType) {
+    private static TypeElementPropertyBinding creteTypeElementPropertyBinding(String modelName, Universe.Layout.Model.Element element, ContentType contentType) {
         String typeElementDeveloperName = null;
+        String fieldName = element.getName();
 
         if (contentType == ContentType.Object || contentType == ContentType.List) {
             typeElementDeveloperName = element.getName();
+            fieldName = modelName + " - " + fieldName;
         }
 
-        return new TypeElementPropertyBinding(element.getPrettyName(), element.getName(), typeElementDeveloperName);
+        return new TypeElementPropertyBinding(element.getPrettyName(), fieldName, typeElementDeveloperName);
     }
 
     private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement, String modelName) {
@@ -270,7 +272,7 @@ public class FieldMapper {
                 .collect(Collectors.toList());
 
         List<TypeElementProperty> properties = extractProperties(modelName, groupFieldElement.getElements());
-        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
+        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(modelName, groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
         String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelName;

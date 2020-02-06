@@ -28,15 +28,15 @@ public class XmlMapperGoldenRecordTests {
         assertThat(object2.getProperties().get(1).getDeveloperName(), equalTo("billing_address_rename"));
         assertThat(object2.getProperties().get(1).getContentValue(), nullValue());
         assertThat(object2.getProperties().get(1).getObjectData(), hasSize(2));
-        assertThat(object2.getProperties().get(1).getObjectData().get(0).getDeveloperName(), equalTo("billing_address_rename-child"));
+        assertThat(object2.getProperties().get(1).getObjectData().get(0).getDeveloperName(), equalTo("accountnest2 - billing_address_rename"));
 
         assertThat(object2.getProperties().get(2).getDeveloperName(), equalTo("other_single_value"));
         assertThat(object2.getProperties().get(2).getContentValue(), equalTo("other single value 2"));
 
-        assertThat(object2.getProperties().get(3).getDeveloperName(), equalTo("nest2contact"));
+        assertThat(object2.getProperties().get(3).getDeveloperName(), equalTo("accountnest2 - nest2contact"));
         assertThat(object2.getProperties().get(3).getContentValue(), nullValue());
         assertThat(object2.getProperties().get(3).getObjectData(), hasSize(1));
-        assertThat(object2.getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("nest2contact-child"));
+        assertThat(object2.getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("accountnest2 - nest2contact"));
         assertThat(object2.getProperties().get(3).getObjectData().get(0).getProperties(), hasSize(2));
         assertThat(object2.getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("nest2_contact_name"));
         assertThat(object2.getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("contatc name 2"));

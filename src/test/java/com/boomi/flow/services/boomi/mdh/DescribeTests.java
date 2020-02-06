@@ -814,7 +814,7 @@ public class DescribeTests {
                 .body("install.typeElements[5].bindings[0].propertyBindings[0].typeElementPropertyDeveloperName", equalTo("Name"))
                 .body("install.typeElements[5].bindings[0].propertyBindings[0].typeElementPropertyId", nullValue())
                 .body("install.typeElements[5].bindings[0].propertyBindings[1].databaseContentType", equalTo("region"))
-                .body("install.typeElements[5].bindings[0].propertyBindings[1].databaseFieldName", equalTo("region"))
+                .body("install.typeElements[5].bindings[0].propertyBindings[1].databaseFieldName", equalTo("country - region"))
                 .body("install.typeElements[5].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Region"))
                 .body("install.typeElements[5].bindings[0].propertyBindings[1].typeElementPropertyId", nullValue())
                 .body("install.typeElements[5].bindings[0].serviceElementId", nullValue())
@@ -850,12 +850,12 @@ public class DescribeTests {
                 .body("install.typeElements[4].bindings[0].propertyBindings[0].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[4].bindings[0].propertyBindings[1].databaseContentType", equalTo("capital"))
-                .body("install.typeElements[4].bindings[0].propertyBindings[1].databaseFieldName", equalTo("capital"))
+                .body("install.typeElements[4].bindings[0].propertyBindings[1].databaseFieldName", equalTo("country - capital"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Capital"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[1].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[4].bindings[0].propertyBindings[2].databaseContentType", equalTo("cities"))
-                .body("install.typeElements[4].bindings[0].propertyBindings[2].databaseFieldName", equalTo("cities"))
+                .body("install.typeElements[4].bindings[0].propertyBindings[2].databaseFieldName", equalTo("country - cities"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("cities"))
                 .body("install.typeElements[4].bindings[0].propertyBindings[2].typeElementPropertyId", nullValue())
 
@@ -901,12 +901,12 @@ public class DescribeTests {
                 .body("install.typeElements[4].bindings[1].propertyBindings[0].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[4].bindings[1].propertyBindings[1].databaseContentType", equalTo("capital"))
-                .body("install.typeElements[4].bindings[1].propertyBindings[1].databaseFieldName", equalTo("capital"))
+                .body("install.typeElements[4].bindings[1].propertyBindings[1].databaseFieldName", equalTo("country - capital"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Capital"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[1].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[4].bindings[1].propertyBindings[2].databaseContentType", equalTo("cities"))
-                .body("install.typeElements[4].bindings[1].propertyBindings[2].databaseFieldName", equalTo("cities"))
+                .body("install.typeElements[4].bindings[1].propertyBindings[2].databaseFieldName", equalTo("country - cities"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("cities"))
                 .body("install.typeElements[4].bindings[1].propertyBindings[2].typeElementPropertyId", nullValue())
 
@@ -959,12 +959,12 @@ public class DescribeTests {
                 .body("install.typeElements[4].bindings[2].propertyBindings[0].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[4].bindings[2].propertyBindings[1].databaseContentType", equalTo("capital"))
-                .body("install.typeElements[4].bindings[2].propertyBindings[1].databaseFieldName", equalTo("capital"))
+                .body("install.typeElements[4].bindings[2].propertyBindings[1].databaseFieldName", equalTo("country - capital"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[1].typeElementPropertyDeveloperName", equalTo("Capital"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[1].typeElementPropertyId", nullValue())
 
                 .body("install.typeElements[4].bindings[2].propertyBindings[2].databaseContentType", equalTo("cities"))
-                .body("install.typeElements[4].bindings[2].propertyBindings[2].databaseFieldName", equalTo("cities"))
+                .body("install.typeElements[4].bindings[2].propertyBindings[2].databaseFieldName", equalTo("country - cities"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[2].typeElementPropertyDeveloperName", equalTo("cities"))
                 .body("install.typeElements[4].bindings[2].propertyBindings[2].typeElementPropertyId", nullValue())
 

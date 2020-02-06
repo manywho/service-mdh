@@ -32,7 +32,11 @@ public class Entities {
         properties.add(new Property(GoldenRecordConstants.LINKS_FIELD, mObjectLinks));
         properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
 
-        return new MObject(universeId + "-golden-record", id, properties);
+        String developerName = universeId + "-golden-record";
+        MObject mObjectToReturn = new MObject(developerName, id, properties);
+        mObjectToReturn.setTypeElementBindingDeveloperName(developerName);
+
+        return mObjectToReturn;
     }
 
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
@@ -168,7 +172,10 @@ public class Entities {
         linkProperties.add(new Property("Entity ID", link.getEntityId()));
         linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
 
-        return new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
+        MObject linkObject = new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
+        linkObject.setTypeElementBindingDeveloperName(linkObject.getDeveloperName());
+
+        return linkObject;
     }
 
     public static String addingModelPrefix(String modelName, String fieldGroupName) {
