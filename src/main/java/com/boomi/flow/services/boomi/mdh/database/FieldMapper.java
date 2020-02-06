@@ -125,8 +125,7 @@ public class FieldMapper {
                 if (property.getContentType() == ContentType.List) {
                     mapObject.put(getEntryName(modelName, property, universe.getLayout().getModel().getElements()), object);
                 } else if (property.getContentType() == ContentType.Object && object instanceof Map) {
-                    String objectName = property.getDeveloperName()
-                            .replace(modelName + " - ", "");
+                    String objectName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
                     // this is not really a list in hub, we need to do some modifications
                     mapObject.put(objectName, object);
                 } else {
@@ -140,8 +139,7 @@ public class FieldMapper {
     }
 
     private static String getEntryName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
-        String fieldName = property.getDeveloperName()
-                .replace(modelName + " - ", "");
+        String fieldName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
 
         Universe.Layout.Model.Element foundElement = elements.stream()
                 .filter(element -> element.getName().equals(fieldName))
@@ -174,8 +172,7 @@ public class FieldMapper {
             if (property.getContentType() == ContentType.Object) {
                 MObject firstAndUniqueObject = property.getObjectData().get(0);
                 Map<String, Object> objectHashMap = createMapFromMobject(firstAndUniqueObject, modelName, elements);
-                
-                return objectHashMap.get(property.getDeveloperName());
+                return  objectHashMap.get(Entities.removeModelPrefix(property.getDeveloperName(), modelName));
             }
 
             List<Map<String, Object>> listOfObjects = new ArrayList<>();
