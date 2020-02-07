@@ -192,7 +192,14 @@ public class FieldMapper {
 
         for (Property property: mObject.getProperties()) {
             Object childObject = createMapEntry(property, modelName, elements);
-            mapObject.put(property.getDeveloperName(), childObject);
+
+            String name = property.getDeveloperName();
+
+            if (property.getContentType() == ContentType.List || property.getContentType() == ContentType.Object) {
+                name = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
+            }
+
+            mapObject.put(name, childObject);
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();
