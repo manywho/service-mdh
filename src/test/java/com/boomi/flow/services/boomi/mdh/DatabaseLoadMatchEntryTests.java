@@ -11,6 +11,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.ObjectDataType;
 import com.manywho.sdk.api.run.elements.type.Property;
@@ -224,7 +225,7 @@ public class DatabaseLoadMatchEntryTests {
         fields1.put("field 2", "some value 12");
         Map<String, Object> property31 = new HashMap<>();
         property31.put("field 3 1 property", "value property 3 1");
-        fields1.put("field 3 1", property31);
+        fields1.put("field 3 object", property31);
 
         BatchUpdateRequest.Entity entity1 = new BatchUpdateRequest.Entity();
         entity1.setName("testing");
@@ -237,7 +238,7 @@ public class DatabaseLoadMatchEntryTests {
 
         Map<String, Object> property312 = new HashMap<>();
         property312.put("field 3 1 property", "value property 3 1");
-        fields2.put("field 3 1", property31);
+        fields2.put("field 3 1 object", property312);
 
         BatchUpdateRequest.Entity entity2 = new BatchUpdateRequest.Entity();
         entity2.setName("testing");
@@ -319,8 +320,8 @@ public class DatabaseLoadMatchEntryTests {
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 11"));
         object.getProperties().add(new Property("field 2", "some value 12"));
-        MObject childObject = new MObject("field 3 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
-        object.getProperties().add(new Property("field 3 1", Arrays.asList(childObject)));
+        MObject childObject = new MObject("testing - field 3 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
+        object.getProperties().add(new Property("testing - field 3 object", childObject, ContentType.Object));
 
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
 
@@ -335,8 +336,8 @@ public class DatabaseLoadMatchEntryTests {
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 21"));
         object.getProperties().add(new Property("field 2", "some value 22"));
-        MObject childObject = new MObject("field 3 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
-        object.getProperties().add(new Property("field 3 1", Arrays.asList(childObject)));
+        MObject childObject = new MObject( "testing - field 3 1 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
+        object.getProperties().add(new Property("testing - field 3 1 object", childObject, ContentType.Object));
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
 
         return object;

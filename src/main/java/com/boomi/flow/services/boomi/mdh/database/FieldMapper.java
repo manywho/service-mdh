@@ -113,7 +113,7 @@ public class FieldMapper {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
-            if (property.getDeveloperName().startsWith("___")) {
+            if (property.getDeveloperName().startsWith("___") || property.getDeveloperName().equals(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS)) {
                 continue;
             } else {
                 Object object = createMapEntry(property, universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());

@@ -178,6 +178,15 @@ public class Entities {
         return linkObject;
     }
 
+    public static String extractFieldIdValueOrRandomGenerate(MObject object) {
+        return object.getProperties()
+                .stream()
+                .filter(p -> GoldenRecordConstants.ENTITY_ID_FIELD.equals(p.getDeveloperName()) && Strings.isNullOrEmpty(p.getContentValue()) == false)
+                .findFirst()
+                .map(Property::getContentValue)
+                .orElse(UUID.randomUUID().toString());
+    }
+
     public static String addingModelPrefix(String modelName, String fieldGroupName) {
         return modelName + " - " + fieldGroupName;
     }

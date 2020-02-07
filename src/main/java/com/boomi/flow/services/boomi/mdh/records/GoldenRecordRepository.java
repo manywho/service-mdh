@@ -191,17 +191,7 @@ public class GoldenRecordRepository {
                         // Map all the properties to fields, except our "internal" ones
                         Map<String, Object> fields = FieldMapper.createMapFromModelMobject(universe.getName(), entity, universe);
 
-                        String randomUuid = UUID.randomUUID().toString();
-
-                        // we are adding Golden Record Entity ID because has been removed with the rest of special properties
-                        // the id is mandatory so if there is not Entity ID, we create a new random UUID
-                        String entityId = entity.getProperties().stream()
-                                .filter(p -> GoldenRecordConstants.ENTITY_ID_FIELD.equals(p.getDeveloperName()) && Strings.isNullOrEmpty(p.getContentValue()) == false)
-                                .findFirst()
-                                .map(Property::getContentValue)
-                                .orElse(randomUuid);
-
-                        fields.put(universe.getIdField(), entityId);
+                        fields.put(universe.getIdField(), Entities.extractFieldIdValueOrRandomGenerate(entity));
 
                         return new BatchUpdateRequest.Entity()
                                 .setOp(operation)
@@ -215,7 +205,6 @@ public class GoldenRecordRepository {
                     .setSource(sourceId)
                     .setEntities(entities);
 
-            // NOTE: The endpoint returns a 202, not returning any created objects directly... how will this map? Do we care about creating golden records?
             client.updateGoldenRecords(
                     configuration.getHubHostname(),
                     configuration.getHubUsername(),
