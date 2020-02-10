@@ -38,7 +38,7 @@ public class FieldMapper {
 
         // create properties and bindings
         List<TypeElementProperty> properties = extractProperties(universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
-        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(universe.getLayout().getModel().getElements());
+        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(modelName, universe.getLayout().getModel().getElements());
 
         // adding the default properties and bindings for each model type
 
@@ -109,11 +109,11 @@ public class FieldMapper {
         return types;
     }
 
-    public static Map<String, Object> createMapFromModelMobject(MObject mObject, Universe universe) {
+    public static Map<String, Object> createMapFromModelMobject(String modelName, MObject mObject, Universe universe) {
         Map<String, Object> mapObject = new HashMap<>();
 
         for (Property property: mObject.getProperties()) {
-            if (property.getDeveloperName().startsWith("___")) {
+            if (property.getDeveloperName().startsWith("___") || property.getDeveloperName().equals(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS)) {
                 continue;
             } else {
                 Object object = createMapEntry(property, universe.getLayout().getModel().getName(), universe.getLayout().getModel().getElements());
@@ -123,10 +123,11 @@ public class FieldMapper {
                 }
 
                 if (property.getContentType() == ContentType.List) {
-                    mapObject.put(getEntryName(property, universe.getLayout().getModel().getElements()), object);
+                    mapObject.put(getEntryName(modelName, property, universe.getLayout().getModel().getElements()), object);
                 } else if (property.getContentType() == ContentType.Object && object instanceof Map) {
+                    String objectName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
                     // this is not really a list in hub, we need to do some modifications
-                    mapObject.put(property.getDeveloperName(), object);
+                    mapObject.put(objectName, object);
                 } else {
                     // is not a field group
                     mapObject.put(property.getDeveloperName(), object);
@@ -137,14 +138,17 @@ public class FieldMapper {
         return mapObject;
     }
 
-    private static String getEntryName(Property property, List<Universe.Layout.Model.Element> elements) {
+    private static String getEntryName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
+        String fieldName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
+
         Universe.Layout.Model.Element foundElement = elements.stream()
-                .filter(element -> element.getName().equals(property.getDeveloperName()))
-                . findFirst()
+                .filter(element -> element.getName().equals(fieldName))
+                .findFirst()
                 .orElseGet(Universe.Layout.Model.Element::new);
 
         if (foundElement.isRepeatable()) {
-            return foundElement.getCollectionUniqueId().toLowerCase();
+            // return foundElement.getCollectionUniqueId().toLowerCase();
+            return foundElement.getUniqueId().toLowerCase();
         } else {
             return property.getDeveloperName();
         }
@@ -168,8 +172,7 @@ public class FieldMapper {
             if (property.getContentType() == ContentType.Object) {
                 MObject firstAndUniqueObject = property.getObjectData().get(0);
                 Map<String, Object> objectHashMap = createMapFromMobject(firstAndUniqueObject, modelName, elements);
-                
-                return objectHashMap.get(property.getDeveloperName());
+                return  objectHashMap.get(Entities.removeModelPrefix(property.getDeveloperName(), modelName));
             }
 
             List<Map<String, Object>> listOfObjects = new ArrayList<>();
@@ -189,7 +192,14 @@ public class FieldMapper {
 
         for (Property property: mObject.getProperties()) {
             Object childObject = createMapEntry(property, modelName, elements);
-            mapObject.put(property.getDeveloperName(), childObject);
+
+            String name = property.getDeveloperName();
+
+            if (property.getContentType() == ContentType.List || property.getContentType() == ContentType.Object) {
+                name = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
+            }
+
+            mapObject.put(name, childObject);
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();
@@ -227,14 +237,14 @@ public class FieldMapper {
         return properties;
     }
 
-    private static List<TypeElementPropertyBinding> extractPropertyBindings(List<Universe.Layout.Model.Element> elements) {
+    private static List<TypeElementPropertyBinding> extractPropertyBindings(String modelName, List<Universe.Layout.Model.Element> elements) {
         List<TypeElementPropertyBinding> propertyBindings = new ArrayList<>();
 
         for (Universe.Layout.Model.Element element : elements) {
             ContentType contentType = fieldTypeToContentType(element.getType(), element.isRepeatable());
 
             if (contentType != null) {
-                propertyBindings.add(creteTypeElementPropertyBinding(element, contentType));
+                propertyBindings.add(creteTypeElementPropertyBinding(modelName, element, contentType));
             }
         }
 
@@ -251,14 +261,16 @@ public class FieldMapper {
         return new TypeElementProperty(element.getPrettyName(), contentType, typeElementDeveloperName);
     }
 
-    private static TypeElementPropertyBinding creteTypeElementPropertyBinding(Universe.Layout.Model.Element element, ContentType contentType) {
+    private static TypeElementPropertyBinding creteTypeElementPropertyBinding(String modelName, Universe.Layout.Model.Element element, ContentType contentType) {
         String typeElementDeveloperName = null;
+        String fieldName = element.getName();
 
         if (contentType == ContentType.Object || contentType == ContentType.List) {
             typeElementDeveloperName = element.getName();
+            fieldName = modelName + " - " + fieldName;
         }
 
-        return new TypeElementPropertyBinding(element.getPrettyName(), element.getName(), typeElementDeveloperName);
+        return new TypeElementPropertyBinding(element.getPrettyName(), fieldName, typeElementDeveloperName);
     }
 
     private static List<TypeElement> createChildTypesFromElement(Universe.Layout.Model.Element groupFieldElement, String modelName) {
@@ -270,7 +282,7 @@ public class FieldMapper {
                 .collect(Collectors.toList());
 
         List<TypeElementProperty> properties = extractProperties(modelName, groupFieldElement.getElements());
-        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(groupFieldElement.getElements());
+        List<TypeElementPropertyBinding> propertyBindings = extractPropertyBindings(modelName, groupFieldElement.getElements());
         List<TypeElementBinding> bindings = new ArrayList<>();
 
         String developerSummaryChildProperty = "The structure of a child Type " + groupFieldElement.getPrettyName() + " for " + modelName;

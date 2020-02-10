@@ -23,7 +23,7 @@ public class FieldMapperTests {
                 .readValue(Resources.getResource("field-map/repeatable/mobject.json"), MObject.class);
         Universe universe = JAXB.unmarshal(Resources.getResource("field-map/repeatable/universe.xml"), Universe.class);
 
-        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(mObject, universe);
+        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(universe.getName(), mObject, universe);
 
         BatchUpdateRequest.Entity entity = new BatchUpdateRequest.Entity()
                 .setOp(null)
@@ -49,7 +49,7 @@ public class FieldMapperTests {
                 .readValue(Resources.getResource("field-map/nested-fieldgroup/mobject.json"), MObject.class);
         Universe universe = JAXB.unmarshal(Resources.getResource("field-map/nested-fieldgroup/universe.xml"), Universe.class);
 
-        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(mObject, universe);
+        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(universe.getName(), mObject, universe);
 
         BatchUpdateRequest.Entity entity = new BatchUpdateRequest.Entity()
                 .setOp(null)

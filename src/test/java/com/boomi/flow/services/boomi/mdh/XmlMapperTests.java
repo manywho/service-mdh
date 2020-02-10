@@ -347,16 +347,16 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(2).getDeveloperName(), equalTo("city"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(2).getContentValue(), equalTo("berwyn"));
 
-        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phone"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getContentValue(), nullValue());
 
-        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("number"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("311 555-1234"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("type"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("home"));
 
-        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getDeveloperName(), equalTo("number"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getContentValue(), equalTo("311 555-4321"));
         assertThat( actual.getMatchResults().get(0).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(1).getDeveloperName(), equalTo("type"));
@@ -380,16 +380,16 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(2).getDeveloperName(), equalTo("city"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(2).getContentValue(), equalTo("berwyn"));
 
-        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getDeveloperName(), equalTo("phone"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getContentValue(), nullValue());
 
-        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("number"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("311 555-1234"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("type"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("home"));
 
-        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(0).getDeveloperName(), equalTo("number"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(0).getContentValue(), equalTo("311 555-4321"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(3).getObjectData().get(1).getProperties().get(1).getDeveloperName(), equalTo("type"));
@@ -436,16 +436,16 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(2).getDeveloperName(), equalTo("city"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(2).getContentValue(), equalTo("chesterbrook"));
 
-        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getDeveloperName(), equalTo("phone"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getContentValue(), nullValue());
 
-        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("number"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("311 555-2345"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("type"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("home"));
 
-        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("phone-child"));
+        assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getDeveloperName(), equalTo("contact - phone"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getDeveloperName(), equalTo("number"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(0).getContentValue(), equalTo("311 555-5432"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(3).getObjectData().get(1).getProperties().get(1).getDeveloperName(), equalTo("type"));

@@ -4,6 +4,7 @@ import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
+import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.manywho.sdk.api.run.ServiceProblemException;
@@ -32,7 +33,6 @@ public class MatchEntityRepository {
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
                         .map(Property::getContentValue)
-//                        .filter(source -> source != null && source.isEmpty() == false)
                         .findFirst()
                         .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
@@ -44,7 +44,7 @@ public class MatchEntityRepository {
                     : sourceGroup.getKey();
 
             List<BatchUpdateRequest.Entity> entities = sourceGroup.getValue().stream()
-                    .map(entity -> createUpdateEntity(universe, entity))
+                    .map(mObject -> createUpdateEntity(universe, mObject))
                     .collect(Collectors.toList());
 
             resultsList.add(getResults(configuration, entities, sourceId, universe));
@@ -79,29 +79,12 @@ public class MatchEntityRepository {
 
     private BatchUpdateRequest.Entity createUpdateEntity(Universe universe, MObject entity) {
         // Map all the properties to fields, except our "internal" ones
-        Map<String, Object> fields = mObjectToMap(entity);
-
-        fields.put(universe.getIdField(), entity.getExternalId());
+        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(universe.getName(), entity, universe);
+        fields.put(universe.getIdField(), Entities.extractFieldIdValueOrRandomGenerate(entity));
 
         return new BatchUpdateRequest.Entity()
                 .setOp(null)
                 .setName(universe.getLayout().getModel().getName())
                 .setFields(fields);
-    }
-
-    private Map<String, Object> mObjectToMap(MObject mObject) {
-        HashMap<String, Object> map = new HashMap<>();
-        for (Property property: mObject.getProperties()) {
-            if (property.getDeveloperName().startsWith("___")) {
-                continue;
-            }
-            if (property.getContentValue() != null) {
-                map.put(property.getDeveloperName(), property.getContentValue());
-            } else if (property.getObjectData() != null && property.getObjectData().size() == 1) {
-                map.put(property.getDeveloperName(), mObjectToMap(property.getObjectData().get(0)));
-            }
-        }
-
-        return map;
     }
 }

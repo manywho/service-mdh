@@ -41,6 +41,7 @@ public class DatabaseSaveGoldenRecordTests {
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
                     .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
                     .setLayout(new Universe.Layout()
                             .setIdXPath("/item/id")
                             .setModel(new Universe.Layout.Model()
@@ -62,7 +63,7 @@ public class DatabaseSaveGoldenRecordTests {
         objectField4.setExternalId("123");
         objectField4.setProperties(Arrays.asList(new Property("property 4 1", "value property 4 1")));
 
-        object.getProperties().add(new Property("object field 4", objectField4, ContentType.Object));
+        object.getProperties().add(new Property("testing - object field 4", objectField4, ContentType.Object));
 
         // Update using the incoming object
         MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
@@ -110,7 +111,7 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getProperties().get(4).getDeveloperName(), equalTo("field 3 1"));
         assertThat(result.getProperties().get(4).getContentValue(), equalTo("2019-09-10T15:45:00+01:00"));
         assertThat(result.getProperties().get(5).getContentValue(), nullValue());
-        assertThat(result.getProperties().get(5).getDeveloperName(), equalTo("object field 4"));
+        assertThat(result.getProperties().get(5).getDeveloperName(), equalTo("testing - object field 4"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getDeveloperName(), equalTo("testing - object field 4"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("property 4 1"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 1"));
