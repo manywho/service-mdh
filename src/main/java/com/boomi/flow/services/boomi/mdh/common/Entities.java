@@ -95,7 +95,7 @@ public class Entities {
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
             MObject alreadyLinkedObject = createAlreadyLinkedObject(result.getEntity(), result.getIdResource());
 
-            setExternalIdForObject(alreadyLinkedObject, universe.getIdField());
+            setExternalIdForObject(alreadyLinkedObject, universe);
 
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
         }
@@ -148,20 +148,21 @@ public class Entities {
     private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
         return objects
                 .stream()
-                .peek(object -> setExternalIdForObject(object, universe.getIdField()))
+                .peek(object -> setExternalIdForObject(object, universe))
                 .collect(Collectors.toList());
     }
 
-    private static void setExternalIdForObject(MObject object, String fieldId) {
+    private static void setExternalIdForObject(MObject object, Universe universe) {
         if (Strings.isNullOrEmpty(object.getExternalId())) {
             String externalId = object.getProperties()
                     .stream()
-                    .filter(p -> fieldId.equals(p.getDeveloperName()))
+                    .filter(p -> universe.getIdField().equals(p.getDeveloperName()))
                     .map(Property::getContentValue)
                     .findFirst()
                     .orElse(UUID.randomUUID().toString());
 
             object.setExternalId(externalId);
+            object.setTypeElementBindingDeveloperName(universe.getId()+"-match");
         }
     }
 
