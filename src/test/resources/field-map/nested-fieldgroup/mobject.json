@@ -18,7 +18,7 @@
       "contentFormat": null,
       "contentType": "ContentObject",
       "contentValue": null,
-      "developerName": "contact",
+      "developerName": "account - contact",
       "objectData": [
         {
           "developerName": "account - contact",
@@ -40,7 +40,7 @@
               "contentFormat": null,
               "contentType": "ContentObject",
               "contentValue": null,
-              "developerName": "address",
+              "developerName": "account - address",
               "objectData": [
                 {
                   "developerName": "account - address",
@@ -78,7 +78,7 @@
       "contentFormat": null,
       "contentType": "ContentList",
       "contentValue": null,
-      "developerName": "products",
+      "developerName": "account - products",
       "objectData": null,
       "typeElementId": null,
       "typeElementPropertyId": "841c0db9-0950-4bc9-bea3-386e5d070463"
@@ -87,7 +87,7 @@
       "contentFormat": null,
       "contentType": "ContentList",
       "contentValue": null,
-      "developerName": "collection_root",
+      "developerName": "account - collection_root",
       "objectData": null,
       "typeElementId": null,
       "typeElementPropertyId": "7f6a3fa8-60de-4339-9442-dea7a850c91d"

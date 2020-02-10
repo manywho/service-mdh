@@ -32,7 +32,11 @@ public class Entities {
         properties.add(new Property(GoldenRecordConstants.LINKS_FIELD, mObjectLinks));
         properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
 
-        return new MObject(universeId + "-golden-record", id, properties);
+        String developerName = universeId + "-golden-record";
+        MObject mObjectToReturn = new MObject(developerName, id, properties);
+        mObjectToReturn.setTypeElementBindingDeveloperName(developerName);
+
+        return mObjectToReturn;
     }
 
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
@@ -91,7 +95,7 @@ public class Entities {
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
             MObject alreadyLinkedObject = createAlreadyLinkedObject(result.getEntity(), result.getIdResource());
 
-            setExternalIdForObject(alreadyLinkedObject, universe.getIdField());
+            setExternalIdForObject(alreadyLinkedObject, universe);
 
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
         }
@@ -144,20 +148,21 @@ public class Entities {
     private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
         return objects
                 .stream()
-                .peek(object -> setExternalIdForObject(object, universe.getIdField()))
+                .peek(object -> setExternalIdForObject(object, universe))
                 .collect(Collectors.toList());
     }
 
-    private static void setExternalIdForObject(MObject object, String fieldId) {
+    private static void setExternalIdForObject(MObject object, Universe universe) {
         if (Strings.isNullOrEmpty(object.getExternalId())) {
             String externalId = object.getProperties()
                     .stream()
-                    .filter(p -> fieldId.equals(p.getDeveloperName()))
+                    .filter(p -> universe.getIdField().equals(p.getDeveloperName()))
                     .map(Property::getContentValue)
                     .findFirst()
                     .orElse(UUID.randomUUID().toString());
 
             object.setExternalId(externalId);
+            object.setTypeElementBindingDeveloperName(universe.getId()+"-match");
         }
     }
 
@@ -168,7 +173,19 @@ public class Entities {
         linkProperties.add(new Property("Entity ID", link.getEntityId()));
         linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
 
-        return new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
+        MObject linkObject = new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
+        linkObject.setTypeElementBindingDeveloperName(linkObject.getDeveloperName());
+
+        return linkObject;
+    }
+
+    public static String extractFieldIdValueOrRandomGenerate(MObject object) {
+        return object.getProperties()
+                .stream()
+                .filter(p -> GoldenRecordConstants.ENTITY_ID_FIELD.equals(p.getDeveloperName()) && Strings.isNullOrEmpty(p.getContentValue()) == false)
+                .findFirst()
+                .map(Property::getContentValue)
+                .orElse(UUID.randomUUID().toString());
     }
 
     public static String addingModelPrefix(String modelName, String fieldGroupName) {
