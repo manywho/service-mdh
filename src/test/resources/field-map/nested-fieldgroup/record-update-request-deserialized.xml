@@ -7,9 +7,9 @@
             </address>
             <name>Joe Doe</name>
         </contact>
-        <collection_root/>
+        <products_wrapper/>
         <name>Joe</name>
         <a_number/>
-        <products/>
+        <collection_name/>
     </account>
 </batch>
