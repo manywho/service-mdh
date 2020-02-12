@@ -37,6 +37,38 @@ public class DatabaseSaveGoldenRecordTests {
 
     @Test
     public void testSaveWithSingleExistingObjectReturnsObject() {
+        Universe.Layout.Model.Element element1 = new Universe.Layout.Model.Element();
+        element1.setUniqueId("field 1 1");
+        element1.setName("field 1 1");
+
+        Universe.Layout.Model.Element element2 = new Universe.Layout.Model.Element();
+        element2.setUniqueId("field 2 1");
+        element2.setName("field 2 1");
+
+        Universe.Layout.Model.Element element3 = new Universe.Layout.Model.Element();
+        element3.setUniqueId("field 3 1");
+        element3.setName("field 3 2");
+
+        Universe.Layout.Model.Element element4 = new Universe.Layout.Model.Element();
+        element4.setUniqueId("object field 4");
+        element4.setName("object field 4");
+
+        Universe.Layout.Model.Element element41 = new Universe.Layout.Model.Element();
+        element41.setUniqueId("property 4 1");
+        element41.setName("property 4 1");
+
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+        elements.add(element1);
+        elements.add(element2);
+        elements.add(element3);
+        elements.add(element4);
+        elements.add(element41);
+
+
+        Universe.Layout.Model model = new Universe.Layout.Model()
+                .setName("testing")
+                .setElements(elements);
+
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
@@ -44,9 +76,7 @@ public class DatabaseSaveGoldenRecordTests {
                         .setName("testing")
                     .setLayout(new Universe.Layout()
                             .setIdXPath("/item/id")
-                            .setModel(new Universe.Layout.Model()
-                                    .setName("testing")
-                            )
+                            .setModel(model)
                     )
                 );
 

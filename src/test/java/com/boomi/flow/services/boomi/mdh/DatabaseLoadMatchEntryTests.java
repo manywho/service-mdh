@@ -37,6 +37,32 @@ public class DatabaseLoadMatchEntryTests {
 
     @Test
     public void testLoadMatchEntityObjectsReturnsObject() {
+        Universe.Layout.Model.Element element1 = new Universe.Layout.Model.Element();
+        element1.setUniqueId("field 1");
+        element1.setName("field 1");
+
+        Universe.Layout.Model.Element element2 = new Universe.Layout.Model.Element();
+        element2.setUniqueId("field 2");
+        element2.setName("field 2");
+
+        Universe.Layout.Model.Element element3 = new Universe.Layout.Model.Element();
+        element3.setUniqueId("field 3 1 property");
+        element3.setName("field 3 1 property");
+
+        Universe.Layout.Model.Element element4 = new Universe.Layout.Model.Element();
+        element4.setUniqueId("field 3 1 object");
+        element4.setName("field 3 1 object");
+
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+        elements.add(element1);
+        elements.add(element2);
+        elements.add(element3);
+        elements.add(element4);
+
+        Universe.Layout.Model model = new Universe.Layout.Model()
+                .setName("testing")
+                .setElements(elements);
+
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
@@ -44,8 +70,8 @@ public class DatabaseLoadMatchEntryTests {
                     .setName("testing")
                     .setLayout(new Universe.Layout()
                             .setIdXPath("/item/id")
-                            .setModel(new Universe.Layout.Model()
-                                    .setName("testing"))));
+                            .setModel(model))
+                );
 
         when(client.queryMatchEntity(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731"), eq(createBatchUpdateRequest())))
                 .thenReturn(createMatchEntityResponse());
@@ -225,7 +251,7 @@ public class DatabaseLoadMatchEntryTests {
         fields1.put("field 2", "some value 12");
         Map<String, Object> property31 = new HashMap<>();
         property31.put("field 3 1 property", "value property 3 1");
-        fields1.put("field 3 object", property31);
+        fields1.put("field 3 1 object", property31);
 
         BatchUpdateRequest.Entity entity1 = new BatchUpdateRequest.Entity();
         entity1.setName("testing");
@@ -320,8 +346,8 @@ public class DatabaseLoadMatchEntryTests {
         object.getProperties().add(new Property("___sourceId", "TESTING"));
         object.getProperties().add(new Property("field 1", "some value 11"));
         object.getProperties().add(new Property("field 2", "some value 12"));
-        MObject childObject = new MObject("testing - field 3 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
-        object.getProperties().add(new Property("testing - field 3 object", childObject, ContentType.Object));
+        MObject childObject = new MObject("testing - field 3 1 object", Arrays.asList(new Property("field 3 1 property", "value property 3 1")));
+        object.getProperties().add(new Property("testing - field 3 1 object", childObject, ContentType.Object));
 
         object.getProperties().add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
 
