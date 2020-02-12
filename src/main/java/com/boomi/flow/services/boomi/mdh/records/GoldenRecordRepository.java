@@ -34,9 +34,9 @@ public class GoldenRecordRepository {
         update(configuration, objects, universeId, "DELETE");
     }
 
-    public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
-
+    public List<MObject> findAll(ApplicationConfiguration configuration, String universeId, ListFilter filter) {
+        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universeId, configuration.getHubHostname(), configuration.getHubUsername());
+        Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
         GoldenRecordQueryRequest request = new GoldenRecordQueryRequest();
 
         // TODO: Cleanup everything in this filter block cause it's super ugly
@@ -138,7 +138,7 @@ public class GoldenRecordRepository {
                         }
 
                         fieldFilters.add(new GoldenRecordQueryRequest.Filter.FieldValue()
-                                .setFieldId(elementIdFinder.findIdFromNameOfElement(configuration, universe, field.getColumnName()))
+                                .setFieldId(elementIdFinder.findIdFromNameOfElement(configuration, universeId, field.getColumnName()))
                                 .setOperator(operator)
                                 .setValue(field.getContentValue())
                         );
@@ -149,13 +149,19 @@ public class GoldenRecordRepository {
             }
         }
 
-        GoldenRecordQueryResponse result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
+        GoldenRecordQueryResponse result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId, request);
         if (result == null || result.getRecords() == null || result.getResultCount() == 0) {
             return new ArrayList<>();
         }
 
         return result.getRecords().stream()
-                .map(record -> Entities.createGoldenRecordMObject(universe, record.getRecordId(), record.getMObject(), record.getLinks()))
+                .map(record -> {
+                            MObject mObject = Entities.createGoldenRecordMObject(universeId, record.getRecordId(), record.getMObject(), record.getLinks());
+                            FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
+
+                            return mObject;
+                        }
+                )
                 .collect(Collectors.toList());
     }
 

@@ -24,6 +24,12 @@ import java.util.stream.Collectors;
 public class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
 
+    public enum SearchingBy {
+        UNIQUE_ID,
+        NAME,
+        COLLECTION_TAG
+    };
+
     static List<TypeElement> createModelTypes(Universe universe) {
         String modelName = universe.getName();
         String universeName = TypeNameGenerator.createModelName(universe.getName());
@@ -123,9 +129,9 @@ public class FieldMapper {
                 }
 
                 if (property.getContentType() == ContentType.List) {
-                    mapObject.put(getEntryName(modelName, property, universe.getLayout().getModel().getElements()), object);
+                    mapObject.put(getEntryNameToSendToHubApi(modelName, property, universe.getLayout().getModel().getElements()), object);
                 } else if (property.getContentType() == ContentType.Object && object instanceof Map) {
-                    String objectName = getEntryName(modelName, property, universe.getLayout().getModel().getElements());
+                    String objectName = getEntryNameToSendToHubApi(modelName, property, universe.getLayout().getModel().getElements());
                     // this is not really a list in hub, we need to do some modifications
                     mapObject.put(objectName, object);
                 } else {
@@ -138,14 +144,17 @@ public class FieldMapper {
         return mapObject;
     }
 
-    private static String getEntryName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
+    /**
+     * from the property name (uniqueId) we need to find the name to be send to hub name/collectionTag
+     */
+    private static String getEntryNameToSendToHubApi(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
         String fieldName = property.getDeveloperName();
 
         if (property.getContentType() == ContentType.Object || property.getContentType() == ContentType.List) {
             fieldName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
         }
 
-        Universe.Layout.Model.Element foundElement = findElementByUniqueId(elements, fieldName);
+        Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.UNIQUE_ID);
 
         if (foundElement.isRepeatable()) {
             return foundElement.getCollectionTag();
@@ -154,18 +163,88 @@ public class FieldMapper {
         return foundElement.getName();
     }
 
-    /*
-    this is a recursive search throw all the element
+    /**
+     * preparing the response to be send to flow
      */
-    static Universe.Layout.Model.Element findElementByUniqueId (List<Universe.Layout.Model.Element> elements, String uniqueId) {
+    public static void renameMobjectPropertiesToUseUniqueId(Universe universe, MObject mObject) {
+        // we don't need to rename anything related with our properties and neither with Fuzzy Match Details
+        for(Property property: mObject.getProperties()) {
+            if (property.getDeveloperName().startsWith("__")
+                    || property.getDeveloperName().equals(universe.getIdField())
+                    || property.getDeveloperName().equals(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS)) {
+                continue;
+            }
+
+            boolean changePropertyName = true;
+
+            // we only attempt to find a uniqueId if it is not one of these properties
+            if (property.getDeveloperName().equals(FuzzyMatchDetailsConstants.ALREADY_LINKED) ||
+                    property.getDeveloperName().equals(FuzzyMatchDetailsConstants.MATCH) ||
+                    property.getDeveloperName().equals(FuzzyMatchDetailsConstants.DUPLICATE)) {
+
+                changePropertyName = false;
+            }
+            String newName = property.getDeveloperName();
+            if (changePropertyName) {
+                newName = getUniqueIdByPropertyName(universe.getLayout().getModel().getName(), property, universe.getLayout().getModel().getElements());
+            }
+
+            // if it is one of our properties we don't change the property name, but we still need to change the property names of the object in objectData
+            if (property.getContentType() == ContentType.List ||
+                    property.getContentType() == ContentType.Object || changePropertyName == false
+                    && property.getObjectData() != null) {
+
+                if (changePropertyName) {
+                    newName = universe.getLayout().getModel().getName() + " - " + newName;
+                }
+                for (MObject childObject:property.getObjectData()) {
+                    childObject.setDeveloperName(newName);
+                    renameMobjectPropertiesToUseUniqueId(universe, childObject);
+                }
+            }
+
+            property.setDeveloperName(newName);
+        }
+    }
+
+    /**
+     * when the response is translated automatically mapped to MObject the names are still name/collectionTag,
+     * we search in this method for a name that flow understand (uniqueId)
+     */
+    private static String getUniqueIdByPropertyName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
+        String fieldName = property.getDeveloperName();
+
+        if (property.getContentType() == ContentType.List) {
+            fieldName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
+            Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.COLLECTION_TAG);
+
+            return foundElement.getUniqueId().toLowerCase();
+        } else if(property.getContentType() == ContentType.Object) {
+            fieldName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
+            Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.NAME);
+
+            return foundElement.getUniqueId().toLowerCase();
+        }
+
+        Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.NAME);
+
+        return foundElement.getUniqueId().toLowerCase();
+    }
+
+    /*
+        this is a recursive search through all the element, we can search elements by collectionTag, Name or UniqueID
+     */
+    static Universe.Layout.Model.Element findElementBy(List<Universe.Layout.Model.Element> elements, String search, SearchingBy searchingBy) {
         Universe.Layout.Model.Element found = null;
         for(Universe.Layout.Model.Element element: elements) {
-            if (element.getUniqueId().toLowerCase().equals(uniqueId)) {
+            if (searchingBy == SearchingBy.NAME && element.getName().toLowerCase().equals(search) ||
+                    searchingBy == SearchingBy.COLLECTION_TAG && element.getName().toLowerCase().equals(search) ||
+                    searchingBy == SearchingBy.UNIQUE_ID && element.getUniqueId().toLowerCase().equals(search)) {
                 return element;
             }
 
             if (element.getElements() != null && element.getElements().size() > 0) {
-                found = findElementByUniqueId(element.getElements(), uniqueId);
+                found = findElementBy(element.getElements(), search, searchingBy);
 
                 if (found != null) {
                     return found;
@@ -198,8 +277,11 @@ public class FieldMapper {
                 if (property.getObjectData().size() > 0) {
                     MObject firstAndUniqueObject = property.getObjectData().get(0);
                     objectHashMap = createMapFromMobject(firstAndUniqueObject, modelName, elements);
+
+                    return objectHashMap.values().iterator().next();
                 }
-                return  objectHashMap.get(Entities.removeModelPrefix(property.getDeveloperName(), modelName));
+
+                return null;
             }
 
             List<Map<String, Object>> listOfObjects = new ArrayList<>();
@@ -220,13 +302,13 @@ public class FieldMapper {
         for (Property property: mObject.getProperties()) {
             Object childObject = createMapEntry(property, modelName, elements);
 
-            String name = getEntryName(modelName, property, elements);
+            String name = getEntryNameToSendToHubApi(modelName, property, elements);
             mapObject.put(name, childObject);
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();
 
-        Universe.Layout.Model.Element element = findElementByUniqueId(elements, Entities.removeModelPrefix(mObject.getDeveloperName(), modelName));
+        Universe.Layout.Model.Element element = findElementBy(elements, Entities.removeModelPrefix(mObject.getDeveloperName(), modelName), SearchingBy.UNIQUE_ID);
 
         wrapperObject.put(element.getName(), mapObject);
 

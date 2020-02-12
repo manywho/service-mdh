@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.common;
 
+import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;

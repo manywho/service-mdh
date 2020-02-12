@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.client;
 
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.w3c.dom.Node;
@@ -31,12 +32,17 @@ public class MapAdapterCommon {
 
                     if (childNode.getFirstChild().hasChildNodes() &&
                             childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
+                        Property propertyCollection = new Property(modelNode.getNodeName() + " - " + childNode.getFirstChild().getNodeName(), createListMobject(modelNode, childNode.getChildNodes()));
+                        propertyCollection.setContentType(ContentType.List);
 
                         // this is a collection of repeatable field groups
-                        properties.add(new Property(modelNode.getNodeName() + " - " + childNode.getFirstChild().getNodeName(), createListMobject(modelNode, childNode.getChildNodes())));
+                        properties.add(propertyCollection);
                     } else {
+                        Property propertyFieldGroup = new Property(modelNode.getNodeName() + " - " + childNode.getNodeName(), createMobject(modelNode, childNode));
+                        propertyFieldGroup.setContentType(ContentType.Object);
+
                         // this is a field group
-                        properties.add(new Property(modelNode.getNodeName() + " - " + childNode.getNodeName(), createMobject(modelNode, childNode)));
+                        properties.add(propertyFieldGroup);
                     }
                 }
             }

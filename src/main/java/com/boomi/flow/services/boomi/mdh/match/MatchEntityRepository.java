@@ -53,7 +53,12 @@ public class MatchEntityRepository {
         return resultsList.stream()
                 .flatMap(Collection::stream)
                 .filter(result -> result.getEntity() != null)
-                .map(matchResult -> Entities.createMatchMObject(universeId, universe, matchResult))
+                .map(matchResult -> {
+                    MObject mObject = Entities.createMatchMObject(universeId, universe, matchResult);
+                    FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
+
+                    return mObject;
+                })
                 .collect(Collectors.toList());
     }
 
