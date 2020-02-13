@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -21,13 +22,11 @@ public class GoldenRecordRepository {
     private final static Logger LOGGER = LoggerFactory.getLogger(GoldenRecordRepository.class);
 
     private final MdhClient client;
-    private final ElementIdFinder elementIdFinder;
 
     @Inject
-    public GoldenRecordRepository(MdhClient client, ElementIdFinder elementIdFinder)
+    public GoldenRecordRepository(MdhClient client)
     {
         this.client = client;
-        this.elementIdFinder = elementIdFinder;
     }
 
     public void delete(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
@@ -138,7 +137,7 @@ public class GoldenRecordRepository {
                         }
 
                         fieldFilters.add(new GoldenRecordQueryRequest.Filter.FieldValue()
-                                .setFieldId(elementIdFinder.findIdFromNameOfElement(configuration, universeId, field.getColumnName()))
+                                .setFieldId(field.getColumnName().toUpperCase())
                                 .setOperator(operator)
                                 .setValue(field.getContentValue())
                         );
@@ -168,6 +167,7 @@ public class GoldenRecordRepository {
     public List<MObject> update(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
         return update(configuration, objects, universeId, null);
     }
+
 
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
         Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);

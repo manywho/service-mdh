@@ -27,9 +27,6 @@ public class DatabaseLoadGoldenRecordTests {
     @Mock
     private MdhClient client;
 
-    @Mock
-    private ElementIdFinder elementIdFinder;
-
     private ObjectDataType objectDataType = new ObjectDataType()
             .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
 
@@ -99,7 +96,7 @@ public class DatabaseLoadGoldenRecordTests {
                                         .setName("testing")
                                         .setElements(createElements(uniqueIds, names)))));
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
@@ -175,7 +172,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
@@ -318,12 +315,7 @@ public class DatabaseLoadGoldenRecordTests {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-
-        when(elementIdFinder.findIdFromNameOfElement(any(), any(), eq("field 1"))).thenReturn("FIELD 1");
-        when(elementIdFinder.findIdFromNameOfElement(any(), any(), eq("field 2"))).thenReturn("FIELD 2");
-
-
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, elementIdFinder), new MatchEntityRepository(client))
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)

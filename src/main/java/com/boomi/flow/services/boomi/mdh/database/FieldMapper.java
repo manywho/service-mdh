@@ -139,7 +139,7 @@ public class FieldMapper {
     /**
      * from the property name (uniqueId) we need to find the name to be send to hub name/collectionTag
      */
-    private static String getEntryNameToSendToHubApi(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
+    public static String getEntryNameToSendToHubApi(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
         String fieldName = property.getDeveloperName();
 
         if (property.getContentType() == ContentType.Object || property.getContentType() == ContentType.List) {
@@ -203,7 +203,7 @@ public class FieldMapper {
      * when the response is translated automatically mapped to MObject the names are still name/collectionTag,
      * we search in this method for a name that flow understand (uniqueId)
      */
-    private static String getUniqueIdByPropertyName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
+    public static String getUniqueIdByPropertyName(String modelName, Property property, List<Universe.Layout.Model.Element> elements) {
         String fieldName = property.getDeveloperName();
 
         if (property.getContentType() == ContentType.List) {
