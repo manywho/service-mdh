@@ -35,51 +35,49 @@ public class DatabaseSaveGoldenRecordTests {
     private ObjectDataType objectDataType = new ObjectDataType()
             .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
 
+    private List<Universe.Layout.Model.Element> createElements(List<String> uniqueIds, List<String> names) {
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+
+        for(int i=0; i<uniqueIds.size(); i++) {
+            String name = names.get(i);
+            String uniqueId = uniqueIds.get(i);
+            Universe.Layout.Model.Element element = new Universe.Layout.Model.Element();
+            element.setUniqueId(uniqueId);
+            element.setName(name);
+
+            elements.add(element);
+        }
+
+        return elements;
+    }
+
     @Test
     public void testSaveWithSingleExistingObjectReturnsObject() {
-        Universe.Layout.Model.Element element1 = new Universe.Layout.Model.Element();
-        element1.setUniqueId("field 1 1");
-        element1.setName("field 1 1");
-
-        Universe.Layout.Model.Element element2 = new Universe.Layout.Model.Element();
-        element2.setUniqueId("field 2 1");
-        element2.setName("field 2 1");
-
-        Universe.Layout.Model.Element element3 = new Universe.Layout.Model.Element();
-        element3.setUniqueId("field 3 1");
-        element3.setName("field 3 2");
-
-        Universe.Layout.Model.Element element4 = new Universe.Layout.Model.Element();
-        element4.setUniqueId("object field 4");
-        element4.setName("object field 4");
-
-        Universe.Layout.Model.Element element41 = new Universe.Layout.Model.Element();
-        element41.setUniqueId("property 4 1");
-        element41.setName("property 4 1");
-
-        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
-        elements.add(element1);
-        elements.add(element2);
-        elements.add(element3);
-        elements.add(element4);
-        elements.add(element41);
-
-
-        Universe.Layout.Model model = new Universe.Layout.Model()
-                .setName("testing")
-                .setElements(elements);
-
-        Universe universe = new Universe()
-                .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
-                .setName("testing")
-                .setLayout(new Universe.Layout()
-                        .setIdXPath("/item/id")
-                        .setModel(model)
-                );
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "object field 4",
+                "property 4 1"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "object field 4",
+                "property 4 1"
+        );
 
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
-                .thenReturn(universe);
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
 
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());

@@ -18,7 +18,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -32,21 +34,48 @@ public class DatabaseDeleteGoldenRecordTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("universe-name-golden-record");
+            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
+
+    private List<Universe.Layout.Model.Element> createElements(List<String> uniqueIds, List<String> names) {
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+
+        for(int i=0; i<uniqueIds.size(); i++) {
+            String name = names.get(i);
+            String uniqueId = uniqueIds.get(i);
+            Universe.Layout.Model.Element element = new Universe.Layout.Model.Element();
+            element.setUniqueId(uniqueId);
+            element.setName(name);
+
+            elements.add(element);
+        }
+
+        return elements;
+    }
 
     @Test
     public void testDeleteWithSingleNewObjectWorks() {
+
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1"
+        );
+
         // Make sure we return the expected universe layout for the test
-        when(client.findUniverse(any(), any(), any(), eq("universe-name")))
+        when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
                         .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
                         .setLayout(new Universe.Layout()
                                 .setIdXPath("/item/id")
                                 .setModel(new Universe.Layout.Model()
                                         .setName("testing")
-                                )
-                        )
-                );
+                                        .setElements(createElements(uniqueIds, names)))));
 
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());

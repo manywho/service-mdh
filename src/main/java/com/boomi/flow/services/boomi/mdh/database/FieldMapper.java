@@ -128,16 +128,8 @@ public class FieldMapper {
                     continue;
                 }
 
-                if (property.getContentType() == ContentType.List) {
-                    mapObject.put(getEntryNameToSendToHubApi(modelName, property, universe.getLayout().getModel().getElements()), object);
-                } else if (property.getContentType() == ContentType.Object && object instanceof Map) {
-                    String objectName = getEntryNameToSendToHubApi(modelName, property, universe.getLayout().getModel().getElements());
-                    // this is not really a list in hub, we need to do some modifications
-                    mapObject.put(objectName, object);
-                } else {
-                    // is not a field group
-                    mapObject.put(property.getDeveloperName(), object);
-                }
+                String objectName = getEntryNameToSendToHubApi(modelName, property, universe.getLayout().getModel().getElements());
+                mapObject.put(objectName, object);
             }
         }
 
