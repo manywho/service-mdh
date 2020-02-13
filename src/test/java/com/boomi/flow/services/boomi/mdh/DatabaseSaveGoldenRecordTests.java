@@ -69,16 +69,17 @@ public class DatabaseSaveGoldenRecordTests {
                 .setName("testing")
                 .setElements(elements);
 
+        Universe universe = new Universe()
+                .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                .setName("testing")
+                .setLayout(new Universe.Layout()
+                        .setIdXPath("/item/id")
+                        .setModel(model)
+                );
+
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
-                .thenReturn(new Universe()
-                    .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
-                        .setName("testing")
-                    .setLayout(new Universe.Layout()
-                            .setIdXPath("/item/id")
-                            .setModel(model)
-                    )
-                );
+                .thenReturn(universe);
 
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());

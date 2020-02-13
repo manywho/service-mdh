@@ -7,6 +7,7 @@ import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.*;
 import com.manywho.sdk.api.ComparisonType;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.*;
 import org.junit.Test;
@@ -15,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import java.time.OffsetDateTime;
 import java.util.*;
-
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.any;
@@ -30,7 +31,7 @@ public class DatabaseLoadGoldenRecordTests {
     private ElementIdFinder elementIdFinder;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("universe-name-golden-record");
+            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
 
     private GoldenRecordQueryResponse response = new GoldenRecordQueryResponse()
             .setResultCount(2)
@@ -41,17 +42,69 @@ public class DatabaseLoadGoldenRecordTests {
                     )
             );
 
+    private List<Universe.Layout.Model.Element> createElements(List<String> uniqueIds, List<String> names) {
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+
+        for(int i=0; i<uniqueIds.size(); i++) {
+            String name = names.get(i);
+            String uniqueId = uniqueIds.get(i);
+            Universe.Layout.Model.Element element = new Universe.Layout.Model.Element();
+            element.setUniqueId(uniqueId);
+            element.setName(name);
+
+            elements.add(element);
+        }
+
+        return elements;
+    }
+
     @Test
     public void testLoadReturnsCorrectlyFormattedMObjects() {
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
+
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
 
         List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-golden-record"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
         assertThat(objects.get(0).getProperties(), hasSize(6));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
@@ -61,7 +114,7 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects.get(0).getProperties().get(2).getDeveloperName(), equalTo("field 3 1"));
         assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
         assertThat(objects.get(0).getProperties().get(3).getContentValue(), nullValue());
-        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 4 1-child"));
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("testing - field 4 1"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 4 1 property"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 value 1 1"));
         assertThat(objects.get(0).getProperties().get(4).getDeveloperName(), equalTo(GoldenRecordConstants.LINKS_FIELD));
@@ -82,6 +135,42 @@ public class DatabaseLoadGoldenRecordTests {
     public void testLoadWithNoFilter() {
         GoldenRecordQueryRequest query = new GoldenRecordQueryRequest();
 
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
         // Actual test is below here
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
@@ -94,7 +183,7 @@ public class DatabaseLoadGoldenRecordTests {
                         TestConstants.CONFIGURATION.getHubHostname(),
                         TestConstants.CONFIGURATION.getHubUsername(),
                         TestConstants.CONFIGURATION.getHubToken(),
-                        "universe-name",
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
                         query
                 );
 
@@ -103,6 +192,42 @@ public class DatabaseLoadGoldenRecordTests {
 
     @Test
     public void testLoadWithComprehensiveFilter() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
         List<ListFilterWhere> wheres = new ArrayList<>();
         wheres.add(createWhere("___filterCreatedDate", CriteriaType.GreaterThan, "2013-01-01T00:00:00.0000000+00:00"));
         wheres.add(createWhere("___filterCreatedDate", CriteriaType.LessThanOrEqual, "2019-02-28T00:00:00.0000000+00:00"));
@@ -206,7 +331,7 @@ public class DatabaseLoadGoldenRecordTests {
                         TestConstants.CONFIGURATION.getHubHostname(),
                         TestConstants.CONFIGURATION.getHubUsername(),
                         TestConstants.CONFIGURATION.getHubToken(),
-                        "universe-name",
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
                         query
                 );
     }
@@ -217,9 +342,11 @@ public class DatabaseLoadGoldenRecordTests {
         mObjectProperties.add(new Property("field 2 " + number, "field 2 value " + number));
         mObjectProperties.add(new Property("field 3 " + number, "field 3 value " + number));
 
-        MObject mObjectField4 = new MObject("field 4 1-child", Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
-        mObjectProperties.add(new Property("field 4 " + number, mObjectField4));
-        MObject mObject = new MObject("universe-name", mObjectProperties);
+        MObject mObjectField4 = new MObject("testing - field 4 " + number, Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
+        Property property = new Property("testing - field 4 " + number, mObjectField4);
+        property.setContentType(ContentType.Object);
+        mObjectProperties.add(property);
+        MObject mObject = new MObject("12fa66f9-e14d-f642-878f-030b13b64731", mObjectProperties);
 
         List<GoldenRecord.Link> links = new ArrayList<>();
         GoldenRecord.Link link = new GoldenRecord.Link();

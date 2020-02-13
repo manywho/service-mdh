@@ -228,6 +228,10 @@ public class FieldMapper {
 
         Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.NAME);
 
+        if (foundElement == null) {
+            throw new RuntimeException("The field "+ fieldName + " hasn't been found, please update the service");
+        }
+
         return foundElement.getUniqueId().toLowerCase();
     }
 
