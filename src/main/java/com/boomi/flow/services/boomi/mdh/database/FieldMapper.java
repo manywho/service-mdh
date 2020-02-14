@@ -233,9 +233,9 @@ public class FieldMapper {
     static Universe.Layout.Model.Element findElementBy(List<Universe.Layout.Model.Element> elements, String search, SearchingBy searchingBy) {
         Universe.Layout.Model.Element found = null;
         for(Universe.Layout.Model.Element element: elements) {
-            if (searchingBy == SearchingBy.NAME && element.getName().toLowerCase().equals(search) ||
-                    searchingBy == SearchingBy.COLLECTION_TAG && element.getName().toLowerCase().equals(search) ||
-                    searchingBy == SearchingBy.UNIQUE_ID && element.getUniqueId().toLowerCase().equals(search)) {
+            if (searchingBy == SearchingBy.NAME && element.getName().equalsIgnoreCase(search) ||
+                    searchingBy == SearchingBy.COLLECTION_TAG && element.getName().equalsIgnoreCase(search) ||
+                    searchingBy == SearchingBy.UNIQUE_ID && element.getUniqueId().equalsIgnoreCase(search)) {
                 return element;
             }
 
