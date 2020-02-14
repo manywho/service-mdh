@@ -5,7 +5,7 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
-import com.google.common.base.Strings;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -22,22 +22,20 @@ public class GoldenRecordRepository {
     private final static Logger LOGGER = LoggerFactory.getLogger(GoldenRecordRepository.class);
 
     private final MdhClient client;
-    private final ElementIdFinder elementIdFinder;
 
     @Inject
-    public GoldenRecordRepository(MdhClient client, ElementIdFinder elementIdFinder)
+    public GoldenRecordRepository(MdhClient client)
     {
         this.client = client;
-        this.elementIdFinder = elementIdFinder;
     }
 
     public void delete(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
         update(configuration, objects, universeId, "DELETE");
     }
 
-    public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
-
+    public List<MObject> findAll(ApplicationConfiguration configuration, String universeId, ListFilter filter) {
+        LOGGER.info("Loading golden records for the universe {} from the Atom at {} with the username {}", universeId, configuration.getHubHostname(), configuration.getHubUsername());
+        Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
         GoldenRecordQueryRequest request = new GoldenRecordQueryRequest();
 
         // TODO: Cleanup everything in this filter block cause it's super ugly
@@ -139,7 +137,7 @@ public class GoldenRecordRepository {
                         }
 
                         fieldFilters.add(new GoldenRecordQueryRequest.Filter.FieldValue()
-                                .setFieldId(elementIdFinder.findIdFromNameOfElement(configuration, universe, field.getColumnName()))
+                                .setFieldId(field.getColumnName().toUpperCase())
                                 .setOperator(operator)
                                 .setValue(field.getContentValue())
                         );
@@ -150,19 +148,26 @@ public class GoldenRecordRepository {
             }
         }
 
-        GoldenRecordQueryResponse result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, request);
+        GoldenRecordQueryResponse result = client.queryGoldenRecords(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId, request);
         if (result == null || result.getRecords() == null || result.getResultCount() == 0) {
             return new ArrayList<>();
         }
 
         return result.getRecords().stream()
-                .map(record -> Entities.createGoldenRecordMObject(universe, record.getRecordId(), record.getMObject(), record.getLinks()))
+                .map(record -> {
+                            MObject mObject = Entities.createGoldenRecordMObject(universeId, record.getRecordId(), record.getMObject(), record.getLinks());
+                            FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
+
+                            return mObject;
+                        }
+                )
                 .collect(Collectors.toList());
     }
 
     public List<MObject> update(ApplicationConfiguration configuration, String universeId, List<MObject> objects) {
         return update(configuration, objects, universeId, null);
     }
+
 
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
         Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);

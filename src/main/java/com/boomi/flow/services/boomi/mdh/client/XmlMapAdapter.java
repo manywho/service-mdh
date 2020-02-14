@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
@@ -47,6 +48,7 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
             if (fuzzyProperties.size() ==  6) {
                 MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
+                fuzzyMatchDetailsObject.setExternalId(UUID.randomUUID().toString());
                 properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
             } else {
                 Element element = wrapper.elements.get(0);

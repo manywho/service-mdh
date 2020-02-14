@@ -90,12 +90,12 @@ public class Entities {
         Property propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
 
         if ("SUCCESS".equals(result.getStatus())) {
-            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, setExternalIdForeachObject(result.getMatch(), universe));
-            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, setExternalIdForeachObject(result.getDuplicate(), universe));
+            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, prepareEachObjectForFlow(result.getMatch(), universe));
+            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, prepareEachObjectForFlow(result.getDuplicate(), universe));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
             MObject alreadyLinkedObject = createAlreadyLinkedObject(result.getEntity(), result.getIdResource());
 
-            setExternalIdForObject(alreadyLinkedObject, universe);
+            prepreObjectForFlow(alreadyLinkedObject, universe);
 
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
         }
@@ -145,14 +145,14 @@ public class Entities {
         }
     }
 
-    private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
+    private static List<MObject> prepareEachObjectForFlow(List<MObject> objects, Universe universe) {
         return objects
                 .stream()
-                .peek(object -> setExternalIdForObject(object, universe))
+                .peek(object -> prepreObjectForFlow(object, universe))
                 .collect(Collectors.toList());
     }
 
-    private static void setExternalIdForObject(MObject object, Universe universe) {
+    private static void prepreObjectForFlow(MObject object, Universe universe) {
         if (Strings.isNullOrEmpty(object.getExternalId())) {
             String externalId = object.getProperties()
                     .stream()

@@ -4,7 +4,6 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.database.MdhRawDatabase;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityRepository;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
-import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.boomi.flow.services.boomi.mdh.common.BatchUpdateRequest;
@@ -35,20 +34,49 @@ public class DatabaseSaveGoldenRecordTests {
     private ObjectDataType objectDataType = new ObjectDataType()
             .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-golden-record");
 
+    private List<Universe.Layout.Model.Element> createElements(List<String> uniqueIds, List<String> names) {
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+
+        for(int i=0; i<uniqueIds.size(); i++) {
+            String name = names.get(i);
+            String uniqueId = uniqueIds.get(i);
+            Universe.Layout.Model.Element element = new Universe.Layout.Model.Element();
+            element.setUniqueId(uniqueId);
+            element.setName(name);
+
+            elements.add(element);
+        }
+
+        return elements;
+    }
+
     @Test
     public void testSaveWithSingleExistingObjectReturnsObject() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "object field 4",
+                "property 4 1"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "object field 4",
+                "property 4 1"
+        );
+
         // Make sure we return the expected universe layout for the test
         when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
                 .thenReturn(new Universe()
-                    .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
                         .setName("testing")
-                    .setLayout(new Universe.Layout()
-                            .setIdXPath("/item/id")
-                            .setModel(new Universe.Layout.Model()
-                                    .setName("testing")
-                            )
-                    )
-                );
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
 
         // Construct the incoming object
         MObject object = new MObject(objectDataType.getDeveloperName());
@@ -66,7 +94,7 @@ public class DatabaseSaveGoldenRecordTests {
         object.getProperties().add(new Property("testing - object field 4", objectField4, ContentType.Object));
 
         // Update using the incoming object
-        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .update(TestConstants.CONFIGURATION, objectDataType, object);
 
         // Make sure we perform the update in MDH, with the request that we're expecting

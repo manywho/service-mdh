@@ -6,6 +6,8 @@ import com.boomi.flow.services.boomi.mdh.common.DateFilter;
 import com.boomi.flow.services.boomi.mdh.common.Dates;
 import com.boomi.flow.services.boomi.mdh.common.Entities;
 import com.boomi.flow.services.boomi.mdh.common.ListFilters;
+import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
@@ -68,9 +70,10 @@ public class QuarantineRepository {
         this.mdhClient = mdhClient;
     }
 
-    public List<MObject> findAll(ApplicationConfiguration configuration, String universe, ListFilter filter) {
-        LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universe, configuration.getHubHostname(), configuration.getHubUsername());
+    public List<MObject> findAll(ApplicationConfiguration configuration, String universeId, ListFilter filter) {
+        LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universeId, configuration.getHubHostname(), configuration.getHubUsername());
 
+        Universe universe = mdhClient.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
         QuarantineQueryRequest.Filter queryFilter = new QuarantineQueryRequest.Filter();
 
         QuarantineQueryRequest queryRequest = new QuarantineQueryRequest()
@@ -135,13 +138,18 @@ public class QuarantineRepository {
             }
         }
 
-        QuarantineQueryResponse result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universe, queryRequest);
+        QuarantineQueryResponse result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId, queryRequest);
         if (result == null || result.getEntries() == null) {
             return new ArrayList<>();
         }
 
         return result.getEntries().stream()
-                .map(entry -> Entities.createQuarantineMObject(universe, entry))
+                .map(entry -> {
+                    MObject mObject = Entities.createQuarantineMObject(universeId, entry);
+                    FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
+
+                    return mObject;
+                })
                 .collect(Collectors.toList());
     }
 }
