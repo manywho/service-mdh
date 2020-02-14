@@ -64,7 +64,7 @@ public class MapAdapterCommon {
 
     private static MObject createMobject(Node modelNode, Node childNode) {
         String developerName = modelNode.getNodeName() + " - " + childNode.getNodeName();
-        MObject object = new MObject(developerName, UUID.randomUUID().toString(), createPropertiesModel(childNode, childNode.getChildNodes()));
+        MObject object = new MObject(developerName, UUID.randomUUID().toString(), createPropertiesModel(modelNode, childNode.getChildNodes()));
         object.setTypeElementBindingDeveloperName(developerName);
 
         return object;
