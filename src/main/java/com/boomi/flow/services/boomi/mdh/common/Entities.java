@@ -70,7 +70,7 @@ public class Entities {
         if (property.getObjectData() == null || property.getObjectData().size() < 1) {
             return true;
         }
-        
+
         for (MObject object :property.getObjectData()) {
             if (object.getProperties() == null || object.getProperties().size() < 1) {
                 return false;

@@ -239,7 +239,7 @@ public class DatabaseLoadGoldenRecordTests {
         wheres.add(createWhere("field 1", CriteriaType.Equal, "equals something"));
         wheres.add(createWhere("field 2", CriteriaType.GreaterThan, "greater than something"));
         wheres.add(createWhere("field 1", CriteriaType.GreaterThanOrEqual, "greater than or equal to something"));
-        wheres.add(createWhere("field 2", CriteriaType.IsEmpty, "is empty"));
+        wheres.add(createWhere("field 2", CriteriaType.IsEmpty, "true"));
         wheres.add(createWhere("field 1", CriteriaType.LessThan, "less than something"));
         wheres.add(createWhere("field 2", CriteriaType.LessThanOrEqual, "less than or equal to something"));
         wheres.add(createWhere("field 1", CriteriaType.NotEqual, "not equal to something"));
@@ -283,7 +283,7 @@ public class DatabaseLoadGoldenRecordTests {
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
                                                 .setFieldId("FIELD 2")
                                                 .setOperator("IS_NULL")
-                                                .setValue("is empty"),
+                                                .setValue(null),
                                         new GoldenRecordQueryRequest.Filter.FieldValue()
                                                 .setFieldId("FIELD 1")
                                                 .setOperator("LESS_THAN")

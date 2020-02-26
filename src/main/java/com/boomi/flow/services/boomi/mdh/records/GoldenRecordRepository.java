@@ -112,8 +112,12 @@ public class GoldenRecordRepository {
 
                                 break;
                             case IsEmpty:
-                                // TODO: Check if this is correct
-                                operator = "IS_NULL";
+
+                                if ("true".equalsIgnoreCase(field.getContentValue())) {
+                                    operator = "IS_NULL";
+                                } else {
+                                    operator = "IS_NOT_NULL";
+                                }
 
                                 break;
                             case LessThan:
@@ -136,10 +140,15 @@ public class GoldenRecordRepository {
                                 throw new ServiceProblemException(400, "An unsupported criteria type of " + field.getCriteriaType() + " was given for the column " + field.getColumnName());
                         }
 
+                        String value = field.getContentValue();
+                        if ("IS_NULL".equalsIgnoreCase(operator) || "IS_NOT_NULL".equalsIgnoreCase(operator)) {
+                            value = null;
+                        }
+
                         fieldFilters.add(new GoldenRecordQueryRequest.Filter.FieldValue()
                                 .setFieldId(field.getColumnName().toUpperCase())
                                 .setOperator(operator)
-                                .setValue(field.getContentValue())
+                                .setValue(value)
                         );
                     }
                 }
