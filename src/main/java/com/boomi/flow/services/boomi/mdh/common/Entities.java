@@ -175,7 +175,7 @@ public class Entities {
 
         linkProperties.add(new Property("Source", link.getSource()));
         linkProperties.add(new Property("Entity ID", link.getEntityId()));
-        linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
+        linkProperties.add(new Property("Established Date", EngineCompatibleDates.format(link.getEstablishedDate())));
 
         MObject linkObject = new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
         linkObject.setTypeElementBindingDeveloperName(linkObject.getDeveloperName());
