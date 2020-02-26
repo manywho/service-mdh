@@ -17,7 +17,9 @@ import java.util.stream.Collectors;
 
 public class Entities {
 
-    public static MObject createGoldenRecordMObject(String universeId, String id, MObject mObject, List<GoldenRecord.Link> links) {
+    public static MObject createGoldenRecordMObject(String universeId, GoldenRecord record) {
+        MObject mObject = record.getMObject();
+
         if (mObject == null) {
             return null;
         }
@@ -25,15 +27,17 @@ public class Entities {
         List<Property> properties = mObject.getProperties();
 
         // this part is only for Golden Records
-        List<MObject> mObjectLinks = links.stream()
+        List<MObject> mObjectLinks = record.getLinks().stream()
                 .map(Entities::createMObjectForLink)
                 .collect(Collectors.toList());
 
         properties.add(new Property(GoldenRecordConstants.LINKS_FIELD, mObjectLinks));
-        properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
+        properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, record.getRecordId()));
+        properties.add(new Property(GoldenRecordConstants.CREATED_DATE_FIELD, EngineCompatibleDates.format(record.getCreatedDate())));
+        properties.add(new Property(GoldenRecordConstants.UPDATED_DATE_FIELD, EngineCompatibleDates.format(record.getUpdatedDate())));
 
         String developerName = universeId + "-golden-record";
-        MObject mObjectToReturn = new MObject(developerName, id, properties);
+        MObject mObjectToReturn = new MObject(developerName, record.getRecordId(), properties);
         mObjectToReturn.setTypeElementBindingDeveloperName(developerName);
 
         return mObjectToReturn;
@@ -171,7 +175,7 @@ public class Entities {
 
         linkProperties.add(new Property("Source", link.getSource()));
         linkProperties.add(new Property("Entity ID", link.getEntityId()));
-        linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
+        linkProperties.add(new Property("Established Date", EngineCompatibleDates.format(link.getEstablishedDate())));
 
         MObject linkObject = new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
         linkObject.setTypeElementBindingDeveloperName(linkObject.getDeveloperName());

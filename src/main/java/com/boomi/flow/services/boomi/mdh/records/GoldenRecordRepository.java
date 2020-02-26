@@ -155,7 +155,7 @@ public class GoldenRecordRepository {
 
         return result.getRecords().stream()
                 .map(record -> {
-                            MObject mObject = Entities.createGoldenRecordMObject(universeId, record.getRecordId(), record.getMObject(), record.getLinks());
+                            MObject mObject = Entities.createGoldenRecordMObject(universeId, record);
                             FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
 
                             return mObject;

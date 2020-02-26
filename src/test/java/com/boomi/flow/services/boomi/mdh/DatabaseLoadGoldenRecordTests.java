@@ -103,7 +103,7 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-golden-record"));
         assertThat(objects.get(0).getExternalId(), equalTo("record ID 1"));
-        assertThat(objects.get(0).getProperties(), hasSize(6));
+        assertThat(objects.get(0).getProperties(), hasSize(8));
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
         assertThat(objects.get(0).getProperties().get(1).getDeveloperName(), equalTo("field 2 1"));
@@ -126,6 +126,10 @@ public class DatabaseLoadGoldenRecordTests {
         assertThat(objects.get(0).getProperties().get(4).getObjectData().get(0).getProperties().get(2).getContentValue(), equalTo("2016-03-04T23:45:10Z"));
         assertThat(objects.get(0).getProperties().get(5).getDeveloperName(), equalTo("___recordId"));
         assertThat(objects.get(0).getProperties().get(5).getContentValue(), equalTo("record ID 1"));
+        assertThat(objects.get(0).getProperties().get(6).getDeveloperName(), equalTo("___filterCreatedDate"));
+        assertThat(objects.get(0).getProperties().get(6).getContentValue(), equalTo("2015-01-02T12:34:00Z"));
+        assertThat(objects.get(0).getProperties().get(7).getDeveloperName(), equalTo("___filterUpdatedDate"));
+        assertThat(objects.get(0).getProperties().get(7).getContentValue(), equalTo("2017-03-04T23:45:00Z"));
     }
 
     @Test
@@ -348,11 +352,11 @@ public class DatabaseLoadGoldenRecordTests {
         links.add(link);
 
         return new GoldenRecord()
-                .setCreatedDate(OffsetDateTime.parse("2015-01-02T12:34:56Z"))
+                .setCreatedDate(OffsetDateTime.parse("2015-01-02T12:34Z"))
                 .setMObject(mObject)
                 .setLinks(links)
                 .setRecordId("record ID " + number)
-                .setUpdatedDate(OffsetDateTime.parse("2017-03-04T23:45:10Z"));
+                .setUpdatedDate(OffsetDateTime.parse("2017-03-04T23:45Z"));
     }
 
     private static ListFilterWhere createWhere(String columnName, CriteriaType criteriaType, String value) {
