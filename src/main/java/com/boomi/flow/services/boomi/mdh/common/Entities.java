@@ -46,7 +46,11 @@ public class Entities {
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
         List<Property> properties = new ArrayList<>();
         if (entry.getEntity() != null) {
-            properties = entry.getEntity().getProperties();
+            for (Property property :entry.getEntity().getProperties()) {
+                if (isValidProperty(property)) {
+                    properties.add(property);
+                }
+            }
         }
 
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
@@ -59,6 +63,21 @@ public class Entities {
         properties.add(new Property(QuarantineEntryConstants.SOURCE_ID_FIELD, entry.getSourceId()));
 
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
+    }
+
+    // we are dealing with data that has problems, if the mobject doesn't have properties the engine will fail
+    private static boolean isValidProperty(Property property) {
+        if (property.getObjectData() == null || property.getObjectData().size() < 1) {
+            return true;
+        }
+        
+        for (MObject object :property.getObjectData()) {
+            if (object.getProperties() == null || object.getProperties().size() < 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField, boolean isModel) {
