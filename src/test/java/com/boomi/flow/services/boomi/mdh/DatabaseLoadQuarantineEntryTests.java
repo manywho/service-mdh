@@ -12,6 +12,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.*;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -109,7 +110,12 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects, hasSize(2));
         assertThat(objects.get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
+
         assertThat(objects.get(0).getProperties(), hasSize(12));
+
+        // property "testing - field 5" shouldn't be listed, because it doesn't have properties
+        assertThat(objects.get(0).getProperties(), not(Matchers.hasItem(Matchers.hasProperty("developerName", equalTo("testing - field 5")))));
+
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
 
@@ -364,6 +370,10 @@ public class DatabaseLoadQuarantineEntryTests {
         MObject field4 = new MObject("testing - field 4 " + number ,
                 Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
         properties.add(new Property("field 4", field4));
+
+        // field 5 doesn't have properties, so it is not valid for engine
+        MObject field5 = new MObject("testing - field 5 " + number , new ArrayList<>());
+        properties.add(new Property("field 5", field5));
 
         MObject entity = new MObject("dunno", properties);
 
