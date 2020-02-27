@@ -73,12 +73,41 @@ public class QuarantineRepository {
     public List<MObject> findAll(ApplicationConfiguration configuration, String universeId, ListFilter filter) {
         LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universeId, configuration.getHubHostname(), configuration.getHubUsername());
 
-        Universe universe = mdhClient.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
-        QuarantineQueryRequest.Filter queryFilter = new QuarantineQueryRequest.Filter();
-
         QuarantineQueryRequest queryRequest = new QuarantineQueryRequest()
-                .setFilter(queryFilter)
+                .setFilter(mapToQueryFilter(filter))
                 .setIncludeData(true);
+
+        queryRequest.setType(findStatusFilter(filter));
+
+        Universe universe = mdhClient.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
+
+        QuarantineQueryResponse result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId, queryRequest);
+        if (result == null || result.getEntries() == null) {
+            return new ArrayList<>();
+        }
+
+        return result.getEntries().stream()
+                .map(entry -> {
+                    MObject mObject = Entities.createQuarantineMObject(universeId, entry);
+                    FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
+
+                    return mObject;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String findStatusFilter(ListFilter filter) {
+        if (filter != null && filter.hasWhere()) {
+            // Status
+            return ListFilters.findConstrainedFilter(filter.getWhere(), QuarantineEntryConstants.STATUS_FIELD, VALID_STATUSES)
+                    .orElse(null);
+        }
+
+        return null;
+    }
+
+    private  QuarantineQueryRequest.Filter mapToQueryFilter(ListFilter filter) {
+        QuarantineQueryRequest.Filter queryFilter = new QuarantineQueryRequest.Filter();
 
         if (filter != null) {
             if (filter.getLimit() > 200) {
@@ -94,9 +123,20 @@ public class QuarantineRepository {
             }
 
             if (filter.hasWhere()) {
-                // Status
-                ListFilters.findConstrainedFilter(filter.getWhere(), QuarantineEntryConstants.STATUS_FIELD, VALID_STATUSES)
-                        .ifPresent(queryRequest::setType);
+                // we inform the user if a filter is not supported
+                filter.getWhere().stream()
+                        .filter(listFilterWhere -> QuarantineEntryConstants.STATUS_FIELD.equals(listFilterWhere.getColumnName()) == false &&
+                                QuarantineEntryConstants.SOURCE_ID_FIELD.equals(listFilterWhere.getColumnName()) == false &&
+                                QuarantineEntryConstants.SOURCE_ENTITY_ID_FIELD.equals(listFilterWhere.getColumnName()) == false &&
+                                QuarantineEntryConstants.CREATED_DATE_FIELD.equals(listFilterWhere.getColumnName()) == false &&
+                                QuarantineEntryConstants.END_DATE_FIELD.equals(listFilterWhere.getColumnName()) == false &&
+                                QuarantineEntryConstants.CAUSE_FIELD.equals(listFilterWhere.getColumnName()) == false &&
+                                QuarantineEntryConstants.RESOLUTION_FIELD.equals(listFilterWhere.getColumnName()) == false)
+                        .findFirst()
+                        .ifPresent(listFilterWhere -> {
+                            LOGGER.warn("An unsupported filter of {} was given", listFilterWhere.getColumnName());
+                            throw new ServiceProblemException(400, String.format("An unsupported filter of %s was given", listFilterWhere.getColumnName()));
+                        });
 
                 // Source ID
                 ListFilters.findFilterValue(filter.getWhere(), QuarantineEntryConstants.SOURCE_ID_FIELD, CriteriaType.Equal)
@@ -138,18 +178,6 @@ public class QuarantineRepository {
             }
         }
 
-        QuarantineQueryResponse result = mdhClient.queryQuarantineEntries(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId, queryRequest);
-        if (result == null || result.getEntries() == null) {
-            return new ArrayList<>();
-        }
-
-        return result.getEntries().stream()
-                .map(entry -> {
-                    MObject mObject = Entities.createQuarantineMObject(universeId, entry);
-                    FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
-
-                    return mObject;
-                })
-                .collect(Collectors.toList());
+        return queryFilter;
     }
 }

@@ -11,6 +11,7 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.*;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -345,6 +346,20 @@ public class DatabaseLoadQuarantineEntryTests {
                         "12fa66f9-e14d-f642-878f-030b13b64731",
                         query
                 );
+    }
+
+    @Test(expected = ServiceProblemException.class)
+    public void testLoadWithWrongFilters() {
+        List<ListFilterWhere> wheres = new ArrayList<>();
+        wheres.add(createWhere("custom name", CriteriaType.Equal, "doesn't matter"));
+        ListFilter listFilter = new ListFilter();
+        listFilter.setComparisonType(ComparisonType.And);
+        listFilter.setLimit(123);
+        listFilter.setWhere(wheres);
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
+
     }
 
     private static QuarantineEntry createIncorrectFormattedQuarantineEntry(int number) {
