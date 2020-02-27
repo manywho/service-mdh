@@ -5,10 +5,6 @@ import com.boomi.flow.services.boomi.mdh.match.FuzzyMatchDetailsConstants;
 import com.google.common.base.Strings;
 import com.manywho.sdk.api.ContentType;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
-import com.manywho.sdk.api.draw.elements.type.TypeElement;
-import com.manywho.sdk.api.draw.elements.type.TypeElementBinding;
-import com.manywho.sdk.api.draw.elements.type.TypeElementProperty;
-import com.manywho.sdk.api.draw.elements.type.TypeElementPropertyBinding;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.slf4j.Logger;
@@ -17,7 +13,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class FieldMapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(FieldMapper.class);
