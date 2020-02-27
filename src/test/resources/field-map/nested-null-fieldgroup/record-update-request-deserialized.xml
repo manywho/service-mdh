@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<batch src="flow">
+    <account>
+        <contact>
+            <name>Joe Doe</name>
+        </contact>
+        <products_wrapper/>
+        <name>Joe</name>
+        <a_number/>
+        <collection_name/>
+    </account>
+</batch>

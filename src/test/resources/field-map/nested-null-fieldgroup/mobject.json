@@ -1,0 +1,179 @@
+{
+  "developerName": "093a3572-8106-4d12-aa29-7e8dd8bf0fd2-golden-record",
+  "externalId": "a976b616-6b74-4234-afa3-96fc6a34a190",
+  "internalId": "12cc5724-4b11-4292-a41f-c2e32d98f7c1",
+  "isSelected": true,
+  "order": 0,
+  "properties": [
+    {
+      "contentFormat": null,
+      "contentType": "ContentString",
+      "contentValue": "Joe",
+      "developerName": "name",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "bcdacb28-822e-480c-8db3-002edf96edce"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentObject",
+      "contentValue": null,
+      "developerName": "account - contact",
+      "objectData": [
+        {
+          "developerName": "account - contact",
+          "externalId": "de350ca9-0222-4d92-87b7-94ccf6b7f576",
+          "internalId": "2819a18c-f4ad-4453-80a2-f1ff8444d7ba",
+          "isSelected": false,
+          "order": 0,
+          "properties": [
+            {
+              "contentFormat": null,
+              "contentType": "ContentString",
+              "contentValue": "Joe Doe",
+              "developerName": "name",
+              "objectData": null,
+              "typeElementId": null,
+              "typeElementPropertyId": "0e370307-945e-4be4-bee1-711610c4e1a4"
+            },
+            {
+              "contentFormat": null,
+              "contentType": "ContentObject",
+              "contentValue": null,
+              "developerName": "account - address",
+              "objectData": null,
+              "typeElementId": null,
+              "typeElementPropertyId": "1aeab3e2-ef2f-428c-a974-b77c15e8ab26"
+            }
+          ],
+          "typeElementBindingDeveloperName": null,
+          "typeElementId": "a451c599-2715-4098-84c3-10154e1710c3"
+        }
+      ],
+      "typeElementId": null,
+      "typeElementPropertyId": "5ab47e56-8c5c-4e07-9c94-2a1dd744d0d8"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentList",
+      "contentValue": null,
+      "developerName": "account - products",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "841c0db9-0950-4bc9-bea3-386e5d070463"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentList",
+      "contentValue": null,
+      "developerName": "account - collection_root",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "7f6a3fa8-60de-4339-9442-dea7a850c91d"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentNumber",
+      "contentValue": "",
+      "developerName": "a_number",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "0c4f3727-3b8e-4bb6-9909-2eb6beda3682"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentString",
+      "contentValue": "",
+      "developerName": "___sourceId",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "4d41ac12-eee5-455e-9a13-c1349b00ec7e"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentDateTime",
+      "contentValue": "",
+      "developerName": "___filterCreatedDate",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "64fdc441-f01f-4541-ae66-ec7f610bcdd9"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentDateTime",
+      "contentValue": "",
+      "developerName": "___filterUpdatedDate",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "257bc1b1-9f25-4b89-bf7d-236a4d91dd33"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentString",
+      "contentValue": "a976b616-6b74-4234-afa3-96fc6a34a190",
+      "developerName": "___recordId",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "c8c98810-6242-40ae-8ccc-33e14c5bce7e"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentString",
+      "contentValue": "4fcc4d5e-d49c-44dd-beaf-f8371f328980",
+      "developerName": "___entityId",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "90814b51-614e-406d-88c4-435a05b62087"
+    },
+    {
+      "contentFormat": null,
+      "contentType": "ContentList",
+      "contentValue": null,
+      "developerName": "___links",
+      "objectData": [
+        {
+          "developerName": "Golden Record: Link",
+          "externalId": "4fcc4d5e-d49c-44dd-beaf-f8371f328980",
+          "internalId": "61cb008f-d523-44b3-a9b3-9917c15c3715",
+          "isSelected": false,
+          "order": 0,
+          "properties": [
+            {
+              "contentFormat": null,
+              "contentType": "ContentString",
+              "contentValue": "4fcc4d5e-d49c-44dd-beaf-f8371f328980",
+              "developerName": "Entity ID",
+              "objectData": null,
+              "typeElementId": null,
+              "typeElementPropertyId": "83f2d72a-e222-4edf-97a3-7aa3f1e9b39d"
+            },
+            {
+              "contentFormat": null,
+              "contentType": "ContentDateTime",
+              "contentValue": "2020-01-14T16:04:39Z",
+              "developerName": "Established Date",
+              "objectData": null,
+              "typeElementId": null,
+              "typeElementPropertyId": "200982de-9e9f-4e9d-afc0-05743a843945"
+            },
+            {
+              "contentFormat": null,
+              "contentType": "ContentString",
+              "contentValue": "flow",
+              "developerName": "Source",
+              "objectData": null,
+              "typeElementId": null,
+              "typeElementPropertyId": "3155570a-e15a-4ce2-8a45-c65f46cc080d"
+            }
+          ],
+          "typeElementBindingDeveloperName": null,
+          "typeElementId": "6d4483fb-2dbb-42af-a91b-cb9f34f7318c"
+        }
+      ],
+      "typeElementId": null,
+      "typeElementPropertyId": "f7fb07f0-18a0-4b1c-8765-e28c25ae0d8f"
+    }
+  ],
+  "typeElementBindingDeveloperName": null,
+  "typeElementId": "ad0ff97b-e624-4ca6-8417-052cc09a32cf"
+}

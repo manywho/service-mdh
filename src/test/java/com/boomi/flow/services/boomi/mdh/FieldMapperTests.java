@@ -67,4 +67,30 @@ public class FieldMapperTests {
 
         Assert.assertEquals(expected, bodyContent.toString());
     }
+    
+    @Test
+    public void testCreateHashFromMobjectWithNestedNullFieldGroup() throws IOException {
+        MObject mObject = ObjectMapperFactory
+                .create()
+                .readValue(Resources.getResource("field-map/nested-null-fieldgroup/mobject.json"), MObject.class);
+        Universe universe = JAXB.unmarshal(Resources.getResource("field-map/nested-null-fieldgroup/universe.xml"), Universe.class);
+
+        Map<String, Object> fields = FieldMapper.createMapFromModelMobject(universe.getName(), mObject, universe);
+
+        BatchUpdateRequest.Entity entity = new BatchUpdateRequest.Entity()
+                .setOp(null)
+                .setName(universe.getLayout().getModel().getName())
+                .setFields(fields);
+
+        BatchUpdateRequest updateRequest = new BatchUpdateRequest()
+                .setSource("flow")
+                .setEntities(Collections.singletonList(entity));
+
+        StringWriter bodyContent = new StringWriter();
+        JAXB.marshal(updateRequest, bodyContent);
+
+        String expected = Resources.toString(Resources.getResource("field-map/nested-null-fieldgroup/record-update-request-deserialized.xml"), Charsets.UTF_8);
+
+        Assert.assertEquals(expected, bodyContent.toString());
+    }
 }
