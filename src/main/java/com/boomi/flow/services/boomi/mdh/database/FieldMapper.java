@@ -209,9 +209,10 @@ public class FieldMapper {
 
         for (Property property: mObject.getProperties()) {
             Object childObject = createMapEntry(property, modelName, elements);
-
-            String name = getEntryNameToSendToHubApi(modelName, property, elements);
-            mapObject.put(name, childObject);
+            if (childObject != null) {
+                String name = getEntryNameToSendToHubApi(modelName, property, elements);
+                mapObject.put(name, childObject);
+            }
         }
 
         Map<String, Object> wrapperObject = new HashMap<>();
