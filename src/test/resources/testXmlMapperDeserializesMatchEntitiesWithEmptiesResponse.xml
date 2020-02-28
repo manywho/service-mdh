@@ -1,0 +1,55 @@
+<MatchEntitiesResponse>
+    <MatchResult matchRule="Incoming name is similar to (Jaro-Winkler) Existing name" status="SUCCESS">
+        <entity>
+            <contact>
+                <id>1</id>
+                <phones>
+                    <phone/>
+                </phones>
+            </contact>
+        </entity>
+        <match>
+            <contact>
+                <id>e6e1b847-d61a-46d9-a610-c678ba40ca41</id>
+                <phones>
+                    <phone/>
+                </phones>
+            </contact>
+            <fuzzyMatchDetails>
+                <field>name</field>
+                <first>BOBBY</first>
+                <second>BOB</second>
+                <method>jarowinkler</method>
+                <matchStrength>0.90666664</matchStrength>
+                <threshold>0.85</threshold>
+            </fuzzyMatchDetails>
+        </match>
+        <duplicate>
+            <contact>
+                <id>fc8cd5be-ac26-4e9a-9d0c-6b397a124172</id>
+                <phones/>
+            </contact>
+            <fuzzyMatchDetails>
+                <field>name</field>
+                <first>BOBBY</first>
+                <second>BOB</second>
+                <method>jarowinkler</method>
+                <matchStrength>0.90666664</matchStrength>
+                <threshold>0.85</threshold>
+            </fuzzyMatchDetails>
+        </duplicate>
+    </MatchResult>
+    <MatchResult status="ALREADY_LINKED">
+        <entity>
+            <contact>
+                <id>2</id>
+                <phones>
+                    <phone>
+                        <number />
+                        <type />
+                    </phone>
+                </phones>
+            </contact>
+        </entity>
+    </MatchResult>
+</MatchEntitiesResponse>
