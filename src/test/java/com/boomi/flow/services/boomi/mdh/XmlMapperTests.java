@@ -417,7 +417,7 @@ public class XmlMapperTests {
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(3).getDeveloperName(), equalTo("method"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(3).getContentValue(), equalTo("jarowinkler"));
 
-        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo("matchStrength"));
+        assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(4).getDeveloperName(), equalTo("Match Strength"));
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(4).getContentValue(), equalTo("0.90666664"));
 
         assertThat( actual.getMatchResults().get(0).getMatch().get(0).getProperties().get(6).getObjectData().get(0).getProperties().get(5).getDeveloperName(), equalTo("threshold"));
