@@ -20,6 +20,8 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -456,5 +458,39 @@ public class XmlMapperTests {
 
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(5).getDeveloperName(), equalTo("spouse"));
         assertThat( actual.getMatchResults().get(1).getEntity().getProperties().get(5).getContentValue(), equalTo("1002"));
+    }
+
+
+    @Test
+    public void testXmlMapperDeserializesMatchEntityWithEmptyFieldGroupsResponse() {
+        /**
+         * objects without properties shouldn't be returned to engine
+         * if it is an object we don't return that property
+         * if it is a list we ignore the object without properties in that list
+         */
+        URL data = Resources.getResource("testXmlMapperDeserializesMatchEntitiesWithEmptiesResponse.xml");
+        MatchEntityResponse actual = JAXB.unmarshal(data, MatchEntityResponse.class);
+
+        assertThat(actual, not(nullValue()));
+        List<MatchEntityResponse.MatchResult> results = actual.getMatchResults();
+        MatchEntityResponse.MatchResult match = results.get(0);
+        assertThat(match.getEntity().getProperties(), hasSize(1));
+        assertThat(match.getEntity().getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(match.getEntity().getProperties().get(0).getContentValue(), equalTo("1"));
+
+        assertThat(match.getMatch().get(0).getProperties(), hasSize(2));
+        assertThat(match.getMatch().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(match.getMatch().get(0).getProperties().get(0).getContentValue(), equalTo("e6e1b847-d61a-46d9-a610-c678ba40ca41"));
+        assertThat(match.getMatch().get(0).getProperties().get(1).getDeveloperName(), equalTo("Fuzzy Match Details"));
+
+        assertThat(match.getDuplicate().get(0).getProperties(), hasSize(2));
+        assertThat(match.getDuplicate().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(match.getDuplicate().get(0).getProperties().get(0).getContentValue(), equalTo("fc8cd5be-ac26-4e9a-9d0c-6b397a124172"));
+        assertThat(match.getDuplicate().get(0).getProperties().get(1).getDeveloperName(), equalTo("Fuzzy Match Details"));
+
+        MatchEntityResponse.MatchResult alreadyLinked = results.get(1);
+        assertThat(alreadyLinked.getEntity().getProperties(), hasSize(2));
+        assertThat(alreadyLinked.getEntity().getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(alreadyLinked.getEntity().getProperties().get(0).getContentValue(), equalTo("2"));
     }
 }

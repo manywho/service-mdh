@@ -38,11 +38,15 @@ public class MapAdapterCommon {
                         // this is a collection of repeatable field groups
                         properties.add(propertyCollection);
                     } else {
-                        Property propertyFieldGroup = new Property(modelNode.getNodeName() + " - " + childNode.getNodeName(), createMobject(modelNode, childNode));
-                        propertyFieldGroup.setContentType(ContentType.Object);
+                        MObject mObject = createMobject(modelNode, childNode);
+                        // if we return a mobject without properties the engine shows an error
+                        if (mObject.getProperties() != null && mObject.getProperties().isEmpty() == false) {
+                            Property propertyFieldGroup = new Property(modelNode.getNodeName() + " - " + childNode.getNodeName(), mObject);
+                            propertyFieldGroup.setContentType(ContentType.Object);
 
-                        // this is a field group
-                        properties.add(propertyFieldGroup);
+                            // this is a field group
+                            properties.add(propertyFieldGroup);
+                        }
                     }
                 }
             }
@@ -55,7 +59,11 @@ public class MapAdapterCommon {
         List<MObject> objects = new ArrayList<>();
         for(int i = 0; i < nodes.getLength(); i++) {
             if (nodes.item(i).getNodeType() == ELEMENT_NODE) {
-                objects.add(createMobject(modelNode, nodes.item(i)));
+                MObject mObject = createMobject(modelNode, nodes.item(i));
+                // if we return a mobject without properties the engine shows an error
+                if (mObject.getProperties() != null && mObject.getProperties().isEmpty() == false) {
+                    objects.add(mObject);
+                }
             }
         }
 
