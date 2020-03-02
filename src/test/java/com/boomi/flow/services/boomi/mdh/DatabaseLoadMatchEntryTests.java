@@ -129,7 +129,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(matchedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.MATCH));
         assertThat(matchedEntityProperty.getObjectData(), hasSize(1));
-        assertThat(matchedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.MATCH));
+        assertThat(matchedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-match"));
 
         assertThat(matchedEntityProperty.getObjectData().get(0).getProperties(), hasSize(5));
 
@@ -173,7 +173,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(duplicatedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.DUPLICATE));
         assertThat(duplicatedEntityProperty.getObjectData(), hasSize(1));
-        assertThat(duplicatedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.DUPLICATE));
+        assertThat(duplicatedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-match"));
 
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1"));
         assertThat(duplicatedEntityProperty.getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("some value 1"));
@@ -215,7 +215,7 @@ public class DatabaseLoadMatchEntryTests {
 
         assertThat(alreadyLinkedEntityProperty.getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.ALREADY_LINKED));
         assertThat(alreadyLinkedEntityProperty.getObjectData(), hasSize(1));
-        assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo(FuzzyMatchDetailsConstants.ALREADY_LINKED));
+        assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-match"));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties(), hasSize(8));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
         assertThat(alreadyLinkedEntityProperty.getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("4f23f8eb-984b-4e9b-9a52-d9ebaf123456"));

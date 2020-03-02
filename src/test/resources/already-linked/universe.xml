@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<universe>
+    <id>f8bc9aa9-4cc1-42d1-964a-93ec8e1cdd34</id>
+    <version>4de884fa-de94-4b9e-91e5-0100d4d3c3a4</version>
+    <name>hampshire</name>
+    <stats activeRecords="2" enddatedRecords="7" quarantinedRecords="2" asOf="2020-03-01T19:00:18.391Z">
+        <sourceStats sourceCode="flow" pendingBatchUpdates="0" pendingBatchRecords="0" pendingChannelDeliveries="0"
+                     undeliverableChannelDeliveries="0"/>
+    </stats>
+    <sources>
+        <source code="flow" componentId="93e1c7eb-af92-4240-a3cb-4f8a42273f67" state="STRAPPING" allowContribute="true">
+            <channel id="3f2370d9-affc-4d95-a58f-a1c950b80ea9" updateType="FULL" state="CREATED" primary="true"/>
+        </source>
+    </sources>
+    <layoutid>f8bc9aa9-4cc1-42d1-964a-93ec8e1cdd34</layoutid>
+    <layout idXPath="/hampshire/id">
+        <model name="hampshire">
+            <element uniqueId="CITYNAME" name="cityname" prettyName="cityName" type="STRING" required="false"
+                     enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100" truncateLength="100"
+                     repeatable="false"/>
+            <element uniqueId="PRIMARY_SCHOOL" name="primary_school" prettyName="Primary School" type="CONTAINER"
+                     required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
+                <element uniqueId="STATE_SCHOOL" name="state_school" prettyName="state school" type="STRING"
+                         required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100"
+                         truncateLength="100" repeatable="false"/>
+                <element uniqueId="PRIVATE_SCHOOL" name="private_school" prettyName="private school" type="STRING"
+                         required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" maxLength="100"
+                         truncateLength="100" repeatable="false"/>
+            </element>
+        </model>
+        <deletedElements/>
+        <xsd>&lt;xs:schema version=&quot;1.0&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;xs:element
+            name=&quot;hampshire&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;1&quot; name=&quot;id&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;cityname&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element maxOccurs=&quot;1&quot;
+            minOccurs=&quot;0&quot; name=&quot;primary_school&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;state_school&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;private_school&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute
+            name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;ts&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute
+            name=&quot;grid&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:attribute name=&quot;enddate&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;
+        </xsd>
+        <field xpath="/hampshire/id" type="STRING" prettyName="Id"/>
+        <field uniqueId="CITYNAME" xpath="/hampshire/cityname" type="STRING" prettyName="cityName" required="false"
+               enforceIntegrity="false" incomingReferenceIntegrity="false" titleField="false" maxLength="100"
+               truncateLength="100"/>
+        <field uniqueId="STATE_SCHOOL" xpath="/hampshire/primary_school/state_school" type="STRING"
+               prettyName="state school" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+               titleField="false" maxLength="100" truncateLength="100"/>
+        <field uniqueId="PRIVATE_SCHOOL" xpath="/hampshire/primary_school/private_school" type="STRING"
+               prettyName="private school" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
+               titleField="false" maxLength="100" truncateLength="100"/>
+    </layout>
+    <matchid>f8bc9aa9-4cc1-42d1-964a-93ec8e1cdd34</matchid>
+    <matchconfig>
+        <round>
+            <matchrule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GroupingRule" operator="AND">
+                <nestedExpression xsi:type="ExpressionRule" operator="EQUALS">
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="CITYNAME" type="EXISTING"/>
+                    <input xsi:type="UniqueIdRuleInput" uniqueId="CITYNAME" type="INCOMING"/>
+                </nestedExpression>
+            </matchrule>
+        </round>
+    </matchconfig>
+    <dataquality/>
+</universe>
