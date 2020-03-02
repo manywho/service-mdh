@@ -47,6 +47,11 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
             List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(wrapper.elements.get(1), fieldsFuzzyDetails.getChildNodes());
 
             if (fuzzyProperties.size() ==  6) {
+                fuzzyProperties.stream()
+                        .filter(property -> property.getDeveloperName().equals("matchStrength"))
+                        .findFirst()
+                        .ifPresent(property -> property.setDeveloperName("Match Strength"));
+
                 MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
                 fuzzyMatchDetailsObject.setExternalId(UUID.randomUUID().toString());
                 properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
