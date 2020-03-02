@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MatchEntitiesResponse>
+    <MatchResult status="ALREADY_LINKED">
+        <entity>
+            <hampshire>
+                <id>b1ef1bfc-24b6-4450-b820-55a49d41b4b4</id>
+                <cityname>city1</cityname>
+                <primary_school>
+                    <state_school>state school</state_school>
+                    <private_school>private school</private_school>
+                </primary_school>
+            </hampshire>
+        </entity>
+    </MatchResult>
+</MatchEntitiesResponse>

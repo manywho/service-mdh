@@ -88,6 +88,7 @@ public class FieldMapper {
 
                 changePropertyName = false;
             }
+
             String newName = property.getDeveloperName();
             if (changePropertyName) {
                 newName = getUniqueIdByPropertyName(universe.getLayout().getModel().getName(), property, universe.getLayout().getModel().getElements());
@@ -95,14 +96,18 @@ public class FieldMapper {
 
             // if it is one of our properties we don't change the property name, but we still need to change the property names of the object in objectData
             if (property.getContentType() == ContentType.List ||
-                    property.getContentType() == ContentType.Object || changePropertyName == false
-                    && property.getObjectData() != null) {
+                    property.getContentType() == ContentType.Object ||
+                    (property.getObjectData() != null && property.getObjectData().size() > 0)) {
 
                 if (changePropertyName) {
                     newName = universe.getLayout().getModel().getName() + " - " + newName;
                 }
+
                 for (MObject childObject:property.getObjectData()) {
-                    childObject.setDeveloperName(newName);
+                    if (changePropertyName) {
+                        childObject.setDeveloperName(newName);
+                    }
+
                     renameMobjectPropertiesToUseUniqueId(universe, childObject);
                 }
             }
@@ -128,6 +133,11 @@ public class FieldMapper {
             Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.NAME);
 
             return foundElement.getUniqueId().toLowerCase();
+        } else if (fieldName.startsWith(modelName + " - ")) {
+            // we don't know if it is a list or an object but it has the model name prefix, that means it is a field group
+            // it is not possible to have a uniqueid with spaces and "-" in MDH so we are sure that the name was created
+            // from a field group from the model "modelName"
+            fieldName = Entities.removeModelPrefix(property.getDeveloperName(), modelName);
         }
 
         Universe.Layout.Model.Element foundElement = findElementBy(elements, fieldName, SearchingBy.NAME);

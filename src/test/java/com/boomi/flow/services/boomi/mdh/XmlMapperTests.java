@@ -1,6 +1,8 @@
 package com.boomi.flow.services.boomi.mdh;
 
 import com.boomi.flow.services.boomi.mdh.common.DateFilter;
+import com.boomi.flow.services.boomi.mdh.common.Entities;
+import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.match.MatchEntityResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordHistoryResponse;
@@ -13,6 +15,8 @@ import org.junit.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
+
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -492,5 +496,48 @@ public class XmlMapperTests {
         assertThat(alreadyLinked.getEntity().getProperties(), hasSize(2));
         assertThat(alreadyLinked.getEntity().getProperties().get(0).getDeveloperName(), equalTo("id"));
         assertThat(alreadyLinked.getEntity().getProperties().get(0).getContentValue(), equalTo("2"));
+    }
+
+    @Test
+    public void testDeserailizeAlreadyLinkedNotRepeatebleFieldGroups() {
+        URL data = Resources.getResource("already-linked/response-match.xml");
+        MatchEntityResponse matchResult = JAXB.unmarshal(data, MatchEntityResponse.class);
+        Universe universe = JAXB.unmarshal(Resources.getResource("already-linked/universe.xml"), Universe.class);
+
+        MObject mObject = Entities.createMatchMObject("f8bc9aa9-4cc1-42d1-964a-93ec8e1cdd34", universe, matchResult.getMatchResults().get(0));
+        FieldMapper.renameMobjectPropertiesToUseUniqueId(universe, mObject);
+
+        assertThat(mObject.getDeveloperName(), equalTo("f8bc9aa9-4cc1-42d1-964a-93ec8e1cdd34-match"));
+        assertThat(mObject.getProperties(), hasSize(8));
+        assertThat(mObject.getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(mObject.getProperties().get(0).getContentValue(), equalTo("b1ef1bfc-24b6-4450-b820-55a49d41b4b4"));
+
+        assertThat(mObject.getProperties().get(1).getDeveloperName(), equalTo("cityname"));
+        assertThat(mObject.getProperties().get(1).getContentValue(), equalTo("city1"));
+
+        assertThat(mObject.getProperties().get(2).getDeveloperName(), equalTo("hampshire - primary_school"));
+        assertThat(mObject.getProperties().get(2).getObjectData().get(0).getDeveloperName(), equalTo("hampshire - primary_school"));
+        assertThat(mObject.getProperties().get(2).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("state_school"));
+        assertThat(mObject.getProperties().get(2).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("state school"));
+        assertThat(mObject.getProperties().get(2).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("private_school"));
+        assertThat(mObject.getProperties().get(2).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("private school"));
+
+        assertThat(mObject.getProperties().get(7).getDeveloperName(), equalTo("Already Linked Entities"));
+
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getDeveloperName(), equalTo("f8bc9aa9-4cc1-42d1-964a-93ec8e1cdd34-match"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties(), hasSize(8));
+
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("id"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("b1ef1bfc-24b6-4450-b820-55a49d41b4b4"));
+
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("cityname"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("city1"));
+
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(2).getDeveloperName(), equalTo("hampshire - primary_school"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getDeveloperName(), equalTo("hampshire - primary_school"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("state_school"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("state school"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(1).getDeveloperName(), equalTo("private_school"));
+        assertThat(mObject.getProperties().get(7).getObjectData().get(0).getProperties().get(2).getObjectData().get(0).getProperties().get(1).getContentValue(), equalTo("private school"));
     }
 }

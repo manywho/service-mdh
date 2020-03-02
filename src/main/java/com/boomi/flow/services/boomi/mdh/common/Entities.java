@@ -116,7 +116,7 @@ public class Entities {
             propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, prepareEachObjectForFlow(result.getMatch(), universe));
             propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, prepareEachObjectForFlow(result.getDuplicate(), universe));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
-            MObject alreadyLinkedObject = createAlreadyLinkedObject(result.getEntity(), result.getIdResource());
+            MObject alreadyLinkedObject = createAlreadyLinkedObject(universe, result.getEntity(), result.getIdResource());
 
             prepreObjectForFlow(alreadyLinkedObject, universe);
 
@@ -144,7 +144,7 @@ public class Entities {
         return object;
     }
 
-    private static MObject createAlreadyLinkedObject(MObject object, String idResource) {
+    private static MObject createAlreadyLinkedObject(Universe universe, MObject object, String idResource) {
         List<Property> copyOfProperties = object.getProperties()
                 .stream()
                 .map(Entities::copyProperty)
@@ -157,7 +157,7 @@ public class Entities {
         copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>()));
         copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>()));
 
-        return new MObject(object.getDeveloperName(), object.getExternalId(), copyOfProperties);
+        return new MObject(universe.getId() + "-match", object.getExternalId(), copyOfProperties);
     }
 
     private static Property copyProperty(Property propertyToCopy) {
