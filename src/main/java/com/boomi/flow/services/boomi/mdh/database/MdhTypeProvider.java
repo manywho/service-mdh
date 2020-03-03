@@ -3,8 +3,10 @@ package com.boomi.flow.services.boomi.mdh.database;
 import com.boomi.flow.services.boomi.mdh.ApplicationConfiguration;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
+import com.google.common.base.Strings;
 import com.manywho.sdk.api.describe.DescribeServiceRequest;
 import com.manywho.sdk.api.draw.elements.type.TypeElement;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.services.types.TypeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,18 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
         // TODO: Get this bug fixed in the system flows
         if (request.hasConfigurationValues() == false) {
             return new ArrayList<>();
+        }
+
+        if (Strings.isNullOrEmpty(configuration.getHubToken())) {
+            throw new ServiceProblemException(400, "Hub Token can not be empty");
+        }
+
+        if (Strings.isNullOrEmpty(configuration.getHubUsername())) {
+            throw new ServiceProblemException(400, "Hub Username can not be empty");
+        }
+
+        if (Strings.isNullOrEmpty(configuration.getHubHostname())) {
+            throw new ServiceProblemException(400, "Hub Hostname can not be empty");
         }
 
         List<Universe> universes = repository.findAll(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken());
