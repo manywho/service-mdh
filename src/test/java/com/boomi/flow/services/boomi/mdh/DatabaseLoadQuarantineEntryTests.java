@@ -8,18 +8,17 @@ import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineEntry;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryRequest;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineQueryResponse;
 import com.boomi.flow.services.boomi.mdh.quarantine.QuarantineRepository;
-import com.boomi.flow.services.boomi.mdh.records.ElementIdFinder;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordRepository;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
+import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.*;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
+import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -34,7 +33,7 @@ public class DatabaseLoadQuarantineEntryTests {
     private MdhClient client;
 
     private ObjectDataType objectDataType = new ObjectDataType()
-            .setDeveloperName("universe-name-quarantine");
+            .setDeveloperName("12fa66f9-e14d-f642-878f-030b13b64731-quarantine");
 
     private QuarantineQueryResponse response = new QuarantineQueryResponse()
             .setEntries(
@@ -44,19 +43,80 @@ public class DatabaseLoadQuarantineEntryTests {
                     )
             );
 
+    private List<Universe.Layout.Model.Element> createElements(List<String> uniqueIds, List<String> names) {
+        List<Universe.Layout.Model.Element> elements = new ArrayList<>();
+
+        for(int i=0; i<uniqueIds.size(); i++) {
+            String name = names.get(i);
+            String uniqueId = uniqueIds.get(i);
+            Universe.Layout.Model.Element element = new Universe.Layout.Model.Element();
+            element.setUniqueId(uniqueId);
+            element.setName(name);
+
+            elements.add(element);
+        }
+
+        return elements;
+    }
+
     @Test
     public void testLoadReturnsCorrectlyFormattedMObjects() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 4",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property",
+                "field 4"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 4",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property",
+                "field 4"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(2));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
+
         assertThat(objects.get(0).getProperties(), hasSize(12));
+
+        // property "testing - field 5" shouldn't be listed, because it doesn't have properties
+        assertThat(objects.get(0).getProperties(), not(Matchers.hasItem(Matchers.hasProperty("developerName", equalTo("testing - field 5")))));
+
         assertThat(objects.get(0).getProperties().get(0).getDeveloperName(), equalTo("field 1 1"));
         assertThat(objects.get(0).getProperties().get(0).getContentValue(), equalTo("field 1 value 1"));
 
@@ -67,7 +127,7 @@ public class DatabaseLoadQuarantineEntryTests {
         assertThat(objects.get(0).getProperties().get(2).getContentValue(), equalTo("field 3 value 1"));
 
         assertThat(objects.get(0).getProperties().get(3).getContentValue(), nullValue());
-        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("field 4 1-child"));
+        assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getDeveloperName(), equalTo("testing - field 4"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("field 4 1 property"));
         assertThat(objects.get(0).getProperties().get(3).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 value 1 1"));
 
@@ -91,7 +151,6 @@ public class DatabaseLoadQuarantineEntryTests {
 
     @Test
     public void testLoadReturnsIncorrectlyFormattedMObjects() {
-
         QuarantineQueryResponse incorrectlyFormattedEntity = new QuarantineQueryResponse()
                 .setEntries(
                         Arrays.asList(
@@ -101,12 +160,12 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(incorrectlyFormattedEntity);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         assertThat(objects, not(nullValue()));
         assertThat(objects, hasSize(1));
-        assertThat(objects.get(0).getDeveloperName(), equalTo("universe-name-quarantine"));
+        assertThat(objects.get(0).getDeveloperName(), equalTo("12fa66f9-e14d-f642-878f-030b13b64731-quarantine"));
         assertThat(objects.get(0).getExternalId(), equalTo("a transaction ID 1"));
         assertThat(objects.get(0).getProperties(), hasSize(8));
 
@@ -130,6 +189,46 @@ public class DatabaseLoadQuarantineEntryTests {
 
     @Test
     public void testLoadWithNoFilter() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 4",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property",
+                "field 4"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 4",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property",
+                "field 4"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
         QuarantineQueryRequest query = new QuarantineQueryRequest()
                 .setFilter(new QuarantineQueryRequest.Filter())
                 .setIncludeData(true);
@@ -138,7 +237,7 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        List<MObject> objects = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, null, null);
 
         verify(client)
@@ -146,7 +245,7 @@ public class DatabaseLoadQuarantineEntryTests {
                         TestConstants.CONFIGURATION.getHubHostname(),
                         TestConstants.CONFIGURATION.getHubUsername(),
                         TestConstants.CONFIGURATION.getHubToken(),
-                        "universe-name",
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
                         query
                 );
 
@@ -155,6 +254,46 @@ public class DatabaseLoadQuarantineEntryTests {
 
     @Test
     public void testLoadWithComprehensiveFilter() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 4",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property",
+                "field 4"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 4",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property",
+                "field 4"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
         List<ListFilterWhere> wheres = new ArrayList<>();
         wheres.add(createWhere("___status", CriteriaType.Equal, "ACTIVE"));
         wheres.add(createWhere("___sourceId", CriteriaType.Equal, "a source ID"));
@@ -196,7 +335,7 @@ public class DatabaseLoadQuarantineEntryTests {
         when(client.queryQuarantineEntries(any(), any(), any(), any(), any()))
                 .thenReturn(response);
 
-        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client, new ElementIdFinder(null)), new MatchEntityRepository(client))
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
         verify(client)
@@ -204,9 +343,23 @@ public class DatabaseLoadQuarantineEntryTests {
                         TestConstants.CONFIGURATION.getHubHostname(),
                         TestConstants.CONFIGURATION.getHubUsername(),
                         TestConstants.CONFIGURATION.getHubToken(),
-                        "universe-name",
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
                         query
                 );
+    }
+
+    @Test(expected = ServiceProblemException.class)
+    public void testLoadWithWrongFilters() {
+        List<ListFilterWhere> wheres = new ArrayList<>();
+        wheres.add(createWhere("custom name", CriteriaType.Equal, "doesn't matter"));
+        ListFilter listFilter = new ListFilter();
+        listFilter.setComparisonType(ComparisonType.And);
+        listFilter.setLimit(123);
+        listFilter.setWhere(wheres);
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
+
     }
 
     private static QuarantineEntry createIncorrectFormattedQuarantineEntry(int number) {
@@ -224,13 +377,18 @@ public class DatabaseLoadQuarantineEntryTests {
     }
 
     private static QuarantineEntry createQuarantineEntry(int number) {
+
         List<Property> properties = new ArrayList<>();
         properties.add(new Property("field 1 " + number, "field 1 value " + number));
         properties.add(new Property("field 2 " + number, "field 2 value " + number));
         properties.add(new Property("field 3 " + number, "field 3 value " + number));
-        MObject field4 = new MObject("field 4 " + number + "-child",
+        MObject field4 = new MObject("testing - field 4 " + number ,
                 Collections.singletonList(new Property("field 4 " + number + " property", "value property 4 value 1 " + number)));
         properties.add(new Property("field 4", field4));
+
+        // field 5 doesn't have properties, so it is not valid for engine
+        MObject field5 = new MObject("testing - field 5 " + number , new ArrayList<>());
+        properties.add(new Property("field 5", field5));
 
         MObject entity = new MObject("dunno", properties);
 

@@ -48,7 +48,7 @@ public class MdhTypeProvider implements TypeProvider<ApplicationConfiguration> {
     private static List<TypeElement> loadModelTypes(List<Universe> universes) {
         return universes.stream()
                 .filter(universe -> universe.getLayout() != null && universe.getLayout().getModel() != null)
-                .map(FieldMapper::createModelTypes)
+                .map(DescribeType::createModelTypes)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }

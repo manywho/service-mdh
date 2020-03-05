@@ -41,28 +41,7 @@
               "contentType": "ContentObject",
               "contentValue": null,
               "developerName": "account - address",
-              "objectData": [
-                {
-                  "developerName": "account - address",
-                  "externalId": "798126d5-b947-4adf-9a63-f61c05f0a35b",
-                  "internalId": "937d1ff4-81ef-4f8f-9ccd-d1480ef7aaaf",
-                  "isSelected": false,
-                  "order": 0,
-                  "properties": [
-                    {
-                      "contentFormat": null,
-                      "contentType": "ContentString",
-                      "contentValue": "Science Park Road",
-                      "developerName": "street",
-                      "objectData": null,
-                      "typeElementId": null,
-                      "typeElementPropertyId": "2c038cb1-17be-468e-9259-6902b14200af"
-                    }
-                  ],
-                  "typeElementBindingDeveloperName": null,
-                  "typeElementId": "73fd77a4-cd24-4e2d-8c3c-f4e3d8380108"
-                }
-              ],
+              "objectData": null,
               "typeElementId": null,
               "typeElementPropertyId": "1aeab3e2-ef2f-428c-a974-b77c15e8ab26"
             }

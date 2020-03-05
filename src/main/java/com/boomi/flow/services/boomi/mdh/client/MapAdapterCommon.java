@@ -1,5 +1,6 @@
 package com.boomi.flow.services.boomi.mdh.client;
 
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 import org.w3c.dom.Node;
@@ -13,7 +14,7 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
 public class MapAdapterCommon {
-    public static List<Property> createPropertiesModel(NodeList map) {
+    public static List<Property> createPropertiesModel(Node modelNode, NodeList map) {
         ArrayList<Property> properties = new ArrayList<>();
 
         for (int i = 0; i < map.getLength(); i++) {
@@ -31,12 +32,21 @@ public class MapAdapterCommon {
 
                     if (childNode.getFirstChild().hasChildNodes() &&
                             childNode.getFirstChild().getFirstChild().getNodeType() == ELEMENT_NODE) {
+                        Property propertyCollection = new Property(modelNode.getNodeName() + " - " + childNode.getFirstChild().getNodeName(), createListMobject(modelNode, childNode.getChildNodes()));
+                        propertyCollection.setContentType(ContentType.List);
 
                         // this is a collection of repeatable field groups
-                        properties.add(new Property(childNode.getFirstChild().getNodeName(), createListMobject(childNode.getChildNodes())));
+                        properties.add(propertyCollection);
                     } else {
-                        // this is a field group
-                        properties.add(new Property(childNode.getNodeName(), createMobject(childNode)));
+                        MObject mObject = createMobject(modelNode, childNode);
+                        // if we return a mobject without properties the engine shows an error
+                        if (mObject.getProperties() != null && mObject.getProperties().isEmpty() == false) {
+                            Property propertyFieldGroup = new Property(modelNode.getNodeName() + " - " + childNode.getNodeName(), mObject);
+                            propertyFieldGroup.setContentType(ContentType.Object);
+
+                            // this is a field group
+                            properties.add(propertyFieldGroup);
+                        }
                     }
                 }
             }
@@ -45,20 +55,25 @@ public class MapAdapterCommon {
         return properties;
     }
 
-    private static List<MObject> createListMobject(NodeList nodes) {
+    private static List<MObject> createListMobject(Node modelNode, NodeList nodes) {
         List<MObject> objects = new ArrayList<>();
         for(int i = 0; i < nodes.getLength(); i++) {
             if (nodes.item(i).getNodeType() == ELEMENT_NODE) {
-                objects.add(createMobject(nodes.item(i)));
+                MObject mObject = createMobject(modelNode, nodes.item(i));
+                // if we return a mobject without properties the engine shows an error
+                if (mObject.getProperties() != null && mObject.getProperties().isEmpty() == false) {
+                    objects.add(mObject);
+                }
             }
         }
 
         return objects;
     }
 
-    private static MObject createMobject(Node childNode) {
-        MObject object = new MObject(childNode.getNodeName() + "-child", UUID.randomUUID().toString(), createPropertiesModel(childNode.getChildNodes()));
-        object.setTypeElementBindingDeveloperName(childNode.getNodeName() + "-child");
+    private static MObject createMobject(Node modelNode, Node childNode) {
+        String developerName = modelNode.getNodeName() + " - " + childNode.getNodeName();
+        MObject object = new MObject(developerName, UUID.randomUUID().toString(), createPropertiesModel(modelNode, childNode.getChildNodes()));
+        object.setTypeElementBindingDeveloperName(developerName);
 
         return object;
     }

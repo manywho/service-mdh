@@ -8,6 +8,7 @@ import com.boomi.flow.services.boomi.mdh.records.GoldenRecord;
 import com.boomi.flow.services.boomi.mdh.records.GoldenRecordConstants;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.google.common.base.Strings;
+import com.manywho.sdk.api.ContentType;
 import com.manywho.sdk.api.run.elements.type.MObject;
 import com.manywho.sdk.api.run.elements.type.Property;
 
@@ -16,7 +17,9 @@ import java.util.stream.Collectors;
 
 public class Entities {
 
-    public static MObject createGoldenRecordMObject(String universeId, String id, MObject mObject, List<GoldenRecord.Link> links) {
+    public static MObject createGoldenRecordMObject(String universeId, GoldenRecord record) {
+        MObject mObject = record.getMObject();
+
         if (mObject == null) {
             return null;
         }
@@ -24,20 +27,30 @@ public class Entities {
         List<Property> properties = mObject.getProperties();
 
         // this part is only for Golden Records
-        List<MObject> mObjectLinks = links.stream()
+        List<MObject> mObjectLinks = record.getLinks().stream()
                 .map(Entities::createMObjectForLink)
                 .collect(Collectors.toList());
 
         properties.add(new Property(GoldenRecordConstants.LINKS_FIELD, mObjectLinks));
-        properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, id));
+        properties.add(new Property(GoldenRecordConstants.RECORD_ID_FIELD, record.getRecordId()));
+        properties.add(new Property(GoldenRecordConstants.CREATED_DATE_FIELD, EngineCompatibleDates.format(record.getCreatedDate())));
+        properties.add(new Property(GoldenRecordConstants.UPDATED_DATE_FIELD, EngineCompatibleDates.format(record.getUpdatedDate())));
 
-        return new MObject(universeId + "-golden-record", id, properties);
+        String developerName = universeId + "-golden-record";
+        MObject mObjectToReturn = new MObject(developerName, record.getRecordId(), properties);
+        mObjectToReturn.setTypeElementBindingDeveloperName(developerName);
+
+        return mObjectToReturn;
     }
 
     public static MObject createQuarantineMObject(String universeId, QuarantineEntry entry) {
         List<Property> properties = new ArrayList<>();
         if (entry.getEntity() != null) {
-            properties = entry.getEntity().getProperties();
+            for (Property property :entry.getEntity().getProperties()) {
+                if (isValidProperty(property)) {
+                    properties.add(property);
+                }
+            }
         }
 
         properties.add(new Property(QuarantineEntryConstants.CAUSE_FIELD, entry.getCause()));
@@ -52,22 +65,43 @@ public class Entities {
         return new MObject(universeId + "-quarantine", entry.getTransactionId(), properties);
     }
 
-    public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField) {
-        if (Strings.isNullOrEmpty(object.getExternalId()) == false) {
-            return object;
+    // we are dealing with data that has problems, if the mobject doesn't have properties the engine will fail
+    private static boolean isValidProperty(Property property) {
+        if (property.getObjectData() == null || property.getObjectData().size() < 1) {
+            return true;
         }
+
+        for (MObject object :property.getObjectData()) {
+            if (object.getProperties() == null || object.getProperties().size() < 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static MObject setRandomUniqueIdIfEmpty(MObject object, String idField, boolean isModel) {
         // We are requesting an object without id
         String id = UUID.randomUUID().toString();
 
         // Set the ID property, so it can be referenced in a Flow
         for (Property property : object.getProperties()) {
-            if (property.getDeveloperName().equals(idField)) {
+            if (property.getDeveloperName().equals(idField) && Strings.isNullOrEmpty(object.getExternalId()) && isModel) {
                 property.setContentValue(id);
+            }
+
+            if (property.getObjectData() != null) {
+                for(MObject propertyObject : property.getObjectData()) {
+                    /// Set the object's external ID in the child objects (field groups), which is only used inside Flow itself
+                    setRandomUniqueIdIfEmpty(propertyObject, null, false);
+                }
             }
         }
 
-        // Set the object's external ID too, which is only used inside Flow itself
-        object.setExternalId(id);
+        if (Strings.isNullOrEmpty(object.getExternalId())) {
+            // Set the object's external ID too, which is only used inside Flow itself
+            object.setExternalId(id);
+        }
 
         return object;
     }
@@ -79,10 +113,13 @@ public class Entities {
         Property propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>());
 
         if ("SUCCESS".equals(result.getStatus())) {
-            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, setExternalIdForeachObject(result.getMatch(), universe));
-            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, setExternalIdForeachObject(result.getDuplicate(), universe));
+            propertiesMatched = new Property(FuzzyMatchDetailsConstants.MATCH, prepareEachObjectForFlow(result.getMatch(), universe));
+            propertiesDuplicated = new Property(FuzzyMatchDetailsConstants.DUPLICATE, prepareEachObjectForFlow(result.getDuplicate(), universe));
         } else if ("ALREADY_LINKED".equals(result.getStatus())) {
-            MObject alreadyLinkedObject = new MObject(result.getEntity().getDeveloperName(), result.getEntity().getExternalId(), result.getEntity().getProperties());
+            MObject alreadyLinkedObject = createAlreadyLinkedObject(universe, result.getEntity(), result.getIdResource());
+
+            prepreObjectForFlow(alreadyLinkedObject, universe);
+
             propertiesAlreadyLinked = new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, alreadyLinkedObject);
         }
 
@@ -101,30 +138,54 @@ public class Entities {
                 .findFirst()
                 .orElse(UUID.randomUUID().toString());
 
-
         MObject object = new MObject(universeId + "-match", externalId, properties);
         object.setTypeElementBindingDeveloperName(object.getDeveloperName());
 
         return object;
     }
 
-    private static List<MObject> setExternalIdForeachObject(List<MObject> objects, Universe universe) {
+    private static MObject createAlreadyLinkedObject(Universe universe, MObject object, String idResource) {
+        List<Property> copyOfProperties = object.getProperties()
+                .stream()
+                .map(Entities::copyProperty)
+                .collect(Collectors.toList());
+
+        copyOfProperties.add(new Property(GoldenRecordConstants.SOURCE_ID_FIELD, idResource));
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, (MObject) null));
+
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.MATCH, new ArrayList<>()));
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.DUPLICATE, new ArrayList<>()));
+        copyOfProperties.add(new Property(FuzzyMatchDetailsConstants.ALREADY_LINKED, new ArrayList<>()));
+
+        return new MObject(universe.getId() + "-match", object.getExternalId(), copyOfProperties);
+    }
+
+    private static Property copyProperty(Property propertyToCopy) {
+        if (propertyToCopy.getContentType() == ContentType.Object || propertyToCopy.getContentType() == ContentType.List) {
+            return new Property(propertyToCopy.getDeveloperName(), propertyToCopy.getObjectData());
+        } else {
+            return new Property(propertyToCopy.getDeveloperName(), propertyToCopy.getContentValue());
+        }
+    }
+
+    private static List<MObject> prepareEachObjectForFlow(List<MObject> objects, Universe universe) {
         return objects
                 .stream()
-                .peek(object -> setExternalIdForObject(object, universe.getIdField()))
+                .peek(object -> prepreObjectForFlow(object, universe))
                 .collect(Collectors.toList());
     }
 
-    private static void setExternalIdForObject(MObject object, String fieldId) {
+    private static void prepreObjectForFlow(MObject object, Universe universe) {
         if (Strings.isNullOrEmpty(object.getExternalId())) {
             String externalId = object.getProperties()
                     .stream()
-                    .filter(p -> fieldId.equals(p.getDeveloperName()))
+                    .filter(p -> universe.getIdField().equals(p.getDeveloperName()))
                     .map(Property::getContentValue)
                     .findFirst()
                     .orElse(UUID.randomUUID().toString());
 
             object.setExternalId(externalId);
+            object.setTypeElementBindingDeveloperName(universe.getId()+"-match");
         }
     }
 
@@ -133,9 +194,21 @@ public class Entities {
 
         linkProperties.add(new Property("Source", link.getSource()));
         linkProperties.add(new Property("Entity ID", link.getEntityId()));
-        linkProperties.add(new Property("Established Date", link.getEstablishedDate()));
+        linkProperties.add(new Property("Established Date", EngineCompatibleDates.format(link.getEstablishedDate())));
 
-        return new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
+        MObject linkObject = new MObject(GoldenRecordConstants.LINK, link.getEntityId(), linkProperties);
+        linkObject.setTypeElementBindingDeveloperName(linkObject.getDeveloperName());
+
+        return linkObject;
+    }
+
+    public static String extractFieldIdValueOrRandomGenerate(MObject object) {
+        return object.getProperties()
+                .stream()
+                .filter(p -> GoldenRecordConstants.ENTITY_ID_FIELD.equals(p.getDeveloperName()) && Strings.isNullOrEmpty(p.getContentValue()) == false)
+                .findFirst()
+                .map(Property::getContentValue)
+                .orElse(UUID.randomUUID().toString());
     }
 
     public static String addingModelPrefix(String modelName, String fieldGroupName) {

@@ -155,6 +155,7 @@ public class Universe implements Type {
                 private boolean required;
                 private List<Element> elements;
                 private String collectionUniqueId;
+                private String collectionTag;
                 boolean repeatable;
 
                 @XmlAttribute
@@ -218,6 +219,15 @@ public class Universe implements Type {
 
                 public void setCollectionUniqueId(String collectionUniqueId) {
                     this.collectionUniqueId = collectionUniqueId;
+                }
+
+                @XmlAttribute
+                public String getCollectionTag() {
+                    return collectionTag;
+                }
+
+                public void setCollectionTag(String collectionTag) {
+                    this.collectionTag = collectionTag;
                 }
 
                 @XmlAttribute

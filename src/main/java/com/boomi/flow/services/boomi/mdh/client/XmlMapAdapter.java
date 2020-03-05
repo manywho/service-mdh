@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
@@ -37,16 +38,22 @@ public class XmlMapAdapter extends XmlAdapter<XmlMapWrapper, MObject> {
 
         if(wrapper.elements.size() > 0) {
             Element fieldsEntity = wrapper.elements.get(0);
-            properties =  MapAdapterCommon.createPropertiesModel(fieldsEntity.getChildNodes());
+            properties =  MapAdapterCommon.createPropertiesModel(fieldsEntity, fieldsEntity.getChildNodes());
         }
 
         if (wrapper.elements.size() == 2) {
             // specific for FuzzyMatchDetails
             Element fieldsFuzzyDetails = wrapper.elements.get(1);
-            List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(fieldsFuzzyDetails.getChildNodes());
+            List<Property> fuzzyProperties = MapAdapterCommon.createPropertiesModel(wrapper.elements.get(1), fieldsFuzzyDetails.getChildNodes());
 
             if (fuzzyProperties.size() ==  6) {
+                fuzzyProperties.stream()
+                        .filter(property -> property.getDeveloperName().equals("matchStrength"))
+                        .findFirst()
+                        .ifPresent(property -> property.setDeveloperName("Match Strength"));
+
                 MObject fuzzyMatchDetailsObject = new MObject(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyProperties);
+                fuzzyMatchDetailsObject.setExternalId(UUID.randomUUID().toString());
                 properties.add(new Property(FuzzyMatchDetailsConstants.FUZZY_MATCH_DETAILS, fuzzyMatchDetailsObject));
             } else {
                 Element element = wrapper.elements.get(0);
