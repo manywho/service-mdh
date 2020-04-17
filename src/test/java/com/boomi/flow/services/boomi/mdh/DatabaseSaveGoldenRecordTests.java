@@ -144,4 +144,118 @@ public class DatabaseSaveGoldenRecordTests {
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getDeveloperName(), equalTo("property 4 1"));
         assertThat(result.getProperties().get(5).getObjectData().get(0).getProperties().get(0).getContentValue(), equalTo("value property 4 1"));
     }
+
+    @Test
+    public void testSaveGoldenRecordWithNullSourceId() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
+        // Construct the incoming object
+        MObject object = new MObject(objectDataType.getDeveloperName());
+        object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c");
+        object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
+        object.getProperties().add(new Property("___sourceId", (String) null));
+        object.getProperties().add(new Property("field 1 1", "some value 1"));
+
+
+        // Update using the incoming object
+        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .update(TestConstants.CONFIGURATION, objectDataType, object);
+
+        // Make sure we perform the update in MDH, with the request that we're expecting
+        Map<String, Object> expectedFieldsRequest = new HashMap<>();
+        expectedFieldsRequest.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c");
+        expectedFieldsRequest.put("field 1 1", "some value 1");
+
+        BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
+                .setEntities(Arrays.asList(
+                        new BatchUpdateRequest.Entity()
+                                .setName("testing")
+                                .setFields(expectedFieldsRequest)
+                                .setOp(null)
+                ))
+                .setSource("flow");
+
+        // we are verifying that source is flow
+        verify(client)
+                .updateGoldenRecords(
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
+                        expectedRequest
+                );
+    }
+
+    @Test
+    public void testSaveGoldenRecordWithEmptySourceId() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), eq("12fa66f9-e14d-f642-878f-030b13b64731")))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
+        // Construct the incoming object
+        MObject object = new MObject(objectDataType.getDeveloperName());
+        object.setExternalId("4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c");
+        object.getProperties().add(new Property(GoldenRecordConstants.ENTITY_ID_FIELD, "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c"));
+        object.getProperties().add(new Property("___sourceId", ""));
+        object.getProperties().add(new Property("field 1 1", "some value 1"));
+
+
+        // Update using the incoming object
+        MObject result = new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .update(TestConstants.CONFIGURATION, objectDataType, object);
+
+        // Make sure we perform the update in MDH, with the request that we're expecting
+        Map<String, Object> expectedFieldsRequest = new HashMap<>();
+        expectedFieldsRequest.put("id", "4f23f8eb-984b-4e9b-9a52-d9ebaf11bb1c");
+        expectedFieldsRequest.put("field 1 1", "some value 1");
+
+        BatchUpdateRequest expectedRequest = new BatchUpdateRequest()
+                .setEntities(Arrays.asList(
+                        new BatchUpdateRequest.Entity()
+                                .setName("testing")
+                                .setFields(expectedFieldsRequest)
+                                .setOp(null)
+                ))
+                .setSource("flow");
+
+        // we are verifying that source is flow
+        verify(client)
+                .updateGoldenRecords(
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
+                        expectedRequest
+                );
+    }
 }
