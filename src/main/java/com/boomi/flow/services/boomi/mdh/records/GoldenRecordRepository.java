@@ -176,6 +176,17 @@ public class GoldenRecordRepository {
         return update(configuration, objects, universeId, null);
     }
 
+    private String getSourceIdFromProperty(Property property) {
+        if (GoldenRecordConstants.SOURCE_ID_FIELD.equals(property.getDeveloperName())) {
+            if (property.getContentValue() == null || property.getContentValue().isEmpty()) {
+                return GoldenRecordConstants.DEFAULT_SOURCE_ID;
+            } else {
+                return property.getContentValue();
+            }
+        }
+
+        throw new RuntimeException("Unexpected error, we can only get source from the source property");
+    }
 
     private List<MObject> update(ApplicationConfiguration configuration, List<MObject> objects, String universeId, String operation) {
         Universe universe = client.findUniverse(configuration.getHubHostname(), configuration.getHubUsername(), configuration.getHubToken(), universeId);
@@ -185,20 +196,13 @@ public class GoldenRecordRepository {
                 .collect(Collectors.groupingBy(object -> object.getProperties()
                         .stream()
                         .filter(property -> property.getDeveloperName().equals(GoldenRecordConstants.SOURCE_ID_FIELD))
-                        .map(Property::getContentValue)
-//                        .filter(source -> source != null && source.isEmpty() == false)
+                        .map(this::getSourceIdFromProperty)
                         .findFirst()
                         .orElseThrow(() -> new ServiceProblemException(400, "No Source ID was given for the record to update"))));
 
         for (Map.Entry<String, List<MObject>> sourceGroup : objectsBySource.entrySet()) {
             // TODO: Check if we should be setting this to a default value, or error if no source was set
-            String sourceId;
-            if (sourceGroup.getKey().isEmpty()){
-                sourceId = GoldenRecordConstants.DEFAULT_SOURCE_ID;
-            } else{
-                sourceId = sourceGroup.getKey();
-            }
-
+            String sourceId = sourceGroup.getKey();
             List<BatchUpdateRequest.Entity> entities = sourceGroup.getValue().stream()
                     .map(entity -> {
                         // Map all the properties to fields, except our "internal" ones
