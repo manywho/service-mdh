@@ -313,6 +313,97 @@ public class DescribeTests {
                 .body("install.typeElements[3].properties[9].typeElementId", nullValue());
     }
 
+    @Test
+    public void testInstallEmptyHostnameValue() {
+        JSONObject request = new JSONObject()
+                .put("configurationValues", new JSONArray()
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Hostname")
+                                .put("contentValue", "")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Username")
+                                .put("contentValue", "username")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Token")
+                                .put("contentValue", "password")
+                        )
+                );
+
+        ValidatableResponse response = given()
+                .contentType(ContentType.JSON)
+                .body(request.toString())
+                .when()
+                .post("/metadata")
+                .then()
+                .assertThat()
+                .statusCode(400);
+
+        response
+                .body("message", equalTo("Hub Hostname can not be empty"));
+    }
+
+    @Test
+    public void testInstallEmptyUsernameValue() {
+        JSONObject request = new JSONObject()
+                .put("configurationValues", new JSONArray()
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Hostname")
+                                .put("contentValue", "atom.example.com")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Username")
+                                .put("contentValue", "")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Token")
+                                .put("contentValue", "password")
+                        )
+                );
+        ValidatableResponse response = given()
+                .contentType(ContentType.JSON)
+                .body(request.toString())
+                .when()
+                .post("/metadata")
+                .then()
+                .assertThat()
+                .statusCode(400);
+
+        response
+                .body("message", equalTo("Hub Username can not be empty"));
+    }
+
+    @Test
+    public void testInstallEmptyPasswordValue() {
+        JSONObject request = new JSONObject()
+                .put("configurationValues", new JSONArray()
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Hostname")
+                                .put("contentValue", "atom.example.com")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Username")
+                                .put("contentValue", "username")
+                        )
+                        .put(new JSONObject()
+                                .put("developerName", "Hub Token")
+                                .put("contentValue", "")
+                        )
+                );
+        ValidatableResponse response = given()
+                .contentType(ContentType.JSON)
+                .body(request.toString())
+                .when()
+                .post("/metadata")
+                .then()
+                .assertThat()
+                .statusCode(400);
+
+        response
+                .body("message", equalTo("Hub Token can not be empty"));
+    }
+
 
     @Test
     public void testInstall() {
