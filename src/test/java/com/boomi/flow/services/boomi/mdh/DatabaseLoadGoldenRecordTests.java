@@ -310,14 +310,222 @@ public class DatabaseLoadGoldenRecordTests {
                         .setFields(Arrays.asList(
                                 new GoldenRecordQueryRequest.Sort.Field()
                                         .setDirection("ASC")
-                                        .setFieldId("a field ID")
-
+                                        .setFieldId("A FIELD ID")
                         ))
                 );
 
         // Actual test is below here
         when(client.queryGoldenRecords(any(), any(), any(), any(), any()))
                 .thenReturn(response);
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
+
+        verify(client)
+                .queryGoldenRecords(
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
+                        query
+                );
+    }
+
+    @Test
+    public void testLoadWithSimpleOrdering() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
+        ListFilter listFilter = new ListFilter();
+        listFilter.setComparisonType(ComparisonType.And);
+        listFilter.setLimit(0);
+
+        // simple ordering on one property/column
+        listFilter.setOrderByPropertyDeveloperName("some property");
+        listFilter.setOrderByDirectionType(ListFilter.OrderByDirectionType.Ascending);
+
+        GoldenRecordQueryRequest query = new GoldenRecordQueryRequest()
+                .setSort(new GoldenRecordQueryRequest.Sort()
+                        .setFields(Arrays.asList(
+                                new GoldenRecordQueryRequest.Sort.Field()
+                                        .setFieldId("SOME PROPERTY")
+                                        .setDirection("ASC")
+                        ))
+                );
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
+
+        verify(client)
+                .queryGoldenRecords(
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
+                        query
+                );
+    }
+
+    @Test
+    public void testLoadWithCombinedOrdering() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
+        ListFilter listFilter = new ListFilter();
+        listFilter.setComparisonType(ComparisonType.And);
+        listFilter.setLimit(0);
+
+        // combined ordering on two properties/columns
+        listFilter.setOrderByPropertyDeveloperName("some property");
+        listFilter.setOrderByDirectionType(ListFilter.OrderByDirectionType.Ascending);
+        listFilter.addOrderBy(new ListFilter.OrderBy("other property", "DESC"));
+
+        GoldenRecordQueryRequest query = new GoldenRecordQueryRequest()
+                .setSort(new GoldenRecordQueryRequest.Sort()
+                        .setFields(Arrays.asList(
+                                new GoldenRecordQueryRequest.Sort.Field()
+                                        .setFieldId("SOME PROPERTY")
+                                        .setDirection("ASC"),
+                                new GoldenRecordQueryRequest.Sort.Field()
+                                        .setFieldId("OTHER PROPERTY")
+                                        .setDirection("DESC")
+                        ))
+                );
+
+        new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
+                .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
+
+        verify(client)
+                .queryGoldenRecords(
+                        TestConstants.CONFIGURATION.getHubHostname(),
+                        TestConstants.CONFIGURATION.getHubUsername(),
+                        TestConstants.CONFIGURATION.getHubToken(),
+                        "12fa66f9-e14d-f642-878f-030b13b64731",
+                        query
+                );
+    }
+
+    @Test
+    public void testLoadWithSkippedDuplicatedOrdering() {
+        List<String> uniqueIds = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+        List<String> names = Arrays.asList(
+                "field 1 1",
+                "field 2 1",
+                "field 3 1",
+                "field 4 1",
+                "field 4 1 property",
+                "field 1 2",
+                "field 2 2",
+                "field 3 2",
+                "field 4 2",
+                "field 4 2 property"
+        );
+
+        // Make sure we return the expected universe layout for the test
+        when(client.findUniverse(any(), any(), any(), any()))
+                .thenReturn(new Universe()
+                        .setId(UUID.fromString("12fa66f9-e14d-f642-878f-030b13b64731"))
+                        .setName("testing")
+                        .setLayout(new Universe.Layout()
+                                .setIdXPath("/item/id")
+                                .setModel(new Universe.Layout.Model()
+                                        .setName("testing")
+                                        .setElements(createElements(uniqueIds, names)))));
+
+        ListFilter listFilter = new ListFilter();
+        listFilter.setComparisonType(ComparisonType.And);
+        listFilter.setLimit(0);
+
+        // duplicated ordering on same property/column
+        listFilter.setOrderByPropertyDeveloperName("some property");
+        listFilter.setOrderByDirectionType(ListFilter.OrderByDirectionType.Ascending);
+        listFilter.addOrderBy(new ListFilter.OrderBy("some property", "DESC"));
+
+        GoldenRecordQueryRequest query = new GoldenRecordQueryRequest()
+                .setSort(new GoldenRecordQueryRequest.Sort()
+                        .setFields(Arrays.asList(
+                                new GoldenRecordQueryRequest.Sort.Field()
+                                        .setFieldId("SOME PROPERTY")
+                                        .setDirection("ASC")
+                        ))
+                );
 
         new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
