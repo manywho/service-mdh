@@ -334,28 +334,10 @@ public class DatabaseLoadGoldenRecordTests {
     @Test
     public void testLoadWithSimpleOrdering() {
         List<String> uniqueIds = Arrays.asList(
-                "field 1 1",
-                "field 2 1",
-                "field 3 1",
-                "field 4 1",
-                "field 4 1 property",
-                "field 1 2",
-                "field 2 2",
-                "field 3 2",
-                "field 4 2",
-                "field 4 2 property"
+                "field"
         );
         List<String> names = Arrays.asList(
-                "field 1 1",
-                "field 2 1",
-                "field 3 1",
-                "field 4 1",
-                "field 4 1 property",
-                "field 1 2",
-                "field 2 2",
-                "field 3 2",
-                "field 4 2",
-                "field 4 2 property"
+                "field"
         );
 
         // Make sure we return the expected universe layout for the test
@@ -402,28 +384,10 @@ public class DatabaseLoadGoldenRecordTests {
     @Test
     public void testLoadWithCombinedOrdering() {
         List<String> uniqueIds = Arrays.asList(
-                "field 1 1",
-                "field 2 1",
-                "field 3 1",
-                "field 4 1",
-                "field 4 1 property",
-                "field 1 2",
-                "field 2 2",
-                "field 3 2",
-                "field 4 2",
-                "field 4 2 property"
+                "field"
         );
         List<String> names = Arrays.asList(
-                "field 1 1",
-                "field 2 1",
-                "field 3 1",
-                "field 4 1",
-                "field 4 1 property",
-                "field 1 2",
-                "field 2 2",
-                "field 3 2",
-                "field 4 2",
-                "field 4 2 property"
+                "field"
         );
 
         // Make sure we return the expected universe layout for the test
@@ -474,28 +438,10 @@ public class DatabaseLoadGoldenRecordTests {
     @Test
     public void testLoadWithSkippedDuplicatedOrdering() {
         List<String> uniqueIds = Arrays.asList(
-                "field 1 1",
-                "field 2 1",
-                "field 3 1",
-                "field 4 1",
-                "field 4 1 property",
-                "field 1 2",
-                "field 2 2",
-                "field 3 2",
-                "field 4 2",
-                "field 4 2 property"
+                "field"
         );
         List<String> names = Arrays.asList(
-                "field 1 1",
-                "field 2 1",
-                "field 3 1",
-                "field 4 1",
-                "field 4 1 property",
-                "field 1 2",
-                "field 2 2",
-                "field 3 2",
-                "field 4 2",
-                "field 4 2 property"
+                "field"
         );
 
         // Make sure we return the expected universe layout for the test
