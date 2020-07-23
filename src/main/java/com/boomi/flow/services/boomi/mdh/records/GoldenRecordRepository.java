@@ -39,19 +39,31 @@ public class GoldenRecordRepository {
 
         // TODO: Cleanup everything in this filter block cause it's super ugly
         if (filter != null) {
+            GoldenRecordQueryRequest.Sort sort = new GoldenRecordQueryRequest.Sort();
+
+            if (filter.getOrderByPropertyDeveloperName() != null && filter.getOrderByDirectionType() != null) {
+                sort.getFields().add(new GoldenRecordQueryRequest.Sort.Field()
+                        .setFieldId(filter.getOrderByPropertyDeveloperName().toUpperCase())
+                        .setDirection(filter.getOrderByDirectionType().toString())
+                );
+            }
 
             if (filter.hasOrderBy()) {
-                GoldenRecordQueryRequest.Sort sort = new GoldenRecordQueryRequest.Sort();
-
                 for (ListFilter.OrderBy orderBy : filter.getOrderBy()) {
-                    sort.getFields().add(new GoldenRecordQueryRequest.Sort.Field()
-                            .setFieldId(orderBy.getColumnName())
-                            .setDirection(orderBy.getDirection())
-                    );
+                    String currFieldId = orderBy.getColumnName().toUpperCase();
+                    // Add if we don't already have a sort rule for the same column / fieldId
+                    // based on orderByPropertyDeveloperName
+                    boolean isNotDuplicate = !(filter.getOrderByPropertyDeveloperName() != null &&
+                            currFieldId.equals(filter.getOrderByPropertyDeveloperName().toUpperCase()));
+                    if (isNotDuplicate) {
+                        sort.getFields().add(new GoldenRecordQueryRequest.Sort.Field()
+                                .setFieldId(currFieldId)
+                                .setDirection(orderBy.getDirection())
+                        );
+                    }
                 }
-
-                request.setSort(sort);
             }
+            request.setSort(sort);
 
             if (filter.hasWhere()) {
                 GoldenRecordQueryRequest.Filter queryFilter = new GoldenRecordQueryRequest.Filter();
