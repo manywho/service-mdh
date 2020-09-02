@@ -177,17 +177,18 @@ public class FieldMapper {
 
     static Object createMapEntry(Property property, String modelName, List<Universe.Layout.Model.Element> elements) {
         if (property.getContentValue() != null) {
-            if (property.getContentType() == ContentType.DateTime && Strings.isNullOrEmpty(property.getContentValue())) {
-                // Ignore datetime with empty values
-                return null;
-            }
-
-            if (property.getContentType() == ContentType.DateTime) {
-                return OffsetDateTime
-                        .parse(property.getContentValue())
-                        .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
-            } else {
-                return property.getContentValue();
+            switch (property.getContentType()) {
+                case DateTime:
+                    return Strings.isNullOrEmpty(property.getContentValue()) ?
+                        // Ignore datetime with empty values
+                        null :
+                        OffsetDateTime
+                            .parse(property.getContentValue())
+                            .format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")));
+                case Boolean:
+                    return property.getContentValue().toLowerCase();
+                default:
+                    return property.getContentValue();
             }
         } else if (property.getObjectData() != null) {
             if (property.getContentType() == ContentType.Object) {
