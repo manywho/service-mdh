@@ -75,6 +75,15 @@
     },
     {
       "contentFormat": null,
+      "contentType": "ContentBoolean",
+      "contentValue": "False",
+      "developerName": "single_boolean_value",
+      "objectData": null,
+      "typeElementId": null,
+      "typeElementPropertyId": "aa08510a-8801-4a21-a61a-74885b92b78d"
+    },
+    {
+      "contentFormat": null,
       "contentType": "ContentObject",
       "contentValue": null,
       "developerName": "accountnest2 - nest2contact",
