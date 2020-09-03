@@ -177,7 +177,11 @@ public class FieldMapper {
 
     static Object createMapEntry(Property property, String modelName, List<Universe.Layout.Model.Element> elements) {
         if (property.getContentValue() != null) {
-            switch (property.getContentType()) {
+            switch (
+                property.getContentType() != null ?
+                    property.getContentType() :
+                    ContentType.String
+            ) {
                 case DateTime:
                     return Strings.isNullOrEmpty(property.getContentValue()) ?
                         // Ignore datetime with empty values
