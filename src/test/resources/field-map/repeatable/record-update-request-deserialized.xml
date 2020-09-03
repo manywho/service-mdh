@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <batch src="flow">
     <accountnest2>
+        <single_boolean_value>false</single_boolean_value>
         <single_value>single value 2-1</single_value>
         <other_single_value>other single value 2</other_single_value>
         <nest2contact>

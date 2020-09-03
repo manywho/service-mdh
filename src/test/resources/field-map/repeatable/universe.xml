@@ -30,6 +30,8 @@
             <element uniqueId="OTHER_SINGLE_VALUE" name="other_single_value" prettyName="other single value"
                      type="STRING" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false"
                      maxLength="100" truncateLength="100" repeatable="false"/>
+            <element uniqueId="SINGLE_BOOLEAN_VALUE" name="single_boolean_value" prettyName="single boolean value"
+                     type="BOOLEAN" required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false"/>
             <element uniqueId="NEST2CONTACT" name="nest2contact" prettyName="nest2contact" type="CONTAINER"
                      required="false" enforceIntegrity="false" incomingReferenceIntegrity="false" repeatable="false">
                 <element uniqueId="NEST2_CONTACT_NAME" name="nest2_contact_name" prettyName="nest2 contact name"
@@ -50,6 +52,7 @@
             maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;billing_address_street&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;xs:attribute
             name=&quot;op&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;xs:element
             maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;other_single_value&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
+            maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;single_boolean_value&quot; type=&quot;xs:boolean&quot;/&gt;&lt;xs:element
             maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;nest2contact&quot;&gt;&lt;xs:complexType&gt;&lt;xs:all&gt;&lt;xs:element
             maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;nest2_contact_name&quot; type=&quot;xs:string&quot;/&gt;&lt;xs:element
             maxOccurs=&quot;1&quot; minOccurs=&quot;0&quot; name=&quot;nest2_contact_phone&quot; type=&quot;xs:string&quot;/&gt;&lt;/xs:all&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:all&gt;&lt;xs:attribute
@@ -69,6 +72,9 @@
                collectionId="BILLING_ADDRESS_COLLECTION_NAME"/>
         <field uniqueId="OTHER_SINGLE_VALUE" xpath="/accountnest2/other_single_value" type="STRING"
                prettyName="other single value" required="false" enforceIntegrity="false"
+               incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
+        <field uniqueId="SINGLE_BOOLEAN_VALUE" xpath="/accountnest2/single_boolean_value" type="BOOLEAN"
+               prettyName="single boolean value" required="false" enforceIntegrity="false"
                incomingReferenceIntegrity="false" titleField="false" maxLength="100" truncateLength="100"/>
         <field uniqueId="NEST2_CONTACT_NAME" xpath="/accountnest2/nest2contact/nest2_contact_name" type="STRING"
                prettyName="nest2 contact name" required="false" enforceIntegrity="false"
