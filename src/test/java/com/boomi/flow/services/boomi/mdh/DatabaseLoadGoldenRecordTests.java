@@ -247,12 +247,15 @@ public class DatabaseLoadGoldenRecordTests {
 
         ListFilter listFilter = new ListFilter();
         listFilter.setComparisonType(ComparisonType.And);
-        listFilter.setLimit(123);
         listFilter.setWhere(wheres);
+        listFilter.setLimit(3);
+        listFilter.setOffset(2);
 
         listFilter.addOrderBy(new ListFilter.OrderBy("a field ID", "ASC"));
 
         GoldenRecordQueryRequest query = new GoldenRecordQueryRequest()
+                .setLimit("3")
+                .setOffsetToken("2")
                 .setFilter(new GoldenRecordQueryRequest.Filter()
 //                        .setCreatingSourceId("a creating source ID")
                                 .setCreatedDate(new DateFilter()
