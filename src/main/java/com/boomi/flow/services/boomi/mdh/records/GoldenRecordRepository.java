@@ -64,6 +64,9 @@ public class GoldenRecordRepository {
                 }
             }
             request.setSort(sort);
+            request.setLimit(filter.getLimit().toString());
+            String tokenEncoded = Base64.getEncoder().encodeToString(filter.getOffset().toString().getBytes());
+            request.setOffsetToken(tokenEncoded);
 
             if (filter.hasWhere()) {
                 GoldenRecordQueryRequest.Filter queryFilter = new GoldenRecordQueryRequest.Filter();
