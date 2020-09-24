@@ -256,7 +256,7 @@ public class DatabaseLoadGoldenRecordTests {
         listFilter.addOrderBy(new ListFilter.OrderBy("a field ID", "ASC"));
 
         GoldenRecordQueryRequest query = new GoldenRecordQueryRequest()
-                .setLimit("3")
+                .setLimit(3)
                 .setOffsetToken("2")
                 .setFilter(new GoldenRecordQueryRequest.Filter()
 //                        .setCreatingSourceId("a creating source ID")
@@ -347,7 +347,7 @@ public class DatabaseLoadGoldenRecordTests {
         assertEquals("12fa66f9-e14d-f642-878f-030b13b64731", universe.getValue());
         assertEquals(query, queryCaptor.getValue());
         assertEquals("Mg==", queryCaptor.getValue().getOffsetToken());
-        assertEquals("3", queryCaptor.getValue().getLimit());
+        assertEquals((Integer) 3, queryCaptor.getValue().getLimit());
     }
 
     @Test

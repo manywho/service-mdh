@@ -65,9 +65,7 @@ public class GoldenRecordRepository {
                 }
             }
             request.setSort(sort);
-            if (filter.getLimit() != null) {
-                request.setLimit(filter.getLimit().toString());
-            }
+            request.setLimit(filter.getLimit());
 
             request.setOffsetToken(OffsetTokenGenerator.generate(filter));
 

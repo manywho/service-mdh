@@ -16,7 +16,7 @@ public class GoldenRecordQueryRequest {
     private Sort sort;
     private Filter filter;
     private String offsetToken;
-    private String limit;
+    private Integer limit;
     private Boolean includeSourceLinks = true;
 
     public View getView() {
@@ -57,7 +57,7 @@ public class GoldenRecordQueryRequest {
     }
 
     @XmlAttribute(name = "limit")
-    public String getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
@@ -71,7 +71,7 @@ public class GoldenRecordQueryRequest {
         return this;
     }
 
-    public GoldenRecordQueryRequest setLimit(String limit) {
+    public GoldenRecordQueryRequest setLimit(Integer limit) {
         this.limit = limit;
         return this;
     }

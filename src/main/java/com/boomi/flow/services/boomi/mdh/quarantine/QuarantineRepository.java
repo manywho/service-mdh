@@ -74,11 +74,7 @@ public class QuarantineRepository {
     public List<MObject> findAll(ApplicationConfiguration configuration, String universeId, ListFilter filter) {
         LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universeId, configuration.getHubHostname(), configuration.getHubUsername());
 
-        String limit = null;
-
-        if (filter != null && filter.getLimit() != null) {
-            limit = filter.getLimit().toString();
-        }
+        Integer limit = (filter == null) ? null : filter.getLimit();
 
         QuarantineQueryRequest queryRequest = new QuarantineQueryRequest()
                 .setLimit(limit)

@@ -14,7 +14,7 @@ public class QuarantineQueryRequest {
     private boolean includeData;
     private String type;
     private String offsetToken;
-    private String limit;
+    private Integer limit;
 
     public Filter getFilter() {
         return filter;
@@ -51,7 +51,7 @@ public class QuarantineQueryRequest {
     }
 
     @XmlAttribute(name = "limit")
-    public String getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
@@ -60,7 +60,7 @@ public class QuarantineQueryRequest {
         return this;
     }
 
-    public QuarantineQueryRequest setLimit(String limit) {
+    public QuarantineQueryRequest setLimit(Integer limit) {
         this.limit = limit;
         return this;
     }

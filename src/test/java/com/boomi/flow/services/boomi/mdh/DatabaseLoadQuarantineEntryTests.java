@@ -332,7 +332,7 @@ public class DatabaseLoadQuarantineEntryTests {
                         .setSourceId("a source ID")
                 )
                 .setOffsetToken("Mg==")
-                .setLimit("10")
+                .setLimit(10)
                 .setIncludeData(true)
                 .setType("ACTIVE");
 
@@ -364,7 +364,7 @@ public class DatabaseLoadQuarantineEntryTests {
         assertEquals("12fa66f9-e14d-f642-878f-030b13b64731", universe.getValue());
         assertEquals(query, queryCaptor.getValue());
         assertEquals("Mg==", queryCaptor.getValue().getOffsetToken());
-        assertEquals("10", queryCaptor.getValue().getLimit());
+        assertEquals((Integer) 10, queryCaptor.getValue().getLimit());
 
 
     }
