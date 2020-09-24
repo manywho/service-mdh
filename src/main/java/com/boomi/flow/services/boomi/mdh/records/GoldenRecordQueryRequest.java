@@ -15,6 +15,8 @@ public class GoldenRecordQueryRequest {
     private View view;
     private Sort sort;
     private Filter filter;
+    private String offsetToken;
+    private Integer limit;
     private Boolean includeSourceLinks = true;
 
     public View getView() {
@@ -49,8 +51,28 @@ public class GoldenRecordQueryRequest {
         return includeSourceLinks;
     }
 
+    @XmlAttribute(name = "offsetToken")
+    public String getOffsetToken() {
+        return offsetToken;
+    }
+
+    @XmlAttribute(name = "limit")
+    public Integer getLimit() {
+        return limit;
+    }
+
     public GoldenRecordQueryRequest setIncludeSourceLinks(Boolean includeSourceLinks) {
         this.includeSourceLinks = includeSourceLinks;
+        return this;
+    }
+
+    public GoldenRecordQueryRequest setOffsetToken(String offsetToken) {
+        this.offsetToken = offsetToken;
+        return this;
+    }
+
+    public GoldenRecordQueryRequest setLimit(Integer limit) {
+        this.limit = limit;
         return this;
     }
 
