@@ -9,6 +9,7 @@ import com.boomi.flow.services.boomi.mdh.common.ListFilters;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import com.boomi.flow.services.boomi.mdh.universes.UniverseRepository;
+import com.boomi.flow.services.boomi.mdh.utilities.OffsetTokenGenerator;
 import com.manywho.sdk.api.ComparisonType;
 import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.ServiceProblemException;
@@ -73,7 +74,15 @@ public class QuarantineRepository {
     public List<MObject> findAll(ApplicationConfiguration configuration, String universeId, ListFilter filter) {
         LOGGER.info("Loading quarantine entries for the universe {} from the Atom at {} with the username {}", universeId, configuration.getHubHostname(), configuration.getHubUsername());
 
+        String limit = null;
+
+        if (filter != null && filter.getLimit() != null) {
+            limit = filter.getLimit().toString();
+        }
+
         QuarantineQueryRequest queryRequest = new QuarantineQueryRequest()
+                .setLimit(limit)
+                .setOffsetToken(OffsetTokenGenerator.generate(filter))
                 .setFilter(mapToQueryFilter(filter))
                 .setIncludeData(true);
 

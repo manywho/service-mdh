@@ -13,6 +13,8 @@ public class QuarantineQueryRequest {
     private Filter filter;
     private boolean includeData;
     private String type;
+    private String offsetToken;
+    private String limit;
 
     public Filter getFilter() {
         return filter;
@@ -40,6 +42,26 @@ public class QuarantineQueryRequest {
 
     public QuarantineQueryRequest setType(String type) {
         this.type = type;
+        return this;
+    }
+
+    @XmlAttribute(name = "offsetToken")
+    public String getOffsetToken() {
+        return offsetToken;
+    }
+
+    @XmlAttribute(name = "limit")
+    public String getLimit() {
+        return limit;
+    }
+
+    public QuarantineQueryRequest setOffsetToken(String offsetToken) {
+        this.offsetToken = offsetToken;
+        return this;
+    }
+
+    public QuarantineQueryRequest setLimit(String limit) {
+        this.limit = limit;
         return this;
     }
 

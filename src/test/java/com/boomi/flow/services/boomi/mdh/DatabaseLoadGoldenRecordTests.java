@@ -12,6 +12,7 @@ import com.manywho.sdk.api.CriteriaType;
 import com.manywho.sdk.api.run.elements.type.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import java.time.OffsetDateTime;
@@ -19,6 +20,7 @@ import java.util.*;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
@@ -324,14 +326,28 @@ public class DatabaseLoadGoldenRecordTests {
         new MdhRawDatabase(new QuarantineRepository(client), new GoldenRecordRepository(client), new MatchEntityRepository(client))
                 .findAll(TestConstants.CONFIGURATION, objectDataType, null, listFilter, null);
 
+        ArgumentCaptor<String> hostname = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> username = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> token = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> universe = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<GoldenRecordQueryRequest> queryCaptor = ArgumentCaptor.forClass(GoldenRecordQueryRequest.class);
+
         verify(client)
                 .queryGoldenRecords(
-                        TestConstants.CONFIGURATION.getHubHostname(),
-                        TestConstants.CONFIGURATION.getHubUsername(),
-                        TestConstants.CONFIGURATION.getHubToken(),
-                        "12fa66f9-e14d-f642-878f-030b13b64731",
-                        query
+                        hostname.capture(),
+                        username.capture(),
+                        token.capture(),
+                        universe.capture(),
+                        queryCaptor.capture()
                 );
+
+        assertEquals("atom.example.com", hostname.getValue());
+        assertEquals("username", username.getValue());
+        assertEquals("password", token.getValue());
+        assertEquals("12fa66f9-e14d-f642-878f-030b13b64731", universe.getValue());
+        assertEquals(query, queryCaptor.getValue());
+        assertEquals("Mg==", queryCaptor.getValue().getOffsetToken());
+        assertEquals("3", queryCaptor.getValue().getLimit());
     }
 
     @Test

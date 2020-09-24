@@ -5,6 +5,7 @@ import com.boomi.flow.services.boomi.mdh.client.MdhClient;
 import com.boomi.flow.services.boomi.mdh.common.*;
 import com.boomi.flow.services.boomi.mdh.database.FieldMapper;
 import com.boomi.flow.services.boomi.mdh.universes.Universe;
+import com.boomi.flow.services.boomi.mdh.utilities.OffsetTokenGenerator;
 import com.manywho.sdk.api.run.ServiceProblemException;
 import com.manywho.sdk.api.run.elements.type.ListFilter;
 import com.manywho.sdk.api.run.elements.type.ListFilterWhere;
@@ -64,11 +65,11 @@ public class GoldenRecordRepository {
                 }
             }
             request.setSort(sort);
-            request.setLimit(filter.getLimit().toString());
-            if (filter.getOffset() != null) {
-                String tokenEncoded = Base64.getEncoder().encodeToString(filter.getOffset().toString().getBytes());
-                request.setOffsetToken(tokenEncoded);
+            if (filter.getLimit() != null) {
+                request.setLimit(filter.getLimit().toString());
             }
+
+            request.setOffsetToken(OffsetTokenGenerator.generate(filter));
 
             if (filter.hasWhere()) {
                 GoldenRecordQueryRequest.Filter queryFilter = new GoldenRecordQueryRequest.Filter();
